@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: firmament-events
+  namespace: sky-firmament
+  labels:
+    app: firmament-events
+    version: v0.1
+spec:
+  replicas: 1
+  selector:
+    app: firmament-events
+  template:
+    metadata:
+      labels:
+        app: firmament-events
+        version: v0.1
+    spec:
+      volumes:
+      - name: config-volume
+        hostPath:
+          path: /opt/prometheus_config
+      containers:
+      - name: firmament-events
+        image: ading1977/events:20170626
+        imagePullPolicy: Always
+        env:
+           - name: ELASTICSEARCH_HOST
+             value: elasticsearch-logging
+           - name: CEILOMETER_API_HOST
+             value: ceilometer-api
+           - name: EMAIL_HOST
+             valueFrom:
+               configMapKeyRef:
+                 name: config
+                 key: email-host
+           - name: EMAIL_SENDER
+             valueFrom:
+               configMapKeyRef:
+                 name: config
+                 key: email-sender
+           - name: EMAIL_PASS
+             valueFrom:
+               configMapKeyRef:
+                 name: config
+                 key: email-password
+           - name: KUBERNETES_URL
+             valueFrom:
+               configMapKeyRef:
+                 name: config
+                 key: kubernetes.url           
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/prometheus
+      nodeSelector:
+        prometheus: "yes"
+      nodeSelector:
+        prometheus: "yes"

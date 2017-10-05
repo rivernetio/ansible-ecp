@@ -1,0 +1,64 @@
+#Container metrics
+container_cpu_cores_used = sum(irate (container_cpu_usage_seconds_total{image!="",name=~"^k8s_.*"}[1m])) by (namespace,pod_name,container_name)
+
+container_memory_usage_bytes=container_memory_working_set_bytes
+
+container_network_transmit_bps = irate(container_network_transmit_bytes_total{image!="",name=~"^k8s_.*"}[1m])
+container_network_receive_bps = irate(container_network_receive_bytes_total{image!="",name=~"^k8s_.*"}[1m])
+
+#Pod metrics
+pod_cpu_cores_used = sum(container_cpu_cores_used) by (namespace,pod_name) 
+pod_memory_usage_bytes = sum(container_memory_working_set_bytes) by (namespace,pod_name)
+
+pod_network_transmit_bps = sum(container_network_transmit_bps) by (namespace,pod_name)       
+pod_network_receive_bps = sum(container_network_receive_bps) by (namespace,pod_name) 
+          
+pod_fs_usage_bytes = sum(container_fs_usage_bytes) by (namespace,pod_name)                             
+
+#Node metrics
+node_cpu_cores_used=sum(irate (container_cpu_usage_seconds_total{id="/"}[1m])) by (kubernetes_io_hostname)
+node_cpu_cores_total=sum(machine_cpu_cores) by (kubernetes_io_hostname)
+node_cpu_usage_ratio=node_cpu_cores_used/node_cpu_cores_total*100.0
+
+node_memory_used_bytes=sum (container_memory_working_set_bytes{id="/"}) by (kubernetes_io_hostname)
+node_memory_total_bytes=sum (machine_memory_bytes) by (kubernetes_io_hostname)
+node_memory_usage_ratio=node_memory_used_bytes/node_memory_total_bytes*100.0
+
+node_network_transmit_bps = sum (rate (container_network_receive_bytes_total[1m])) by (kubernetes_io_hostname)
+node_network_receive_bps = sum (rate (container_network_transmit_bytes_total[1m])) by (kubernetes_io_hostname)
+
+node_disk_read_bytes_total = sum(node_disk_bytes_read) by (kubernetes_io_hostname)                       
+node_disk_written_bytes_total = sum(node_disk_bytes_written) by (kubernetes_io_hostname)               
+node_disk_read_bps = rate(node_disk_read_bytes_total[1m])                                        
+node_disk_written_bps = rate(node_disk_written_bytes_total [1m])                              
+
+node_filesystem_size_total = sum(container_fs_limit_bytes{id="/"}) by (kubernetes_io_hostname)
+node_filesystem_used_total = sum(container_fs_usage_bytes{id="/"}) by (kubernetes_io_hostname)
+
+#Cluster metrics
+cluster_cpu_cores_used=sum(node_cpu_cores_used)
+cluster_cpu_cores_total=sum(node_cpu_cores_total)
+cluster_cpu_usage_ratio=cluster_cpu_cores_used/cluster_cpu_cores_total*100.0
+
+cluster_memory_used_bytes=sum(node_memory_used_bytes)
+cluster_memory_total_bytes=sum(node_memory_total_bytes)
+cluster_memory_usage_ratio=cluster_memory_used_bytes/cluster_memory_total_bytes*100.0
+
+cluster_network_transmit_bps = sum(node_network_transmit_bps)  
+cluster_network_receive_bps = sum(node_network_receive_bps)  
+
+cluster_disk_read_bps = sum(node_disk_read_bps)       
+cluster_disk_written_bps = sum(node_disk_written_bps)   
+
+cluster_node_num=count(node_boot_time)  
+cluster_filesystem_size_total = sum(node_filesystem_size_total )                                                                 
+cluster_filesystem_used_total=sum(node_filesystem_used_total )
+cluster_filesystem_usage_ratio=cluster_filesystem_used_total/cluster_filesystem_size_total *100.0
+cluster_pod_num=count(kube_pod_info)
+cluster_pod_phase_num=sum(kube_pod_status_phase) by(phase)
+#container num do not include POD container
+cluster_container_num=count(kube_pod_container_info)
+cluster_deployment_num=count(kube_deployment_spec_replicas)
+cluster_replication_controller_num=count(k8s_rc_spec_replicas)
+cluster_daemonset_num=count(k8s_ds_metadata_generation)
+

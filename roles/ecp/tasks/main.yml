@@ -1,0 +1,27 @@
+- name: Label nodes
+  include: label.yml
+  tags:
+    - ecp_label
+
+- name: Create ecp directory
+  file: path={{ kube_ecp_dir }} state=directory
+  tags:
+    - ecp_dir
+
+- name: Create sky-firmament namespace
+  include: namespace.yml
+  tags:
+    - ecp_namespace
+
+- name: Create ecp configuration
+  include: config.yml
+  tags:
+    - ecp_config
+
+- name: Create ecp appstore
+  include: appstore.yml
+  tags:
+    - ecp_appstore
+
+
+

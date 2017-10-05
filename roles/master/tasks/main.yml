@@ -1,5 +1,4 @@
 ---
-
 - name: Init Kubernetes cluster
   shell: |
     kubeadm init --service-cidr {{ service_cidr }} \
@@ -15,7 +14,7 @@
   file: path=/root/.kube/ state=directory
 
 - name: Copy admin.conf to Home directory
-  when: init_cluster
+  when: init_cluster|succeeded
   copy:
     src: "{{ kubeadmin_config }}"
     dest: "/root/.kube/config"
@@ -24,18 +23,29 @@
     mode: 0755
     remote_src: True
 
-- name: Override config file directory for Debian
-  when: ansible_os_family == "Debian"
+- name: Wait until node is available
+  shell: kubectl get no | grep {{ ansible_hostname }}
+  register: get_node_result
+  until: get_node_result.rc == 0
+  retries: 10
+  delay: 1
+  
+- name: Taint master node
+  when:
+    - init_cluster|succeeded
+    - taint_master
+  shell: |
+    kubectl taint nodes --all node-role.kubernetes.io/master-
+
+- name: Set master label
+  when:
+    - init_cluster|succeeded
+    - get_node_result|succeeded
+  shell: |
+    kubectl label node {{ ansible_hostname }} \
+        kubeadm.alpha.kubernetes.io/role=master
+
+- name: Set master run fact
   set_fact:
-    dropin_dir: "/etc/systemd/system"
+    master_have_run: true
 
-- name: Copy kubeadm.conf to drop-in directory
-  template: src=10-kubeadm.conf.j2 dest={{ dropin_dir }}/kubelet.service.d/10-kubeadm.conf
-
-- name: Enable and restart kubelet engine
-  systemd:
-    name: kubelet
-    daemon_reload: yes
-    state: restarted
-    enabled: yes
-  register: started_kubelet

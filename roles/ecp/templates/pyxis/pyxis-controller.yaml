@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: firmament-pyxis
+  namespace: sky-firmament
+  labels:
+    app: firmament-pyxis
+    version: v0.3
+spec:
+  replicas: 1
+  selector:
+    app: firmament-pyxis
+  template:
+    metadata:
+      labels:
+        app: firmament-pyxis
+        version: v0.3
+    spec:
+      containers:
+      - name: firmament-pyxis
+        image: ading1977/pyxis:20170626
+        imagePullPolicy: Always
+        env:
+           - name: KUBERNETES_URL
+             valueFrom:
+               configMapKeyRef:
+                 name: config
+                 key: kubernetes.url
+           - name: harbor_host
+             valueFrom:
+               configMapKeyRef:
+                 name: config
+                 key: harbor.host
+        resources:
+          limits:
+            #cpu: 500m
+            memory: 400Mi
+          requests:
+            #cpu: 500m
+            memory: 400Mi
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+          - name: kubectl-path
+            mountPath: /usr/bin/kubectl
+      volumes:
+        - name: kubectl-path
+          hostPath:
+            path: /usr/bin/kubectl

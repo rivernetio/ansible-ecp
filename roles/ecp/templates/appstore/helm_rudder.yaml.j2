@@ -1,0 +1,105 @@
+# add kube-config file as config map
+apiVersion: v1
+data:
+  config: |
+    apiVersion: v1
+    clusters:
+    - cluster:
+      server: http://{{ groups['master'][0] }}:8080
+    name: cluster
+kind: ConfigMap
+metadata:
+  name: kubecfg
+  namespace: kube-system
+---
+# exposing tiller as a service
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: helm
+    name: tiller
+  name: tiller
+  namespace: kube-system
+spec:
+  ports:
+  - name: api
+    port: 44134
+    protocol: TCP
+    targetPort: 44134
+  selector:
+    app: helm
+    name: tiller
+---
+# exposing rudder as a service
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: helm-rudder
+    type: api
+  name: helm-rudder
+  namespace: kube-system
+spec:
+  ports:
+  - name: api
+    port: 5000
+    protocol: TCP
+    targetPort: 5000
+    nodePort: 31051
+  selector:
+    app: helm-rudder
+    type: api
+  type: NodePort
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: helm-rudder
+    type: api
+  name: helm-rudder
+  namespace: kube-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: helm-rudder
+      type: api
+  template:
+    metadata:
+      labels:
+        app: helm-rudder
+        type: api
+      name: rudder
+    spec:
+      containers:
+      - name: rudder
+        env:
+        - name: RUDDER_TILLER_ADDRESS
+          value: tiller.kube-system:44134
+        - name: RUDDER_HELM_REPO_FILE
+          value: /opt/rudder/helm/repositories.yaml
+        image: {{ registry_domain }}/{{ registry_user }}/{{ rudder_image }}
+        imagePullPolicy: Always
+        args:
+        - --insecure=true
+        ports:
+        - containerPort: 5000
+          name: api
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /opt/rudder/helm
+          name: repo
+      volumes:
+      - name: kubecfg
+        configMap:
+          items:
+          - key: config
+            path: config.yaml
+          name: kubecfg
+      - name: repo
+        hostPath:
+          path: /etc/repository/
+      nodeSelector:
+        appstore: "yes"

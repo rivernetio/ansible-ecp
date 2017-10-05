@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: firmament-mysql
+  namespace: sky-firmament
+  labels:
+    app: firmament-mysql
+spec:
+  replicas: 1
+  selector:
+    app: firmament-mysql
+  template:
+    metadata:
+      labels:
+        app: firmament-mysql
+    spec:
+      containers:
+      - image: ading1977/mysql-sky:20170626
+        name: mysql
+        env:
+          # $ kubectl create secret generic mysql-pass --from-file=password.txt
+          # make sure password.txt does not have a trailing newline
+        - name: MYSQL_ROOT_PASSWORD
+          value: password
+        - name: MYSQL_DATABASE
+          value: keystone
+        - name: MYSQL_USER
+          value: keystone
+        - name: MYSQL_PASSWORD
+          value: password 
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-persistent-storage
+        hostPath:
+          path: /usr/db_data

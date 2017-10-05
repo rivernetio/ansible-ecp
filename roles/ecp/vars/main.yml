@@ -1,0 +1,12 @@
+---
+# Docker registry
+registry_domain: docker.io
+registry_user: ading1977
+
+# ECP namespace
+ecp_namespace: sky-firmament
+
+# ECP images
+rudder_image: rudder:20170626
+tiller_image: tiller:v2.2.3
+

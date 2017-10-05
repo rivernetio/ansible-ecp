@@ -1,0 +1,18 @@
+---
+- name: Copy namespace config file
+  template: src={{ ecp_namespace }}.json.j2 dest={{ kube_ecp_dir }}/{{ ecp_namespace }}.json
+
+- name: Check namespace
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get namespaces | grep {{ ecp_namespace }}
+  run_once: true
+  register: check_namespace
+  ignore_errors: true
+
+- name: Create namespace
+  when: check_namespace|failed
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            create -f {{ kube_ecp_dir }}/{{ ecp_namespace }}.json
+

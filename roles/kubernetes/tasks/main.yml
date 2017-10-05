@@ -23,6 +23,9 @@
     enabled: yes
     gpgcheck: no
 
+- name: Disable selinux
+  selinux: policy=targeted state=permissive
+
 - name: Install kubernetes packages (RHEL/CentOS)
   when: ansible_os_family == "RedHat"
   yum:
@@ -44,3 +47,14 @@
     - kubelet
     - kubernetes-cni
     - kubeadm
+
+- name: Disable swap
+  command: swapoff -a
+
+- name: Enable and start kubelet engine
+  systemd:
+    name: kubelet
+    daemon_reload: yes
+    state: restarted
+    enabled: yes
+

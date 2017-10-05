@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: firmament-license
+  namespace: sky-firmament
+  labels:
+    app: firmament-license
+    version: v0.1
+spec:
+  replicas: 1
+  selector:
+    app: firmament-license
+  template:
+    metadata:
+      labels:
+        app: firmament-license
+        version: v0.1
+    spec:
+      containers:
+      - name: firmament-license
+        image: ading1977/license:20170626
+        imagePullPolicy: Always
+        resources:
+          limits:
+            memory: 600Mi
+          requests:
+            memory: 600Mi
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - mountPath: /etc/license/
+          name: license
+      volumes:
+      - name: license
+        configMap:
+          items:
+          - key: license
+            path: license
+          name: config
