@@ -16,7 +16,7 @@
   delegate_to: "{{ groups['master'][0] }}"
   run_once: true
   register: check_role
-  ignore_errors: true
+  failed_when: check_role.rc !=0 and check_role.rc != 1
 
 - name: Create Kubernetes dashboard role
   when: check_role|failed
@@ -34,7 +34,7 @@
   delegate_to: "{{ groups['master'][0] }}"
   run_once: true
   register: check_dash
-  ignore_errors: true
+  failed_when: check_dash.rc != 0 and check_dash.rc != 1
 
 - name: Create Kubernetes dashboard deployment
   when: check_dash|failed

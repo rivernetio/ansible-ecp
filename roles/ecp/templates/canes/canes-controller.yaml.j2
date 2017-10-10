@@ -18,16 +18,16 @@ spec:
     spec:
       containers:
       - name: firmament-canes
-        image: ading1977/canes:20170626
+        image: {{ registry_domain }}/{{ registry_user }}/{{ canes_image }}
         imagePullPolicy: Always
         env:
            - name: ELASTICSEARCH_HOST
              value: elasticsearch-logging
-           - name: FILE_SERVER
-             valueFrom:
-               configMapKeyRef:
-                 name: config
-                 key: file-server.url
+#           - name: FILE_SERVER
+#             valueFrom:
+#               configMapKeyRef:
+#                 name: ecp-config
+#                 key: file-server.url
         resources:
           limits:
             cpu: 1000m

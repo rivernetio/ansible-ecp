@@ -5,7 +5,7 @@ data:
     apiVersion: v1
     clusters:
     - cluster:
-      server: http://{{ groups['master'][0] }}:8080
+      server: http://{{ kube_api_server }}:8080
     name: cluster
 kind: ConfigMap
 metadata:

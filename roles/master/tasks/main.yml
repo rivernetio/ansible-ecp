@@ -22,30 +22,50 @@
     group: root
     mode: 0755
     remote_src: True
+  run_once: true
 
 - name: Wait until node is available
+  when:
+    - init_cluster|succeeded
   shell: kubectl get no | grep {{ ansible_hostname }}
   register: get_node_result
   until: get_node_result.rc == 0
   retries: 10
-  delay: 1
+  delay: 5
   
 - name: Taint master node
   when:
-    - init_cluster|succeeded
-    - taint_master
+    - get_node_result|succeeded
   shell: |
     kubectl taint nodes --all node-role.kubernetes.io/master-
+  register: taint_master
+  run_once: true
 
 - name: Set master label
   when:
-    - init_cluster|succeeded
-    - get_node_result|succeeded
+    - taint_master|succeeded
   shell: |
     kubectl label node {{ ansible_hostname }} \
-        kubeadm.alpha.kubernetes.io/role=master
+            kubeadm.alpha.kubernetes.io/role=master
+  register: label_master
+  run_once: true
+
+- name: Get kube api server IP
+  when:
+    - get_node_result|succeeded
+  shell: |
+    kubectl describe pod kube-apiserver-{{ ansible_hostname }} \
+            --namespace=kube-system | grep advertise-address | awk -F'=' '{print $2}'
+  register: get_api_server
+  until: get_api_server.stderr == "" and get_api_server.stdout != ""
+  retries: 20
+  delay: 15
 
 - name: Set master run fact
+  when:
+    - label_master|succeeded
+    - get_api_server|succeeded
   set_fact:
     master_have_run: true
+    kube_api_server: "{{ get_api_server.stdout }}"
 

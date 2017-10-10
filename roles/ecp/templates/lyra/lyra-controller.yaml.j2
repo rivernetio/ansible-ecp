@@ -18,18 +18,18 @@ spec:
     spec:
       containers:
       - name: firmament-lyra
-        image: ading1977/lyra:20170626
+        image: {{ registry_domain }}/{{ registry_user }}/{{ lyra_image }}
         imagePullPolicy: Always
         env:
            - name: ETCD_URL
              valueFrom:
                configMapKeyRef:
-                 name: config
+                 name: ecp-config
                  key: etcd.url
            - name: KUBERNETES_URL
              valueFrom:
                configMapKeyRef:
-                 name: config
+                 name: ecp-config
                  key: kubernetes.url
         resources:
           limits:

@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: firmament-license
-        image: ading1977/license:20170626
+        image: {{ registry_domain }}/{{ registry_user }}/{{ license_image }}
         imagePullPolicy: Always
         resources:
           limits:
@@ -36,4 +36,4 @@ spec:
           items:
           - key: license
             path: license
-          name: config
+          name: ecp-config

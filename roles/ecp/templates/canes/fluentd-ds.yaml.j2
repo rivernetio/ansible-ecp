@@ -11,7 +11,7 @@ spec:
     spec:      
       containers:
       - name: fluentd-elasticsearch
-        image: ading1977/fluentd-elasticsearch:1.22
+        image: {{ registry_domain }}/{{ registry_user }}/{{ fluentd_image }}
         imagePullPolicy: Always
         resources:
           limits:
@@ -26,7 +26,7 @@ spec:
         - name: KUBERNETES_URL
           valueFrom:
             configMapKeyRef:
-              name: config
+              name: ecp-config
               key: kubernetes.url
         - name: KUBERNETES_VERIFY_SSL
           value: "False"

@@ -23,5 +23,30 @@
   tags:
     - ecp_appstore
 
+# Needs to verify
+- name: Create logging service
+  when: not opensource
+  include: logging.yml
+  tags:
+    - ecp_logging
+
+# Event image needs to update k8s Java client
+# Existing one is outdated causing client exception
+- name: Create events service
+  when: not opensource
+  include: events.yml
+  tags:
+    - ecp_events
+
+- name: Create license service
+  include: license.yml
+  tags:
+    - ecp_license
+
+- name: Create lyra service
+  include: lyra.yml
+  tags:
+    - ecp_lyra
+
 
 

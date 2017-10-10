@@ -15,6 +15,9 @@
     kubectl get nodes -l kubeadm.alpha.kubernetes.io/role!=master \
         -o jsonpath='{.items[*].status.addresses[?(@.type=="Hostname")].address}'
   register: worker_nodes_result
+  until: worker_nodes_result.stdout != ""
+  retries: 20
+  delay: 15
 
 - set_fact: worker_nodes={{ worker_nodes_result.stdout.split(" ") }}
 
@@ -24,7 +27,8 @@
   with_items:
     - kubectl label nodes {{ worker_nodes[0] }} appstore=yes
     - kubectl label nodes {{ worker_nodes[0] }} prometheus=yes
-  ignore_errors: yes
+  register: result
+  failed_when: result.results[0].rc != 0 or result.results[1].rc != 0
 
 - name: Label cluster with multi-worker nodes
   when: worker_nodes | length > 1

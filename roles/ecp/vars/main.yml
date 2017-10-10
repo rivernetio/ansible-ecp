@@ -7,6 +7,17 @@ registry_user: ading1977
 ecp_namespace: sky-firmament
 
 # ECP images
+# appstore
 rudder_image: rudder:20170626
 tiller_image: tiller:v2.2.3
+# logging
+canes_image: canes:20170626
+elasticsearch_image: elasticsearch:1.5.2
+fluentd_image: fluentd-elasticsearch:1.22
+# events
+events_image: events:20170626
+# license
+license_image: license:20170626
+# lyra
+lyra_image: lyra:20170626
 

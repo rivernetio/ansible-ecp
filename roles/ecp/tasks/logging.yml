@@ -1,0 +1,65 @@
+---
+- name: Create logging service directory
+  file: path={{ kube_ecp_dir }}/canes state=directory
+
+- name: Copy logging service yaml file
+  template: src={{ item }} dest={{ kube_ecp_dir }}/canes/{{ item | basename | regex_replace('\.j2', '') }}
+  with_fileglob:
+    - ../templates/canes/*.j2
+
+- name: Check if canes controller already exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get rc --namespace={{ ecp_namespace }} | grep firmament-canes
+  register: check_canes_rc
+  failed_when: check_canes_rc.rc != 0 and check_canes_rc.rc != 1
+
+- name: Create canes rc
+  when: check_canes_rc|failed
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            create -f {{ kube_ecp_dir }}/canes/canes-controller.yaml
+  run_once: true
+
+- name: Check if canes service already exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get svc --namespace={{ ecp_namespace }} | grep canes-firmament-com
+  register: check_canes_svc
+  failed_when: check_canes_svc.rc != 0 and check_canes_svc.rc != 1
+
+- name: Create canes service
+  when: check_canes_svc|failed
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            create -f {{ kube_ecp_dir }}/canes/canes-service.yaml
+  run_once: true
+
+- name: Check if elasticsearch service already exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get rc --namespace={{ ecp_namespace }} | grep elasticsearch-logging
+  register: check_es_svc
+  failed_when: check_es_svc.rc != 0 and check_es_svc.rc != 1
+
+- name: Create elasticsearch service
+  when: check_es_svc|failed
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            create -f {{ kube_ecp_dir }}/canes/es-service-internal-svc.yaml
+  run_once: true
+
+- name: Check if fluentd daemonset already exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get ds --namespace={{ ecp_namespace }} | grep fluentd-daemonset
+  register: check_fluentd_ds
+  failed_when: check_fluentd_ds.rc !=0 and check_fluentd_ds.rc != 1
+
+- name: Create fluentd daemonset
+  when: check_fluentd_ds|failed
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            create -f {{ kube_ecp_dir }}/canes/fluentd-ds.yaml
+  run_once: true
+
