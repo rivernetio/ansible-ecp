@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ReplicationController
 metadata:
   name: firmament-license
-  namespace: sky-firmament
+  namespace: {{ ecp_namespace }}
   labels:
     app: firmament-license
     version: v0.1

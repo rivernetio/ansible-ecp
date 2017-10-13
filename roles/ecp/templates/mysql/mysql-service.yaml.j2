@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: firmament-mysql
-  namespace: sky-firmament
+  namespace: {{ ecp_namespace }}
   labels:
     app: firmament-mysql-5.6
 spec:

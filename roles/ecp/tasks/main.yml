@@ -48,5 +48,13 @@
   tags:
     - ecp_lyra
 
+- name: Create mysql service
+  include: mysql.yml
+  tags:
+    - ecp_mysql
 
+- name: Create prometheus services
+  include: prometheus.yml
+  tags:
+    - ecp_prometheus
 

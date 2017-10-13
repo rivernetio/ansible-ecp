@@ -2,7 +2,7 @@ apiVersion: extensions/v1beta1
 kind: DaemonSet
 metadata:
   name: fluentd-daemonset
-  namespace: sky-firmament
+  namespace: {{ ecp_namespace }}
 spec:
   template:
     metadata:
