@@ -184,12 +184,19 @@ spec:
       labels:
         app: kube-state-metrics
     spec:
+      serviceAccountName: kube-state-metrics
       containers:
       - name: kube-state-metrics
-        image: {{ registry_domain}}/{{ registry_user}}/{{ kubestatemetrics_image }}
+        image: quay.io/coreos/{{ kubestatemetrics_image }}
         ports:
         - name: exporter
           containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
         resources:
           requests:
             cpu: 10m
@@ -253,7 +260,7 @@ spec:
         component: node-exporter
     spec:
       containers:
-      - image: {{ registry_domain}}/{{ registry_user}}/{{ nodeexporter_image }}
+      - image: quay.io/prometheus/{{ nodeexporter_image }}
         name: prometheus-node-exporter
         ports:
         - name: prom-node-exp
@@ -296,6 +303,7 @@ spec:
       labels:
         name: kube-api-exporter
     spec:
+      serviceAccountName: kube-state-metrics
       containers:
       - name: kube-api-exporter
         image: {{ registry_domain}}/{{ registry_user}}/{{ kubeapiexporter_image }}
@@ -339,9 +347,10 @@ spec:
         app: prometheus
         component: core
     spec:
+      serviceAccountName: prometheus
       containers:
       - name: prometheus
-        image: {{ registry_domain}}/{{ registry_user}}/{{ prometheus_image }}
+        image: quay.io/prometheus/{{ prometheus_image }}
         args:
           - '-storage.local.retention=6h'
           - '-storage.local.memory-chunks=500000'

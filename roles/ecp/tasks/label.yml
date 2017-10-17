@@ -27,8 +27,6 @@
   with_items:
     - kubectl label nodes {{ worker_nodes[0] }} appstore=yes
     - kubectl label nodes {{ worker_nodes[0] }} prometheus=yes
-  register: result
-  failed_when: result.results[0].rc != 0 or result.results[1].rc != 0
 
 - name: Label cluster with multi-worker nodes
   when: worker_nodes | length > 1

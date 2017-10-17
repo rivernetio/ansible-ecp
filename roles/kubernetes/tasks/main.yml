@@ -51,6 +51,13 @@
 - name: Disable swap
   command: swapoff -a
 
+# /dev/mapper/centos-swap swap swap ...
+- name: Remove swap from fstab
+  lineinfile:
+    dest: /etc/fstab
+    regexp: '^/[\S]+\s+[\S]+\s+swap '
+    state: absent
+
 - name: Enable and start kubelet engine
   systemd:
     name: kubelet

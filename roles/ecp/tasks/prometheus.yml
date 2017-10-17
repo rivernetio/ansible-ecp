@@ -56,7 +56,14 @@
   run_once: true
   delegate_to: "{{ prometheus_host }}"
 
-- name: Create prometheus
+- name: Create prometheus RBAC
+  shell: "{{ item }}"
+  with_items:
+    - kubectl --kubeconfig={{ kubeadmin_config }} create -f {{ kube_ecp_dir }}/prometheus/prometheus-rbac.yml
+    - kubectl --kubeconfig={{ kubeadmin_config }} create -f {{ kube_ecp_dir }}/prometheus/prometheus-k8s-rbac.yml
+  run_once: true
+
+- name: Create prometheus, exporters, and grafana
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
             create -f {{ kube_ecp_dir }}/prometheus/manifests-all.yaml
