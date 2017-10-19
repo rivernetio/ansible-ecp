@@ -11,7 +11,7 @@ spec:
     spec:      
       containers:
       - name: fluentd-elasticsearch
-        image: {{ registry_domain }}/{{ registry_user }}/{{ fluentd_image }}
+        image: {{ fluentd_image }}
         imagePullPolicy: Always
         resources:
           limits:

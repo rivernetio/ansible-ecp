@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: firmament-canes
-        image: {{ registry_domain }}/{{ registry_user }}/{{ canes_image }}
+        image: {{ canes_image }}
         imagePullPolicy: Always
         env:
            - name: ELASTICSEARCH_HOST

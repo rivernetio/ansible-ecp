@@ -17,7 +17,7 @@ spec:
         component: core
     spec:
       containers:
-        - image: {{ registry_domain}}/{{ registry_user}}/{{ grafana_image }}
+        - image: {{ grafana_image }}
           imagePullPolicy: Always
           name: grafana-core
           # env:
@@ -132,7 +132,7 @@ spec:
     spec:
       containers:
       - name: grafana-import-dashboards
-        image: {{ registry_domain}}/{{ registry_user}}/{{ docker_image }}
+        image: {{ docker_image }}
         imagePullPolicy: Always
         command: ["/bin/sh", "-c"]
         workingDir: /opt/grafana-import-dashboards
@@ -187,7 +187,7 @@ spec:
       serviceAccountName: kube-state-metrics
       containers:
       - name: kube-state-metrics
-        image: quay.io/coreos/{{ kubestatemetrics_image }}
+        image: {{ kubestatemetrics_image }}
         ports:
         - name: exporter
           containerPort: 8080
@@ -260,7 +260,7 @@ spec:
         component: node-exporter
     spec:
       containers:
-      - image: quay.io/prometheus/{{ nodeexporter_image }}
+      - image: {{ nodeexporter_image }}
         name: prometheus-node-exporter
         ports:
         - name: prom-node-exp
@@ -306,7 +306,7 @@ spec:
       serviceAccountName: kube-state-metrics
       containers:
       - name: kube-api-exporter
-        image: {{ registry_domain}}/{{ registry_user}}/{{ kubeapiexporter_image }}
+        image: {{ kubeapiexporter_image }}
         imagePullPolicy: Always
         ports:
         - containerPort: 80
@@ -350,7 +350,7 @@ spec:
       serviceAccountName: prometheus
       containers:
       - name: prometheus
-        image: quay.io/prometheus/{{ prometheus_image }}
+        image: {{ prometheus_image }}
         args:
           - '-storage.local.retention=6h'
           - '-storage.local.memory-chunks=500000'

@@ -1,39 +1,38 @@
 ---
 # Docker registry
 registry_domain: docker.io
-registry_user: ading1977
 
 # ECP namespace
 ecp_namespace: sky-firmament
 
 # ECP images
 # appstore
-rudder_image: rudder:20170626
-tiller_image: tiller:v2.2.3
+rudder_image: docker.io/ading1977/rudder:20170626
+tiller_image: docker.io/ading1977/tiller:v2.2.3
 # logging
-canes_image: canes:20170626
-elasticsearch_image: elasticsearch:1.5.2
-fluentd_image: fluentd-elasticsearch:1.22
+canes_image: docker.io/ading1977/canes:20170626
+elasticsearch_image: docker.io/ading1977/elasticsearch:1.5.2
+fluentd_image: docker.io/ading1977/fluentd-elasticsearch:1.22
 # events
-events_image: events:20170626
+events_image: docker.io/ading1977/events:20170626
 # license
-license_image: license:20170626
+license_image: docker.io/ading1977/license:20170626
 # lyra
-lyra_image: lyra:20170626
+lyra_image: docker.io/ading1977/lyra:20170626
 # mysql
-mysql_image: mysql:5.7
+mysql_image: docker.io/ading1977/mysql:5.7
 # prometheus
-grafana_image: grafana-sky:20170626
-docker_image: docker
-kubestatemetrics_image: kube-state-metrics:v0.5.0
-nodeexporter_image: node-exporter:0.12.0
-kubeapiexporter_image: kube-api-exporter
-prometheus_image: prometheus:v1.5.2
+grafana_image: docker.io/ading1977/grafana-sky:20170626
+docker_image: docker.io/ading1977/docker
+kubestatemetrics_image: quay.io/coreos/kube-state-metrics:v0.5.0
+nodeexporter_image: quay.io/prometheus/node-exporter:0.12.0
+kubeapiexporter_image: docker.io/ading1977/kube-api-exporter
+prometheus_image: quay.io/prometheus/prometheus:v1.5.2
 # pyxis
-pyxis_image: ading1977/pyxis:20170626
+pyxis_image: docker.io/ading1977/pyxis:20170626
 # river
-river_image: ading1977/river:20170626
+river_image: docker.io/ading1977/river:20170626
 # sas
-keystone_image: ading1977/keystone:20161108
-sas_image: ading1977/skyform-sas:20170626
+keystone_image: docker.io/ading1977/keystone:20161108
+sas_image: docker.io/ading1977/skyform-sas:20170626
 

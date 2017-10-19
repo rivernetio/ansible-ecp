@@ -26,7 +26,7 @@ spec:
         name: tiller
     spec:
       containers:
-      - image: {{ registry_domain }}/{{ registry_user }}/{{ tiller_image }}
+      - image: {{ tiller_image }}
         imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 3

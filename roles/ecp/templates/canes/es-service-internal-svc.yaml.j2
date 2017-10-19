@@ -31,7 +31,7 @@ spec:
         app: elasticsearch-logging
     spec:
       containers:
-      - image: {{ registry_domain }}/{{ registry_user }}/{{ elasticsearch_image }}
+      - image: {{ elasticsearch_image }}
         imagePullPolicy: Always
         name: elasticsearch-logging
         env:

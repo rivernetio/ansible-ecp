@@ -15,7 +15,7 @@ spec:
         app: firmament-mysql
     spec:
       containers:
-      - image: {{ registry_domain }}/{{ registry_user }}/{{ mysql_image }}
+      - image: {{ mysql_image }}
         name: mysql
         env:
           # $ kubectl create secret generic mysql-pass --from-file=password.txt

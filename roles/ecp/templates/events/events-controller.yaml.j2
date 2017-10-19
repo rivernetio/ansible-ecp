@@ -22,7 +22,7 @@ spec:
           path: /opt/prometheus_config
       containers:
       - name: firmament-events
-        image: {{ registry_domain }}/{{ registry_user }}/{{ events_image }}
+        image: {{ events_image }}
         imagePullPolicy: Always
         env:
            - name: ELASTICSEARCH_HOST

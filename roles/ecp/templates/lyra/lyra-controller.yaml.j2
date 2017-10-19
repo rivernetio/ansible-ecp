@@ -19,7 +19,7 @@ spec:
       serviceAccountName: lyra
       containers:
       - name: firmament-lyra
-        image: {{ registry_domain }}/{{ registry_user }}/{{ lyra_image }}
+        image: {{ lyra_image }}
         imagePullPolicy: Always
         env:
            - name: ETCD_URL
