@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: firmament-canes
+  namespace: {{ ecp_namespace }}
+  labels:
+    app: firmament-canes
+    version: v0.3
+spec:
+  replicas: 1
+  selector:
+    app: firmament-canes
+  template:
+    metadata:
+      labels:
+        app: firmament-canes
+        version: v0.3
+    spec:
+      containers:
+      - name: firmament-canes
+        image: {{ canes_image }}
+        imagePullPolicy: Always
+        env:
+           - name: ELASTICSEARCH_HOST
+             value: elasticsearch-logging
+#           - name: FILE_SERVER
+#             valueFrom:
+#               configMapKeyRef:
+#                 name: ecp-config
+#                 key: file-server.url
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 400Mi
+          requests:
+            cpu: 1000m
+            memory: 400Mi
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+          - mountPath: /data/download
+            name: filevolume
+      volumes:
+      - hostPath:
+          path: /opt/fileserver/download
+        name: filevolume

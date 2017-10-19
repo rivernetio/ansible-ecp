@@ -1,0 +1,64 @@
+---
+- name: Create appstore directory
+  file: path={{ kube_ecp_dir }}/appstore state=directory
+
+- name: Copy appstore yaml file
+  template: src={{ item }} dest={{ kube_ecp_dir }}/appstore/{{ item | basename | regex_replace('\.j2', '') }}
+  with_fileglob:
+    - ../templates/appstore/*.j2
+
+- name: Get the appstore host
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get nodes --no-headers=true -l appstore=yes | awk '{print $1}'
+  register: get_appstore_host
+
+- set_fact: appstore_host={{ get_appstore_host.stdout }}
+
+- name: Create repository directory on appstore host
+  file: path=/etc/repository state=directory
+  run_once: true
+  delegate_to: "{{ appstore_host }}"
+
+- slurp:
+    src: "{{ kube_ecp_dir }}/appstore/repositories.yaml"
+  register: repositories
+
+- name: Create repository configuration on appstore host
+  copy:
+    dest: /etc/repository/repositories.yaml
+    content: "{{ repositories.content | b64decode }}"
+    mode: 0644
+  run_once: true
+  delegate_to: "{{ appstore_host }}"
+
+- name: Check if rudder pod already exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get po --namespace={{ ecp_namespace }} | grep rudder
+  run_once: true
+  register: check_rudder
+  failed_when: check_rudder.rc != 0 and check_rudder.rc != 1
+
+- name: Check if tiller pod already exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get po -namespace={{ ecp_namespace }} | grep tiller
+  run_once: true
+  register: check_tiller
+  failed_when: check_tiller.rc != 0 and check_tiller.rc != 1
+    
+- name: Create rudder
+  when: check_rudder|failed
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            create -f {{ kube_ecp_dir }}/appstore/helm_rudder.yaml
+  run_once: true
+
+- name: Create tiller
+  when: check_tiller|failed
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            create -f {{ kube_ecp_dir }}/appstore/tiller.yaml
+  run_once: true
+

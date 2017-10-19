@@ -26,7 +26,7 @@ spec:
     spec:
       containers:
       - name: kubernetes-dashboard
-        image: gcr.io/google_containers/kubernetes-dashboard-amd64:v1.6.0
+        image: gcr.io/google_containers/kubernetes-dashboard-amd64:v1.6.3
         ports:
         - containerPort: 9090
           protocol: TCP
@@ -55,9 +55,7 @@ metadata:
   name: kubernetes-dashboard
   namespace: kube-system
 spec:
-  type: LoadBalancer
-  externalIPs:
-  - {{ groups['master'][0] }}
+  type: NodePort
   ports:
   - port: 80
     targetPort: 9090

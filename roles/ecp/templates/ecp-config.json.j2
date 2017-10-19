@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ecp-config
+  namespace: {{ ecp_namespace }}
+data:
+  license: |
+    nezNch6izJPtoPd2PLD+a1yuUHp4xr/ttYW1vjskh+OKLuhvJTnT5Ud+YLHWXOm37pPuB4y5bJKMd0I9SKYjsn6sCNqz/0sSOrM1s8bG8nrOxjOp8Z5zOfHmGR52byv5tfQre1H1cRNFh6Xh840pPPWwQPmmFo2Dy40JCE4puwY=
+  kubernetes.url: https:\/\/{{ kube_api_server }}:6443
+  etcd.url: http:\/\/{{ groups['master'][0] }}:2379
+  file-server.url: {{ groups['master'][0] }}:31085\/fornax
+  registry.url: {{ registry_domain }}
+  reg.domain: {{ registry_domain }}

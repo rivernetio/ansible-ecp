@@ -1,0 +1,71 @@
+---
+- name: Create prometheus directory
+  file: path={{ kube_ecp_dir }}/prometheus state=directory
+
+- name: Copy prometheus yaml file
+  template: src={{ item }} dest={{ kube_ecp_dir }}/prometheus/{{ item | basename | regex_replace('\.j2', '') }}
+  with_fileglob:
+    - ../templates/prometheus/*.j2
+
+- name: Get the prometheus host
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get nodes --no-headers=true -l prometheus=yes | awk '{print $1}'
+  register: get_prometheus_host
+
+- set_fact: prometheus_host={{ get_prometheus_host.stdout }}
+
+- name: Create repository directory on prometheus host
+  file: path=/opt/prometheus_config state=directory
+  run_once: true
+  delegate_to: "{{ prometheus_host }}"
+
+- slurp:
+    src: "{{ kube_ecp_dir }}/prometheus/prometheus.yml"
+  register: prometheus
+
+- name: Create prometheus configuration on prometheus host
+  copy:
+    dest: /opt/prometheus_config/prometheus.yml
+    content: "{{ prometheus.content | b64decode }}"
+    mode: 0644
+  run_once: true
+  delegate_to: "{{ prometheus_host }}"
+
+- slurp:
+    src: "{{ kube_ecp_dir }}/prometheus/prometheus-record.rules"
+  register: prometheus_record_rules
+
+- name: Create prometheus record rules on prometheus host
+  copy:
+    dest: /opt/prometheus_config/prometheus-record.rules
+    content: "{{ prometheus_record_rules.content | b64decode }}"
+    mode: 0644
+  run_once: true
+  delegate_to: "{{ prometheus_host }}"
+
+- slurp:
+    src: "{{ kube_ecp_dir }}/prometheus/app-record.rules"
+  register: app_record_rules
+
+- name: Create app record rules on prometheus host
+  copy:
+    dest: /opt/prometheus_config/app-record.rules
+    content: "{{ app_record_rules.content | b64decode }}"
+    mode: 0644
+  run_once: true
+  delegate_to: "{{ prometheus_host }}"
+
+- name: Create prometheus RBAC
+  shell: "{{ item }}"
+  with_items:
+    - kubectl --kubeconfig={{ kubeadmin_config }} create -f {{ kube_ecp_dir }}/prometheus/prometheus-rbac.yml
+    - kubectl --kubeconfig={{ kubeadmin_config }} create -f {{ kube_ecp_dir }}/prometheus/prometheus-k8s-rbac.yml
+  run_once: true
+
+- name: Create prometheus, exporters, and grafana
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            create -f {{ kube_ecp_dir }}/prometheus/manifests-all.yaml
+  run_once: true
+

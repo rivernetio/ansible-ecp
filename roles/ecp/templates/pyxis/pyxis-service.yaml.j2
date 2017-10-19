@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pyxis-firmament-com
+  namespace: sky-firmament
+  labels:
+    app: firmament-pyxis
+spec:
+  selector:
+    app: firmament-pyxis
+  ports:
+  - port: 8081
+    targetPort: 8080
+    nodePort: 31081
+  type: NodePort

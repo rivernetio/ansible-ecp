@@ -1,0 +1,30 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: river
+    type: api
+  name: river
+  namespace: kube-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: river
+      type: api
+  template:
+    metadata:
+      labels:
+        app: river
+        type: api
+      name: river
+    spec:
+      containers:
+      - name: river
+        image: {{ river_image }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+          name: api
+          protocol: TCP

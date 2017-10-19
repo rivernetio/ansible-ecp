@@ -1,0 +1,156 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: skyform-sas
+  namespace: sky-firmament
+  labels:
+    app: skyform-sas
+spec:
+  replicas: 1
+  selector:
+    app: skyform-sas
+  template:
+    metadata:
+      labels:
+        app: skyform-sas 
+    spec:
+      containers:
+      - name: firmament-keystone
+        image: {{ keystone_image }}
+        
+        env:
+           - name: OS_TENANT_NAME
+             value: admin
+           - name: OS_USERNAME
+             value: admin
+           - name: OS_PASSWORD
+             value: password
+           - name: OS_AUTH_URL
+             value: "http://firmament-keystone-kilo:5000/v2.0/"
+           - name: OS_REGION_NAM
+             value: SkyForm
+           - name: ADMIN_PASSWORD
+             value: password
+           - name: SERVICE_PASSWORD
+             value: password
+           - name: SERVICE_TOKEN
+             value: password
+           - name: SERVICE_ENDPOINT
+             value: "http://firmament-keystone-kilo:35357/v2.0"
+           - name: SERVICE_TENANT_NAME
+             value: service
+           - name: KEYSTONE_REGION
+             value: SkyForm
+           - name: KEYSTONE_DB_IP
+             value: firmament-mysql
+           - name: LDAP_FLAG
+             value: 'false'
+           - name: LDAP_URL
+             value: 192.168.101.150
+           - name: USERNAME
+             value: cn=Administrator,cn=Users,dc=skycloud,dc=com
+           - name: PASSWORD
+             value: abc@123
+           - name: LDAP_DOMAIN
+             value: dc=skycloud,dc=com
+           - name: LDAP_USER_TREE_DN
+             value: cn=Users,dc=skycloud,dc=com
+           - name: LDAP_PROJECT_TREE_DN
+             value: ou=Projects,ou=OpenStack,dc=skycloud,dc=com
+           - name: LDAP_ROLE_TREE_DN
+             value: ou=Roles,ou=OpenStack,dc=skycloud,dc=com
+           - name: LDAP_GROUP_TREE_DN
+             value: ou=Projects,ou=OpenStack,dc=skycloud,dc=com
+        resources:
+          limits:
+            #cpu: 100m
+            memory: 300Mi
+          requests:
+            #cpu: 100m
+            memory: 300Mi
+        ports:
+        - containerPort: 5000
+        - containerPort: 35357
+      - name: skyform-sas
+        image: {{ sas_image }}
+        imagePullPolicy: Always
+        env:
+           - name: SAS_XMS
+             value: '100'
+           - name: SAS_XMX
+             value: '200'
+           - name: SAS_PERM_SIZE
+             value: '64'
+           - name: SAS_MAX_PERM_SIZE
+             value: '64'
+           - name: SAS_RMI_HOST_IP
+             value: skyform-sas-com
+           - name: SAS_JMX_PORT
+             value: '8999'
+           - name: KEYSTONE_IP
+             value: 'localhost'
+           - name: KEYSTONE_PORT
+             value: '5000'
+           - name: KEYSTONE_ADMIN_TOKEN
+             value: password
+           - name: KEYSTONE_DEFAULT_DOMAIN_ID
+             value: default
+           - name: KEYSTONE_DEFAULT_ADMIN_USER_NAME
+             value: admin
+           - name: KEYSTONE_DEFAULT_ADMIN_ROLE_NAME
+             value: admin
+           - name: KEYSTONE_INNER_ADMIN_USER_NAME
+             value: skyform_inner_admin
+           - name: KEYSTONE_INNER_ADMIN_USER_PASSWORD
+             value: password
+           - name: SKYFORM_SAS_PORT
+             value: '8980'
+           - name: SKYFORM_ADMIN_IP
+             value: firmament-rabbitmq
+           - name: KEYSTONE_DB_IP
+             value: firmament-mysql
+           - name: KEYSTONE_DB_PORT
+             value: '3306'
+           - name: KEYSTONE_DB_USERNAME
+             value: 'keystone'
+           - name: KEYSTONE_DB_PASSWORD
+             value: 'password'
+           - name: SKYFORM_RABBITMQ_ENABLED
+             value: 'false'
+           - name: TOKEN_ENABLE
+             value: 'false'
+#           - name: HARBOR_URL
+#             valueFrom:
+#               configMapKeyRef:
+#                 name: config
+#                 key: harbor.url
+           - name: SAS_DEBUG_PORT
+             value: '8998'
+           - name: SERVICE_TYPE
+             value: ECP
+           - name: LDAP_FLAG
+             value: 'false'
+           - name: LDAP_URL
+             value: ldap://192.168.101.150:389
+           - name: LDAP_ADMIN_USER
+             value: Administrator@skycloud.com
+           - name: LDAP_ADMIN_PASSWORD
+             value: abc@123
+           - name: LDAP_DOMAIN
+             value: DC=skycloud,DC=com
+           - name: LDAP_ROLE_FILTER
+             value: OU=Roles,OU=OpenStack,DC=skycloud,DC=com
+           - name: LDAP_USER_FILTER
+             value: CN=Users,DC=skycloud,DC=com
+           - name: LDAP_PROJECT_FILTER
+             value: OU=Projects,OU=OpenStack,DC=skycloud,DC=com
+        resources:
+          limits:
+            #cpu: 300m
+            memory: 400Mi
+          requests:
+            #cpu: 200m
+            memory: 400Mi
+        ports:
+        - containerPort: 8980
+        - containerPort: 8999

@@ -8,10 +8,33 @@
       shell: "kubeadm reset"
       ignore_errors: True
 
-    - name: Delete flannel.1 interface
-      command: ip link delete flannel.1
+    - name: Remove kubeadmin
+      yum: name={{item}} state=removed
+      with_items:
+        - kubectl
+        - kubeadm
+        - kubelet
+        - kubernetes-cni
       ignore_errors: True
 
-    - name: Delete cni0 interface
-      command: ip link delete cni0
+    - name: Remove data directory
+      file: path={{item}} state=absent
+      with_items:
+        - /var/lib/kubelet
+        - /etc/kubernetes
+        - /var/etcd
+        - /var/lib/etcd
       ignore_errors: True
+
+    - name: Flush IP tables
+      iptables:
+        table: nat
+        flush: true
+      ignore_errors: True
+        
+    - name: Restart docker services
+      systemd:
+        state: restarted
+        name: docker
+        daemon_reload: yes
+

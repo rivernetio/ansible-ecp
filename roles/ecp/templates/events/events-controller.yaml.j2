@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: firmament-events
+  namespace: {{ ecp_namespace }}
+  labels:
+    app: firmament-events
+    version: v0.1
+spec:
+  replicas: 1
+  selector:
+    app: firmament-events
+  template:
+    metadata:
+      labels:
+        app: firmament-events
+        version: v0.1
+    spec:
+      volumes:
+      - name: config-volume
+        hostPath:
+          path: /opt/prometheus_config
+      containers:
+      - name: firmament-events
+        image: {{ events_image }}
+        imagePullPolicy: Always
+        env:
+           - name: ELASTICSEARCH_HOST
+             value: elasticsearch-logging
+           - name: CEILOMETER_API_HOST
+             value: ceilometer-api
+           - name: KUBERNETES_URL
+             valueFrom:
+               configMapKeyRef:
+                 name: ecp-config
+                 key: kubernetes.url           
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/prometheus
+      nodeSelector:
+        prometheus: "yes"
+      nodeSelector:
+        prometheus: "yes"

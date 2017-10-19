@@ -1,0 +1,20 @@
+---
+- name: Copy ecp config file
+  template: src=ecp-config.json.j2 dest={{ kube_ecp_dir }}/ecp-config.json
+
+- name: Check config
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get configmap --namespace={{ ecp_namespace }} | grep ecp-config
+  run_once: true
+  register: check_config
+  failed_when: check_config.rc != 0 and check_config.rc != 1
+
+- name: Create config
+  when: check_config|failed
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            create -f {{ kube_ecp_dir }}/ecp-config.json
+
+
+

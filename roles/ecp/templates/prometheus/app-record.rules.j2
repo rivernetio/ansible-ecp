@@ -1,0 +1,24 @@
+release_pod_memory_used_bytes=sum(container_memory_working_set_bytes{image!="",name=~"^k8s_.*"} ) by (pod_name, namespace) 
+    * on (pod_name) group_right(name) k8s_pod_labels{release!=""}
+
+release_pod_cpu_used_cores=sum( irate(container_cpu_usage_seconds_total{image!="",name=~"^k8s_.*"}[1m]) ) by (pod_name, namespace) 
+    * on (pod_name) group_right(name) k8s_pod_labels{release!=""}
+
+release_pod_network_transmit_bps=sum( irate(container_network_transmit_bytes_total{image!="",name=~"^k8s_.*"}[1m]) ) by (pod_name, namespace)                                                            
+    * on (pod_name) group_right(name) k8s_pod_labels{release!=""}
+release_pod_network_receive_bps=sum( irate(container_network_receive_bytes_total{image!="",name=~"^k8s_.*"}[1m]) ) by (pod_name, namespace)                                                            
+    * on (pod_name) group_right(name) k8s_pod_labels{release!=""}
+
+release_pod_fs_usage_bytes=sum(container_fs_usage_bytes{image!="",name=~"^k8s_.*"} ) by (pod_name, namespace)                                                                            
+    * on (pod_name) group_right(name) k8s_pod_labels{release!=""}
+
+
+
+release_memory_used_bytes=sum(release_pod_memory_used_bytes) by (release)
+
+release_cpu_used_cores=sum(release_pod_cpu_used_cores) by (release)
+
+release_network_transmit_bps=sum( release_pod_network_transmit_bps) by (release)
+release_network_receive_bps=sum( release_pod_network_receive_bps) by (release)
+
+release_fs_usage_bytes=sum( release_pod_fs_usage_bytes) by (release)

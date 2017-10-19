@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: canes-firmament-com
+  namespace: {{ ecp_namespace }}
+  labels:
+    app: firmament-canes
+spec:
+  selector:
+    app: firmament-canes
+  ports:
+  - port: 8084
+    targetPort: 8080
+  type:
+    NodePort

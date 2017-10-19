@@ -20,7 +20,7 @@
   delegate_to: "{{ groups['master'][0] }}"
   run_once: true
   register: check_role
-  ignore_errors: true
+  failed_when: check_role.rc != 0 and check_role.rc != 1
 
 - name: "Create {{ cni.name }} cluster role"
   when: check_role|failed
@@ -38,7 +38,7 @@
   delegate_to: "{{ groups['master'][0] }}"
   run_once: true
   register: check_net
-  ignore_errors: true
+  failed_when: check_net.rc != 0 and check_net.rc != 1
 
 - name: "Create {{ cni.name }} network daemonset"
   when: check_net|failed

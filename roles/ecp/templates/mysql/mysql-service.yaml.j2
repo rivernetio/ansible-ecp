@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: firmament-mysql
+  namespace: {{ ecp_namespace }}
+  labels:
+    app: firmament-mysql-5.6
+spec:
+  selector:
+    app: firmament-mysql
+  ports:
+  - port: 3306
+    targetPort: 3306
+    nodePort: 31036
+  type: NodePort

@@ -1,0 +1,39 @@
+---
+- name: Create pyxis directory
+  file: path={{ kube_ecp_dir }}/pyxis state=directory
+
+- name: Copy pyxis yaml file
+  template: src={{ item }} dest={{ kube_ecp_dir }}/pyxis/{{ item | basename | regex_replace('\.j2', '') }}
+  with_fileglob:
+    - ../templates/pyxis/*.j2
+
+- name: Check if pyxis rc already exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get rc --namespace={{ ecp_namespace }} | grep firmament-pyxis
+  run_once: true
+  register: check_pyxis_rc
+  failed_when: check_pyxis_rc.rc != 0 and check_pyxis_rc.rc != 1
+
+- name: Create pyxis rc
+  when: check_pyxis_rc|failed
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            create -f {{ kube_ecp_dir }}/pyxis/pyxis-controller.yaml
+  run_once: true
+
+- name: Check if pyxis service already exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get svc --namespace={{ ecp_namespace }} | grep firmament-pyxis
+  run_once: true
+  register: check_pyxis_svc
+  failed_when: check_pyxis_svc.rc != 0 and check_pyxis_svc.rc != 1
+
+- name: Create pyxis svc
+  when: check_pyxis_svc|failed
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            create -f {{ kube_ecp_dir }}/pyxis/pyxis-service.yaml
+  run_once: true
+
