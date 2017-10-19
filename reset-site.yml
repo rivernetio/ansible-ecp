@@ -24,6 +24,7 @@
         - /etc/kubernetes
         - /var/etcd
         - /var/lib/etcd
+        - /usr/db_data
       ignore_errors: True
 
     - name: Flush IP tables
