@@ -7,6 +7,12 @@
   with_fileglob:
     - ../templates/lyra/*.j2
 
+- name: Create RBAC
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            create -f {{ kube_ecp_dir }}/lyra/lyra-k8s-rbac.yaml
+  run_once: true
+
 - name: Check if lyra rc already exists
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \

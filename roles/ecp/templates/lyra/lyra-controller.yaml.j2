@@ -16,6 +16,7 @@ spec:
         app: firmament-lyra
         version: v0.3
     spec:
+      serviceAccountName: lyra
       containers:
       - name: firmament-lyra
         image: {{ registry_domain }}/{{ registry_user }}/{{ lyra_image }}

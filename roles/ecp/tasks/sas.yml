@@ -1,0 +1,39 @@
+---
+- name: Create sas directory
+  file: path={{ kube_ecp_dir }}/sas state=directory
+
+- name: Copy sas yaml file
+  template: src={{ item }} dest={{ kube_ecp_dir }}/sas/{{ item | basename | regex_replace('\.j2', '') }}
+  with_fileglob:
+    - ../templates/sas/*.j2
+
+- name: Check if sas rc already exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get rc --namespace={{ ecp_namespace }} | grep skyform-sas
+  run_once: true
+  register: check_sas_rc
+  failed_when: check_sas_rc.rc != 0 and check_sas_rc.rc != 1
+
+- name: Create sas rc
+  when: check_sas_rc|failed
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            create -f {{ kube_ecp_dir }}/sas/sas-controller.yaml
+  run_once: true
+
+- name: Check if sas service already exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get svc --namespace={{ ecp_namespace }} | grep skyform-sas-com
+  run_once: true
+  register: check_sas_svc
+  failed_when: check_sas_svc.rc != 0 and check_sas_svc.rc != 1
+
+- name: Create sas svc
+  when: check_sas_svc|failed
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            create -f {{ kube_ecp_dir }}/sas/sas-service.yaml
+  run_once: true
+

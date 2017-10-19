@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: firmament-keystone
-        image: ading1977/keystone:20161108
+        image: {{ keystone_image }}
         
         env:
            - name: OS_TENANT_NAME
@@ -72,7 +72,7 @@ spec:
         - containerPort: 5000
         - containerPort: 35357
       - name: skyform-sas
-        image: ading1977/skyform-sas:20170626
+        image: {{ sas_image }}
         imagePullPolicy: Always
         env:
            - name: SAS_XMS
@@ -119,11 +119,11 @@ spec:
              value: 'false'
            - name: TOKEN_ENABLE
              value: 'false'
-           - name: HARBOR_URL
-             valueFrom:
-               configMapKeyRef:
-                 name: config
-                 key: harbor.url
+#           - name: HARBOR_URL
+#             valueFrom:
+#               configMapKeyRef:
+#                 name: config
+#                 key: harbor.url
            - name: SAS_DEBUG_PORT
              value: '8998'
            - name: SERVICE_TYPE

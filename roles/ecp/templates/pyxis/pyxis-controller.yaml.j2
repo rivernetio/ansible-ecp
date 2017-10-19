@@ -18,19 +18,19 @@ spec:
     spec:
       containers:
       - name: firmament-pyxis
-        image: ading1977/pyxis:20170626
+        image: {{ pyxis_image }}
         imagePullPolicy: Always
         env:
            - name: KUBERNETES_URL
              valueFrom:
                configMapKeyRef:
-                 name: config
+                 name: ecp-config
                  key: kubernetes.url
-           - name: harbor_host
-             valueFrom:
-               configMapKeyRef:
-                 name: config
-                 key: harbor.host
+#           - name: harbor_host
+#             valueFrom:
+#               configMapKeyRef:
+#                 name: ecp-config
+#                 key: harbor.host
         resources:
           limits:
             #cpu: 500m
