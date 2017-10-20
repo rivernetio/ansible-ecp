@@ -35,7 +35,7 @@
 - name: Check if rudder pod already exists
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
-            get po --namespace={{ ecp_namespace }} | grep rudder
+            get po --namespace=kube-system | grep rudder
   run_once: true
   register: check_rudder
   failed_when: check_rudder.rc != 0 and check_rudder.rc != 1
@@ -43,7 +43,7 @@
 - name: Check if tiller pod already exists
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
-            get po -namespace={{ ecp_namespace }} | grep tiller
+            get po --namespace=kube-system | grep tiller
   run_once: true
   register: check_tiller
   failed_when: check_tiller.rc != 0 and check_tiller.rc != 1
@@ -62,3 +62,21 @@
             create -f {{ kube_ecp_dir }}/appstore/tiller.yaml
   run_once: true
 
+- name: Wait until rudder pod starts to run
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get po --namespace=kube-system | grep rudder
+  register: check_rudder
+  until: check_rudder.rc == 0 and check_rudder.stdout.find("Running") != -1
+  retries: "{{ pod_run_retry | int }}"
+  delay: "{{ pod_run_retry_delay | int }}"
+
+- name: Wait until tiller pod starts to run
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get po --namespace=kube-system | grep tiller
+  register: check_tiller
+  until: check_tiller.rc == 0 and check_tiller.stdout.find("Running") != -1
+  retries: "{{ pod_run_retry | int }}"
+  delay: "{{ pod_run_retry_delay | int }}"
+  

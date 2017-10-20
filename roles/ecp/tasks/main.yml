@@ -18,6 +18,21 @@
   tags:
     - ecp_config
 
+- name: Create license service
+  include: license.yml
+  tags:
+    - ecp_license
+
+- name: Create lyra service
+  include: lyra.yml
+  tags:
+    - ecp_lyra
+
+- name: Create river service
+  include: river.yml
+  tags:
+    - ecp_river
+
 - name: Create ecp appstore
   include: appstore.yml
   tags:
@@ -38,38 +53,23 @@
   tags:
     - ecp_events
 
-- name: Create license service
-  include: license.yml
+- name: Create prometheus services
+  include: prometheus.yml
   tags:
-    - ecp_license
-
-- name: Create lyra service
-  include: lyra.yml
-  tags:
-    - ecp_lyra
+    - ecp_prometheus
 
 - name: Create mysql service
   include: mysql.yml
   tags:
     - ecp_mysql
 
-- name: Create prometheus services
-  include: prometheus.yml
+- name: Create sas service
+  include: sas.yml
   tags:
-    - ecp_prometheus
+    - ecp_sas
 
 - name: Create pyxis service
   include: pyxis.yml
   tags:
     - ecp_pyxis
-
-- name: Create river service
-  include: river.yml
-  tags:
-    - ecp_river
-
-- name: Create sas service
-  include: sas.yml
-  tags:
-    - ecp_sas
 

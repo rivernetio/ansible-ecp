@@ -7,7 +7,16 @@
   with_fileglob:
     - ../templates/lyra/*.j2
 
+- name: Check if lyra service account already exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get sa --namespace={{ ecp_namespace }} | grep lyra
+  run_once: true
+  register: check_lyra_sa
+  failed_when: check_lyra_sa.rc != 0 and check_lyra_sa.rc != 1
+
 - name: Create RBAC
+  when: check_lyra_sa|failed
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
             create -f {{ kube_ecp_dir }}/lyra/lyra-k8s-rbac.yaml
@@ -42,4 +51,13 @@
     kubectl --kubeconfig={{ kubeadmin_config }} \
             create -f {{ kube_ecp_dir }}/lyra/lyra-service.yaml
   run_once: true
+
+- name: Wait until lyra pod starts to run
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get po --namespace={{ ecp_namespace }} | grep firmament-lyra
+  register: check_lyra
+  until: check_lyra.rc == 0 and check_lyra.stdout.find("Running") != -1
+  retries: "{{ pod_run_retry | int }}"
+  delay: "{{ pod_run_retry_delay | int }}"
 

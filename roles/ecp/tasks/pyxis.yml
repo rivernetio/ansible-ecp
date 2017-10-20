@@ -37,3 +37,14 @@
             create -f {{ kube_ecp_dir }}/pyxis/pyxis-service.yaml
   run_once: true
 
+- name: Wait until pyxis pod starts to run
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get po --namespace={{ ecp_namespace }} | grep firmament-pyxis
+  register: check_pyxis
+  until: check_pyxis.rc == 0 and check_pyxis.stdout.find("Running") != -1
+  retries: "{{ pod_run_retry | int }}"
+  delay: "{{ pod_run_retry_delay | int }}"
+
+
+

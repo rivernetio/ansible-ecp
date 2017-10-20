@@ -1,11 +1,10 @@
 ---
+- name: Copy kubeadm.yaml file
+  template: src=kubeadm.yaml.j2  dest={{ kubeadm_config }}
+
 - name: Init Kubernetes cluster
   shell: |
-    kubeadm init --service-cidr {{ service_cidr }} \
-                 --kubernetes-version {{ kube_version }} \
-                 --pod-network-cidr {{ pod_network_cidr }} \
-                 --apiserver-advertise-address {{ groups['master'][0] }} \
-                 --token {{ token }} \
+    kubeadm init --config={{ kubeadm_config }} \
                  --skip-preflight-checks
   run_once: true
   register: init_cluster
@@ -47,25 +46,5 @@
   shell: |
     kubectl label node {{ ansible_hostname }} \
             kubeadm.alpha.kubernetes.io/role=master
-  register: label_master
   run_once: true
-
-- name: Get kube api server IP
-  when:
-    - get_node_result|succeeded
-  shell: |
-    kubectl describe pod kube-apiserver-{{ ansible_hostname }} \
-            --namespace=kube-system | grep advertise-address | awk -F'=' '{print $2}'
-  register: get_api_server
-  until: get_api_server.stderr == "" and get_api_server.stdout != ""
-  retries: 20
-  delay: 15
-
-- name: Set master run fact
-  when:
-    - label_master|succeeded
-    - get_api_server|succeeded
-  set_fact:
-    master_have_run: true
-    kube_api_server: "{{ get_api_server.stdout }}"
 

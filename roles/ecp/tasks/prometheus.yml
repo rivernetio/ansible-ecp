@@ -69,3 +69,30 @@
             create -f {{ kube_ecp_dir }}/prometheus/manifests-all.yaml
   run_once: true
 
+- name: Wait until grafana pod starts to run
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get po --namespace={{ ecp_namespace }} | grep grafana
+  register: check_grafana
+  until: check_grafana.rc == 0 and check_grafana.stdout.find("Running") != -1
+  retries: "{{ pod_run_retry | int }}"
+  delay: "{{ pod_run_retry_delay | int }}"
+
+- name: Wait until metrics pod starts to run
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get po --namespace=kube-system | grep kube-state-metrics
+  register: check_metrics
+  until: check_metrics.rc == 0 and check_metrics.stdout.find("Running") != -1
+  retries: "{{ pod_run_retry | int }}"
+  delay: "{{ pod_run_retry_delay | int }}"
+
+- name: Wait until prometheus podd starts to run
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get po --namespace={{ ecp_namespace }} | grep prometheus
+  register: check_prometheus
+  until: check_prometheus.rc == 0 and check_prometheus.stdout.find("Running") != -1
+  retries: "{{ pod_run_retry | int }}"
+  delay: "{{ pod_run_retry_delay | int }}"
+
