@@ -37,3 +37,12 @@
             create -f {{ kube_ecp_dir }}/mysql/mysql-service.yaml
   run_once: true
 
+- name: Wait until mysql exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get po --namespace={{ ecp_namespace }} | grep mysql
+  register: check_mysql
+  until: check_mysql.rc == 0 and check_mysql.stdout.find("Running") != -1
+  retries: "{{ pod_run_retry | int }}"
+  delay: "{{ pod_run_retry_delay | int }}"
+

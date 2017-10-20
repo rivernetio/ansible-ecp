@@ -7,6 +7,21 @@
   with_fileglob:
     - ../templates/river/*.j2
 
+- name: Check if river service account already exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get sa --namespace={{ ecp_namespace }} | grep river
+  run_once: true
+  register: check_river_sa
+  failed_when: check_river_sa.rc != 0 and check_river_sa.rc != 1
+
+- name: Create RBAC
+  when: check_river_sa|failed
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            create -f {{ kube_ecp_dir }}/river/river-k8s-rbac.yaml
+  run_once: true
+
 - name: Check if river deployment already exists
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
@@ -36,4 +51,15 @@
     kubectl --kubeconfig={{ kubeadmin_config }} \
             create -f {{ kube_ecp_dir }}/river/river-service.yaml
   run_once: true
+
+- name: Wait until river pod exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get po --namespace=kube-system | grep river
+  register: check_river
+  until: check_river.rc == 0 and check_river.stdout.find("Running") != -1
+  retries: "{{ pod_run_retry | int }}"
+  delay: "{{ pod_run_retry_delay | int }}"
+
+
 

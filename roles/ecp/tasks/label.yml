@@ -6,8 +6,8 @@
   when: total_nodes | int == 1
   shell: "{{ item }}"
   with_items:
-    - kubectl label nodes {{ ansible_hostname }} appstore=yes
-    - kubectl label nodes {{ ansible_hostname }} prometheus=yes
+    - kubectl label --overwrite=true nodes {{ ansible_hostname }} appstore=yes
+    - kubectl label --overwrite=true nodes {{ ansible_hostname }} prometheus=yes
 
 - name: Get worker nodes of multi-nodes cluster
   when: total_nodes | int > 1
@@ -25,13 +25,13 @@
   when: worker_nodes | length == 1
   shell: "{{ item }}"
   with_items:
-    - kubectl label nodes {{ worker_nodes[0] }} appstore=yes
-    - kubectl label nodes {{ worker_nodes[0] }} prometheus=yes
+    - kubectl label --overwrite=true nodes {{ worker_nodes[0] }} appstore=yes
+    - kubectl label --overwrite=true nodes {{ worker_nodes[0] }} prometheus=yes
 
 - name: Label cluster with multi-worker nodes
   when: worker_nodes | length > 1
   shell: "{{ item }}"
   with_items:
-    - kubectl label nodes {{ worker_nodes[0] }} appstore=yes
-    - kubectl label nodes {{ worker_nodes[1] }} prometheus=yes
+    - kubectl label --overwrite=true nodes {{ worker_nodes[0] }} appstore=yes
+    - kubectl label --overwrite=true nodes {{ worker_nodes[1] }} prometheus=yes
     

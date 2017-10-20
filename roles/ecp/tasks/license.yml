@@ -37,3 +37,12 @@
             create -f {{ kube_ecp_dir }}/license/license-service.yaml
   run_once: true
 
+- name: Wait until license pod exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get po --namespace={{ ecp_namespace }} | grep firmament-license
+  register: check_license
+  until: check_license.rc == 0 and check_license.stdout.find("Running") != -1
+  retries: "{{ pod_run_retry | int }}"
+  delay: "{{ pod_run_retry_delay | int }}"
+

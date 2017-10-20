@@ -1,3 +1,5 @@
 ---
 dependencies:
-  - { role: master, when: not master_have_run }
+  - { role: common }
+  - { role: chkk8s }
+

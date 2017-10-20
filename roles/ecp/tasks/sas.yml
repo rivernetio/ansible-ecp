@@ -37,3 +37,14 @@
             create -f {{ kube_ecp_dir }}/sas/sas-service.yaml
   run_once: true
 
+- name: Wait until sas pod exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get po --namespace={{ ecp_namespace }} | grep sas
+  register: check_sas
+  until: check_sas.rc == 0 and check_sas.stdout.find("Running") != -1
+  retries: "{{ pod_run_retry | int }}"
+  delay: "{{ pod_run_retry_delay | int }}"
+
+
+
