@@ -1,9 +1,9 @@
 ---
-opensource: true
-
+kubeadm_image_repository: gcr.io/google_containers
 kube_version: v1.7.5
 token: b0f7b8.8d1767876297d85c
 
+############################################################################
 service_subnet: 10.96.0
 service_cidr: "{{ service_subnet }}.0/12"
 dns_name: cluster.local
@@ -17,3 +17,9 @@ cni_opts: interface=enp0s8 # flannel: --iface=enp0s8, calico: interface=enp0s8
 # Tain master
 taint_master: true
 
+# Pod starting retries
+pod_run_retry: 300
+# Pod starting retry delay
+pod_run_retry_delay: 5
+
+opensource: true

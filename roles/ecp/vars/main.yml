@@ -2,11 +2,6 @@
 # Docker registry
 registry_domain: docker.io
 
-# Pod starting retries
-pod_run_retry: 300
-# Pod starting retry delay
-pod_run_retry_delay: 5
-
 # ECP namespace
 ecp_namespace: sky-firmament
 

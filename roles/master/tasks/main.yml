@@ -1,11 +1,10 @@
 ---
+- name: Copy kubeadm.yaml file
+  template: src=kubeadm.yaml.j2  dest={{ kubeadm_config }}
+
 - name: Init Kubernetes cluster
   shell: |
-    kubeadm init --service-cidr {{ service_cidr }} \
-                 --kubernetes-version {{ kube_version }} \
-                 --pod-network-cidr {{ pod_network_cidr }} \
-                 --apiserver-advertise-address {{ groups['master'][0] }} \
-                 --token {{ token }} \
+    kubeadm init --config={{ kubeadm_config }} \
                  --skip-preflight-checks
   run_once: true
   register: init_cluster

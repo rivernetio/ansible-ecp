@@ -52,7 +52,7 @@
             create -f {{ kube_ecp_dir }}/lyra/lyra-service.yaml
   run_once: true
 
-- name: Wait until lyra pod exists
+- name: Wait until lyra pod starts to run
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
             get po --namespace={{ ecp_namespace }} | grep firmament-lyra

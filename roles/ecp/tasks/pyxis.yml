@@ -37,7 +37,7 @@
             create -f {{ kube_ecp_dir }}/pyxis/pyxis-service.yaml
   run_once: true
 
-- name: Wait until pyxis pod exists
+- name: Wait until pyxis pod starts to run
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
             get po --namespace={{ ecp_namespace }} | grep firmament-pyxis

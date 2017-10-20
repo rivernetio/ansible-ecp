@@ -52,7 +52,7 @@
             create -f {{ kube_ecp_dir }}/river/river-service.yaml
   run_once: true
 
-- name: Wait until river pod exists
+- name: Wait until river pod starts to run
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
             get po --namespace=kube-system | grep river

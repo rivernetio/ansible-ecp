@@ -62,7 +62,7 @@
             create -f {{ kube_ecp_dir }}/appstore/tiller.yaml
   run_once: true
 
-- name: Wait until rudder pod exists
+- name: Wait until rudder pod starts to run
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
             get po --namespace=kube-system | grep rudder
@@ -71,7 +71,7 @@
   retries: "{{ pod_run_retry | int }}"
   delay: "{{ pod_run_retry_delay | int }}"
 
-- name: Wait until tiller pod exists
+- name: Wait until tiller pod starts to run
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
             get po --namespace=kube-system | grep tiller
