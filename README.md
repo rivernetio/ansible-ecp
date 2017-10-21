@@ -2,8 +2,10 @@
 Build an ECP cluster using Ansible. The underlying kubernetes is installed with Kubeadm
 
 ## System requirement:
-* Deploy node must be install `Ansible v2.1.0+`.
+* Deploy node must have `Ansible v2.1.0+` installed.
 * All Master/Node should have password-less access from Deploy node.
+* All hosts must have `Docker` installed. Verified with `Docker 1.12`.
+* Verified on `CentOS 7.3`
 
 ## Install
 ### Add the system information into `inventory`. For example:
