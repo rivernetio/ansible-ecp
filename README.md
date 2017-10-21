@@ -63,7 +63,7 @@ river_image: docker.io/rivernet/river:20170626
 keystone_image: docker.io/rivernet/keystone:20161108
 sas_image: docker.io/rivernet/skyform-sas:20170626
 ```
-The following image still needs to be tagged, as ``kubeadm`` cannot get the image from ``kubeadm_image_repository``
+The following image still needs to be pulled on all hosts manually and then tagged **exactly** like the following, as ``kubeadm`` cannot get this image from ``kubeadm_image_repository``
 
 ```gcr.io/google_containers/pause-amd64:3.0```
 
