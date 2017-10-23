@@ -1,4 +1,10 @@
 ---
+###########################################################################
+# Configuration for yum/apt repository
+yum_repo: "http://yum.kubernetes.io/repos/kubernetes-el7-x86_64"
+apt_repo: "deb http://apt.kubernetes.io/ kubernetes-xenial main"
+apt_key: "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
+###########################################################################
 # Configuration for kubeadm
 #kubeadm_image_repository: gcr.io/google_containers
 kubeadm_image_repository: docker.io/ading1977
