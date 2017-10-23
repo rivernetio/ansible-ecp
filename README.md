@@ -2,8 +2,10 @@
 Build an ECP cluster using Ansible. The underlying kubernetes is installed with Kubeadm
 
 ## System requirement:
-* Deploy node must be install `Ansible v2.1.0+`.
+* Deploy node must have `Ansible v2.1.0+` installed.
 * All Master/Node should have password-less access from Deploy node.
+* All hosts must have `Docker` installed. Verified with `Docker 1.12`.
+* Verified on `CentOS 7.3`
 
 ## Install
 ### Add the system information into `inventory`. For example:
@@ -61,7 +63,7 @@ river_image: docker.io/rivernet/river:20170626
 keystone_image: docker.io/rivernet/keystone:20161108
 sas_image: docker.io/rivernet/skyform-sas:20170626
 ```
-The following image still needs to be tagged, as ``kubeadm`` cannot get the image from ``kubeadm_image_repository``
+The following image still needs to be pulled on all hosts manually and then tagged **exactly** like the following, as ``kubeadm`` cannot get this image from ``kubeadm_image_repository``
 
 ```gcr.io/google_containers/pause-amd64:3.0```
 
