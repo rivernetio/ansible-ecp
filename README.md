@@ -24,15 +24,20 @@ node
 ### Customize ```group_vars/all.yml```
 Modify the following variables according to your site
 ```sh
+# Configuration for yum/apt repository
+yum_repo: "http://yum.kubernetes.io/repos/kubernetes-el7-x86_64"
+apt_repo: "deb http://apt.kubernetes.io/ kubernetes-xenial main"
+apt_key: "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
+# Configuration for kubeadm
 kubeadm_image_repository: gcr.io/google_containers
-
+# Configuration for k8s dashboard
 k8s_dashboard_image: gcr.io/google_containers/kubernetes-dashboard-amd64:v1.6.3
-
+# Configuration for networks
 calico_etcd_image: quay.io/coreos/etcd:v3.1.10
 calico_node_image: quay.io/calico/node:v2.4.1
 calico_cni_image: quay.io/calico/cni:v1.10.0
 calico_policy_controller_image: quay.io/calico/kube-policy-controller:v0.7.0
-
+# Configuration for ECP
 # appstore
 rudder_image: docker.io/rivernet/rudder:20170626
 tiller_image: docker.io/rivernet/tiller:v2.2.3
