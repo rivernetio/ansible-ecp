@@ -22,7 +22,6 @@ calico_policy_controller_image: quay.io/calico/kube-policy-controller:v0.7.0
 flannel_image: quay.io/coreos/flannel:v0.7.1-amd64
 ############################################################################
 # Configuration for ECP
-
 # Docker registry
 registry_domain: docker.io
 # ECP namespace
@@ -30,6 +29,7 @@ ecp_namespace: sky-firmament
 # appstore
 rudder_image: docker.io/rivernet/rudder:20170626
 tiller_image: docker.io/rivernet/tiller:v2.2.3
+ecp_charts_url: https://github.com/rivernetio/charts/raw/master/repo/stable
 # logging
 canes_image: docker.io/rivernet/canes:20170626
 elasticsearch_image: docker.io/rivernet/elasticsearch:1.5.2
