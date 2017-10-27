@@ -11,7 +11,7 @@
   failed_when: check_namespace.rc != 0 and check_namespace.rc != 1
 
 - name: Create namespace
-  when: check_namespace|failed
+  when: check_namespace.rc != 0
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
             create -f {{ kube_ecp_dir }}/{{ ecp_namespace }}.json

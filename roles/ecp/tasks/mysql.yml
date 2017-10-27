@@ -16,7 +16,7 @@
   failed_when: check_mysql_rc.rc != 0 and check_mysql_rc.rc != 1
 
 - name: Create mysql rc
-  when: check_mysql_rc|failed
+  when: check_mysql_rc.rc != 0
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
             create -f {{ kube_ecp_dir }}/mysql/mysql-controller.yaml
@@ -31,7 +31,7 @@
   failed_when: check_mysql_svc.rc != 0 and check_mysql_svc.rc != 1
 
 - name: Create mysql svc
-  when: check_mysql_svc|failed
+  when: check_mysql_svc.rc != 0
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
             create -f {{ kube_ecp_dir }}/mysql/mysql-service.yaml

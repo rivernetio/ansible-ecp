@@ -16,7 +16,7 @@
   failed_when: check_lyra_sa.rc != 0 and check_lyra_sa.rc != 1
 
 - name: Create RBAC
-  when: check_lyra_sa|failed
+  when: check_lyra_sa.rc != 0
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
             create -f {{ kube_ecp_dir }}/lyra/lyra-k8s-rbac.yaml
@@ -31,7 +31,7 @@
   failed_when: check_lyra_rc.rc != 0 and check_lyra_rc.rc != 1
 
 - name: Create lyra rc
-  when: check_lyra_rc|failed
+  when: check_lyra_rc.rc != 0
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
             create -f {{ kube_ecp_dir }}/lyra/lyra-controller.yaml
@@ -46,7 +46,7 @@
   failed_when: check_lyra_svc.rc != 0 and check_lyra_svc.rc != 1
 
 - name: Create lyra svc
-  when: check_lyra_svc|failed
+  when: check_lyra_svc.rc != 0
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
             create -f {{ kube_ecp_dir }}/lyra/lyra-service.yaml

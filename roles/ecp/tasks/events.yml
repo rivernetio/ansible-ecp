@@ -22,14 +22,14 @@
   failed_when: check_events_svc.rc != 0 and check_events_svc.rc != 1
     
 - name: Create events rc
-  when: check_events_rc|failed
+  when: check_events_rc.rc != 0
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
             create -f {{ kube_ecp_dir }}/events/events-controller.yaml
   run_once: true
 
 - name: Create events service
-  when: check_events_svc|failed
+  when: check_events_svc.rc != 0
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
             create -f {{ kube_ecp_dir }}/events/events-service.yaml

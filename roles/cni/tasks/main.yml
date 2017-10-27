@@ -23,7 +23,7 @@
   failed_when: check_role.rc != 0 and check_role.rc != 1
 
 - name: "Create {{ cni.name }} cluster role"
-  when: check_role|failed
+  when: check_role.rc != 0
   shell: |
     kubectl create --kubeconfig={{ kubeadmin_config }} \
                    -f {{ network_dir }}/{{ cni.template.rbac }}
@@ -41,19 +41,19 @@
   failed_when: check_net.rc != 0 and check_net.rc != 1
 
 - name: "Create {{ cni.name }} network daemonset"
-  when: check_net|failed
+  when: check_net.rc != 0
   shell: |
     kubectl create --kubeconfig={{ kubeadmin_config }} \
                    -f {{ network_dir }}/{{ cni.template.ds }}
   delegate_to: "{{ groups['master'][0] }}"
   run_once: true
 
-- name: Wait until kubedns starts to run
-  shell: |
-    kubectl --kubeconfig={{ kubeadmin_config }} \
-            get po --namespace=kube-system | grep kube-dns
-  register: check_kubedns
-  until: check_kubedns.rc == 0 and check_kubedns.stdout.find("Running") != -1
-  retries: "{{ pod_run_retry | int }}"
-  delay: "{{ pod_run_retry_delay | int }}"
+#- name: Wait until kubedns starts to run
+#  shell: |
+#    kubectl --kubeconfig={{ kubeadmin_config }} \
+#            get po --namespace=kube-system | grep kube-dns
+#  register: check_kubedns
+#  until: check_kubedns.rc == 0 and check_kubedns.stdout.find("Running") != -1
+#  retries: "{{ pod_run_retry | int }}"
+#  delay: "{{ pod_run_retry_delay | int }}"
 

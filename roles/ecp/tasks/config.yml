@@ -11,7 +11,7 @@
   failed_when: check_config.rc != 0 and check_config.rc != 1
 
 - name: Create config
-  when: check_config|failed
+  when: check_config.rc != 0
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
             create -f {{ kube_ecp_dir }}/ecp-config.json

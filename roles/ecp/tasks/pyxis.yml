@@ -16,7 +16,7 @@
   failed_when: check_pyxis_rc.rc != 0 and check_pyxis_rc.rc != 1
 
 - name: Create pyxis rc
-  when: check_pyxis_rc|failed
+  when: check_pyxis_rc.rc != 0
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
             create -f {{ kube_ecp_dir }}/pyxis/pyxis-controller.yaml
@@ -31,7 +31,7 @@
   failed_when: check_pyxis_svc.rc != 0 and check_pyxis_svc.rc != 1
 
 - name: Create pyxis svc
-  when: check_pyxis_svc|failed
+  when: check_pyxis_svc.rc != 0
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
             create -f {{ kube_ecp_dir }}/pyxis/pyxis-service.yaml

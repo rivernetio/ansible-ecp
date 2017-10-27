@@ -49,14 +49,14 @@
   failed_when: check_tiller.rc != 0 and check_tiller.rc != 1
     
 - name: Create rudder
-  when: check_rudder|failed
+  when: check_rudder.rc != 0
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
             create -f {{ kube_ecp_dir }}/appstore/helm_rudder.yaml
   run_once: true
 
 - name: Create tiller
-  when: check_tiller|failed
+  when: check_tiller.rc != 0
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
             create -f {{ kube_ecp_dir }}/appstore/tiller.yaml

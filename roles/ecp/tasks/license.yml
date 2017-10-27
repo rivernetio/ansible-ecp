@@ -16,7 +16,7 @@
   failed_when: check_license_rc.rc != 0 and check_license_rc.rc != 1
 
 - name: Create license rc
-  when: check_license_rc|failed
+  when: check_license_rc.rc != 0
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
             create -f {{ kube_ecp_dir }}/license/license-controller.yaml
@@ -31,7 +31,7 @@
   failed_when: check_license_svc.rc != 0 and check_license_svc.rc != 1
 
 - name: Create license svc
-  when: check_license_svc|failed
+  when: check_license_svc.rc != 0
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
             create -f {{ kube_ecp_dir }}/license/license-service.yaml

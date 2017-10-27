@@ -16,7 +16,7 @@
   failed_when: check_river_sa.rc != 0 and check_river_sa.rc != 1
 
 - name: Create RBAC
-  when: check_river_sa|failed
+  when: check_river_sa.rc != 0
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
             create -f {{ kube_ecp_dir }}/river/river-k8s-rbac.yaml
@@ -31,7 +31,7 @@
   failed_when: check_river_deploy.rc != 0 and check_river_deploy.rc != 1
 
 - name: Create river deployment
-  when: check_river_deploy|failed
+  when: check_river_deploy.rc != 0
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
             create -f {{ kube_ecp_dir }}/river/river-deployment.yaml
@@ -46,7 +46,7 @@
   failed_when: check_river_svc.rc != 0 and check_river_svc.rc != 1
 
 - name: Create river svc
-  when: check_river_svc|failed
+  when: check_river_svc.rc != 0
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
             create -f {{ kube_ecp_dir }}/river/river-service.yaml

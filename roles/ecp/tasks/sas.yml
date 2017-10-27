@@ -16,7 +16,7 @@
   failed_when: check_sas_rc.rc != 0 and check_sas_rc.rc != 1
 
 - name: Create sas rc
-  when: check_sas_rc|failed
+  when: check_sas_rc.rc != 0
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
             create -f {{ kube_ecp_dir }}/sas/sas-controller.yaml
@@ -31,7 +31,7 @@
   failed_when: check_sas_svc.rc != 0 and check_sas_svc.rc != 1
 
 - name: Create sas svc
-  when: check_sas_svc|failed
+  when: check_sas_svc.rc != 0
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
             create -f {{ kube_ecp_dir }}/sas/sas-service.yaml

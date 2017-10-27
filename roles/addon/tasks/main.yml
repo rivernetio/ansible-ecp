@@ -19,7 +19,7 @@
   failed_when: check_role.rc !=0 and check_role.rc != 1
 
 - name: Create Kubernetes dashboard role
-  when: check_role|failed
+  when: check_role.rc != 0
   shell: |
     kubectl create --kubeconfig={{ kubeadmin_config }} \
                    -f {{ kube_addon_dir }}/kube-dash-rbac.yml
@@ -37,7 +37,7 @@
   failed_when: check_dash.rc != 0 and check_dash.rc != 1
 
 - name: Create Kubernetes dashboard deployment
-  when: check_dash|failed
+  when: check_dash.rc != 0
   shell: |
     kubectl create --kubeconfig={{ kubeadmin_config }} \
                    -f {{ kube_addon_dir }}/kube-dash.yml
