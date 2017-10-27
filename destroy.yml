@@ -1,4 +1,9 @@
 ---
+- hosts: cluster
+  gather_facts: no
+  become: no
+  roles:
+    - { role: common }
 
 - hosts: cluster
   gather_facts: no
@@ -9,7 +14,18 @@
       ignore_errors: True
 
     - name: Remove kubeadmin
+      when: ansible_os_family == "RedHat"
       yum: name={{item}} state=removed
+      with_items:
+        - kubectl
+        - kubeadm
+        - kubelet
+        - kubernetes-cni
+      ignore_errors: True
+
+    - name: Remove kubeadmin
+      when: ansible_os_family == "Debian"
+      apt: name={{item}} state=removed
       with_items:
         - kubectl
         - kubeadm

@@ -13,7 +13,7 @@
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
             get clusterrolebinding | grep kubernetes-dashboard
-  delegate_to: "{{ groups['master'][0] }}"
+  delegate_to: "{{ master_hosts[0] }}"
   run_once: true
   register: check_role
   failed_when: check_role.rc !=0 and check_role.rc != 1
@@ -23,7 +23,7 @@
   shell: |
     kubectl create --kubeconfig={{ kubeadmin_config }} \
                    -f {{ kube_addon_dir }}/kube-dash-rbac.yml
-  delegate_to: "{{ groups['master'][0] }}"
+  delegate_to: "{{ master_hosts[0] }}"
   run_once: true
   register: create_role
 
@@ -31,7 +31,7 @@
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
             get po --all-namespaces | grep kubernetes-dashboard
-  delegate_to: "{{ groups['master'][0] }}"
+  delegate_to: "{{ master_hosts[0] }}"
   run_once: true
   register: check_dash
   failed_when: check_dash.rc != 0 and check_dash.rc != 1
@@ -41,5 +41,5 @@
   shell: |
     kubectl create --kubeconfig={{ kubeadmin_config }} \
                    -f {{ kube_addon_dir }}/kube-dash.yml
-  delegate_to: "{{ groups['master'][0] }}"
+  delegate_to: "{{ master_hosts[0] }}"
   run_once: true

@@ -1,0 +1,5 @@
+---
+master_hosts: "{{ groups.masters | default([]) }}"
+node_hosts: "{{ groups.nodes | default([]) }}"
+cluster_hosts: "{{ groups.cluster | default([]) }}"
+new_node_hosts: "{{ groups.new_nodes | default([]) }}"

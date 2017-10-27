@@ -12,6 +12,6 @@
   shell: |
     kubeadm join --skip-preflight-checks \
                  --token {{ token }} \
-                 {{ groups['master'][0] }}:6443
+                 {{ master_hosts[0] }}:6443
   register: join_cluster
 

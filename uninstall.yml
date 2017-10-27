@@ -1,0 +1,57 @@
+---
+- hosts: nodes_to_uninstall
+  gather_facts: no
+  become: no
+  roles:
+    - { role: common }
+
+- hosts: nodes_to_uninstall
+  gather_facts: no
+  become: yes
+  tasks:
+    - name: Reset Kubernetes component
+      shell: "kubeadm reset"
+      ignore_errors: True
+
+    - name: Remove kubeadmin
+      when: ansible_os_family == "RedHat"
+      yum: name={{item}} state=removed
+      with_items:
+        - kubectl
+        - kubeadm
+        - kubelet
+        - kubernetes-cni
+      ignore_errors: True
+
+    - name: Remove kubeadmin
+      when: ansible_os_family == "Debian"
+      apt: name={{item}} state=removed
+      with_items:
+        - kubectl
+        - kubeadm
+        - kubelet
+        - kubernetes-cni
+      ignore_errors: True
+
+    - name: Remove data directory
+      file: path={{item}} state=absent
+      with_items:
+        - /var/lib/kubelet
+        - /etc/kubernetes
+        - /var/etcd
+        - /var/lib/etcd
+        - /usr/db_data
+      ignore_errors: True
+
+    - name: Flush IP tables
+      iptables:
+        table: nat
+        flush: true
+      ignore_errors: True
+        
+    - name: Restart docker services
+      systemd:
+        state: restarted
+        name: docker
+        daemon_reload: yes
+

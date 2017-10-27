@@ -1,0 +1,7 @@
+---
+- hosts: new_nodes
+  gather_facts: no
+  become: yes
+  roles:
+    - { role: node, tags: node }
+

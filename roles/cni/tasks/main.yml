@@ -17,7 +17,7 @@
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
             get clusterrole | grep {{ cni.name }}
-  delegate_to: "{{ groups['master'][0] }}"
+  delegate_to: "{{ master_hosts[0] }}"
   run_once: true
   register: check_role
   failed_when: check_role.rc != 0 and check_role.rc != 1
@@ -27,7 +27,7 @@
   shell: |
     kubectl create --kubeconfig={{ kubeadmin_config }} \
                    -f {{ network_dir }}/{{ cni.template.rbac }}
-  delegate_to: "{{ groups['master'][0] }}"
+  delegate_to: "{{ master_hosts[0] }}"
   run_once: true
   register: create_role
 
@@ -35,7 +35,7 @@
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
             get ds --all-namespaces | grep {{ cni.name }}
-  delegate_to: "{{ groups['master'][0] }}"
+  delegate_to: "{{ master_hosts[0] }}"
   run_once: true
   register: check_net
   failed_when: check_net.rc != 0 and check_net.rc != 1
@@ -45,7 +45,7 @@
   shell: |
     kubectl create --kubeconfig={{ kubeadmin_config }} \
                    -f {{ network_dir }}/{{ cni.template.ds }}
-  delegate_to: "{{ groups['master'][0] }}"
+  delegate_to: "{{ master_hosts[0] }}"
   run_once: true
 
 - name: Wait until kubedns starts to run

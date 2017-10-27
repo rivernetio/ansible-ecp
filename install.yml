@@ -1,19 +1,19 @@
 ---
 
-- hosts: master
+- hosts: masters[0]
   gather_facts: yes
   become: yes
   roles:
     - { role: master, tags: master }
     - { role: cni, tags: cni }
 
-- hosts: node
+- hosts: nodes
   gather_facts: no
   become: yes
   roles:
     - { role: node, tags: node }
 
-- hosts: master
+- hosts: masters[0]
   gather_facts: no
   become: yes
   roles:

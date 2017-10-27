@@ -24,6 +24,7 @@
     gpgcheck: no
 
 - name: Disable selinux
+  when: ansible_os_family == "RedHat"
   selinux: policy=targeted state=permissive
 
 - name: Install kubernetes packages (RHEL/CentOS)
@@ -43,6 +44,7 @@
   apt:
     name: "{{ item }}"
     update_cache: yes
+    state: present
   with_items:
     - kubectl
     - kubelet
@@ -52,7 +54,8 @@
 - name: Disable swap
   command: swapoff -a
 
-# /dev/mapper/centos-swap swap swap ...
+# /dev/mapper/centos-swap swap swap ... (CentOS)
+# /dev/mapper/vagrant--vg-swap_1 none swap ... (Ubuntu)
 - name: Remove swap from fstab
   lineinfile:
     dest: /etc/fstab

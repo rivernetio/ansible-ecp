@@ -1,7 +1,7 @@
 apiVersion: kubeadm.k8s.io/v1alpha1
 kind: MasterConfiguration
 api:
-  advertiseAddress: {{ groups['master'][0] }}
+  advertiseAddress: {{ master_hosts[0] }}
 kubernetesVersion: {{ kube_version }}
 networking:
   podSubnet: {{ pod_network_cidr }}

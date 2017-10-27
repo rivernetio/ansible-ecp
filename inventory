@@ -1,9 +1,13 @@
-[master]
+[masters]
 10.211.64.107
 
-[node]
+[nodes]
 10.211.64.109
 
+[new_nodes]
+10.211.64.111
+
 [cluster:children]
-master
-node
+masters
+nodes
+new_nodes
