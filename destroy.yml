@@ -41,6 +41,7 @@
         - /var/etcd
         - /var/lib/etcd
         - /usr/db_data
+        - /var/run/calico
       ignore_errors: True
 
     - name: Flush IP tables
