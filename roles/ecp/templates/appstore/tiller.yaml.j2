@@ -25,6 +25,7 @@ spec:
         app: helm
         name: tiller
     spec:
+      serviceAccountName: tiller
       containers:
       - image: {{ tiller_image }}
         imagePullPolicy: Always

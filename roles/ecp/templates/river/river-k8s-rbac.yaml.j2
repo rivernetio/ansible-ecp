@@ -6,49 +6,15 @@ metadata:
   namespace: kube-system
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: ClusterRole
-metadata:
-  name: river
-rules:
-- apiGroups: [""]
-  resources:
-  - nodes
-  - pods
-  - services
-  - resourcequotas
-  - replicationcontrollers
-  - limitranges
-  - persistentvolumeclaims
-  - persistentvolumes
-  - namespaces
-  - configmaps
-  verbs: ["get", "list", "watch", "create", "update", "patch", "delete", "deletecollection"]
-- apiGroups: ["extensions"]
-  resources:
-  - daemonsets
-  - deployments
-  - replicasets
-  verbs: ["get", "list", "watch", "create", "update", "patch", "delete", "deletecollection"]
-- apiGroups: ["apps"]
-  resources:
-  - statefulsets
-  verbs: ["get", "list", "watch", "create", "update", "patch", "delete", "deletecollection"]
-- apiGroups: ["batch"]
-  resources:
-  - cronjobs
-  - jobs
-  verbs: ["get", "list", "watch", "create", "update", "patch", "delete", "deletecollection"]
----
-apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
   name: river
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: river
+  name: cluster-admin
 subjects:
 - kind: ServiceAccount
   name: river
-  namespace: {{ ecp_namespace }}
+  namespace: kube-system
 

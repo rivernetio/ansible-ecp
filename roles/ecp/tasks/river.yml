@@ -10,7 +10,7 @@
 - name: Check if river service account already exists
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
-            get sa --namespace={{ ecp_namespace }} | grep river
+            get sa --namespace=kube-system | grep river
   run_once: true
   register: check_river_sa
   failed_when: check_river_sa.rc != 0 and check_river_sa.rc != 1
