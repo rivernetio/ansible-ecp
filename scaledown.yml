@@ -41,6 +41,7 @@
         - /var/etcd
         - /var/lib/etcd
         - /usr/db_data
+        - /etc/systemd/system/kubelet.service.d
       ignore_errors: True
 
     - name: Flush IP tables

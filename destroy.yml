@@ -42,6 +42,7 @@
         - /var/lib/etcd
         - /usr/db_data
         - /var/run/calico
+        - /etc/systemd/system/kubelet.service.d/
       ignore_errors: True
 
     - name: Flush IP tables

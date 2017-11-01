@@ -34,10 +34,10 @@
     update_cache: yes
     state: present
   with_items:
-    - kubectl
-    - kubelet
-    - kubernetes-cni
-    - kubeadm
+    - kubectl-{{ yum_kubectl_version }}
+    - kubelet-{{ yum_kubelet_version }}
+    - kubernetes-cni-{{ yum_kubernetes_cni_version }}
+    - kubeadm-{{ yum_kubeadm_version }}
 
 - name: Install kubernetes packages (Debian/Ubuntu)
   when: ansible_os_family == "Debian"
@@ -46,10 +46,10 @@
     update_cache: yes
     state: present
   with_items:
-    - kubectl
-    - kubelet
-    - kubernetes-cni
-    - kubeadm
+    - kubectl={{ apt_kubectl_version }}
+    - kubelet={{ apt_kubelet_version }}
+    - kubernetes-cni={{ apt_kubernetes_cni_version }}
+    - kubeadm={{ apt_kubeadm_version }}
 
 - name: Disable swap
   command: swapoff -a
@@ -61,6 +61,18 @@
     dest: /etc/fstab
     regexp: '^/[\S]+\s+[\S]+\s+swap '
     state: absent
+
+- name: Pass bridged IPv4 traffic to iptables’ chains
+  shell: "sysctl net.bridge.bridge-nf-call-iptables=1"
+
+- name: Override config file directory for Debian
+  when: ansible_os_family == "Debian"
+  set_fact:
+    dropin_dir: "/etc/systemd/system"
+
+- name: Copy kubeadm conf to drop-in directory
+  when: ansible_os_family == "Debian"
+  template: src=10-kubeadm.conf.j2 dest={{ dropin_dir }}/kubelet.service.d/10-kubeadm.conf
 
 - name: Enable and start kubelet engine
   systemd:

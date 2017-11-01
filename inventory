@@ -10,3 +10,4 @@
 [cluster:children]
 masters
 nodes
+new_nodes

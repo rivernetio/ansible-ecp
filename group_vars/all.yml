@@ -2,8 +2,17 @@
 ###########################################################################
 # Configuration for yum/apt repository
 yum_repo: "http://yum.kubernetes.io/repos/kubernetes-el7-x86_64"
+yum_kubectl_version: 1.7.5-0
+yum_kubelet_version: 1.7.5-0
+yum_kubernetes_cni_version: 0.5.1-0
+yum_kubeadm_version: 1.7.5-0
+###########################################################################
 apt_repo: "deb http://apt.kubernetes.io/ kubernetes-xenial main"
 apt_key: "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
+apt_kubectl_version: 1.7.5-00
+apt_kubelet_version: 1.7.5-00
+apt_kubernetes_cni_version: 0.5.1-00
+apt_kubeadm_version: 1.7.5-00
 ###########################################################################
 # Configuration for kubeadm
 #kubeadm_image_repository: gcr.io/google_containers
