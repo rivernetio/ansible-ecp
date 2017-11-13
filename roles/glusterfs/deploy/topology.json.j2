@@ -1,0 +1,39 @@
+{
+  "clusters": [
+    {
+      "nodes": [
+{%- for node in glusterfs_hosts %}
+
+        {
+          "node": {
+            "hostnames": {
+              "manage": [
+{% if 'glusterfs_hostname' in hostvars[node] %}
+                "{{ hostvars[node].glusterfs_hostname }}"
+{% else %}
+                "{{ node }}"
+{% endif %}
+              ],
+              "storage": [
+{% if 'glusterfs_ip' in hostvars[node] %}
+                "{{ hostvars[node].glusterfs_ip }}"
+{% else %}
+                "{{ node }}"
+{% endif %}
+              ]
+            },
+            "zone": {{ hostvars[node].glusterfs_zone | default(1) }}
+          },
+          "devices": [
+{% for device in hostvars[node].glusterfs_devices %}
+            "{{ device }}"{% if not loop.last %},{% endif %}
+{% endfor %}
+
+          ]
+        }{% if not loop.last %},{% endif %}
+{% endfor %}
+
+      ]
+    }
+  ]
+}

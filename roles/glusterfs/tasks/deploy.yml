@@ -1,0 +1,6 @@
+---
+- name: Deploy glusterfs
+  shell: |
+    {{ kube_glusterfs_dir }}/gk-deploy -gy {{ kube_glusterfs_dir }}/topology.json
+  
+  

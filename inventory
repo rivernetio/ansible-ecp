@@ -3,11 +3,15 @@
 
 [nodes]
 10.211.64.109
+10.211.64.111
 
 [new_nodes]
-10.211.64.111
 
 [cluster:children]
 masters
 nodes
-new_nodes
+
+[glusterfs_nodes]
+10.211.64.107 glusterfs_devices='["/dev/sdb"]' glusterfs_hostname='kube07'
+10.211.64.109 glusterfs_devices='["/dev/sdb"]' glusterfs_hostname='kube09'
+10.211.64.111 glusterfs_devices='["/dev/sdb"]' glusterfs_hostname='kube11'

@@ -1,0 +1,36 @@
+---
+- name: Add GlusterFS APT repository
+  when: ansible_os_family == "Debian"
+  apt_repository:
+    repo: "{{ apt_glusterfs_repo }}"
+    state: present
+
+- name: Install glusterfs client
+  when: ansible_os_family == "RedHat"
+  yum:
+    name: "{{ item }}"
+    update_cache: yes
+    state: present
+  with_items:
+    - glusterfs-client
+
+- name: Install glusterfs client
+  when: ansible_os_family == "Debian"
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+    state: present
+  with_items:
+    - software-properties-common
+    - glusterfs-client
+
+- name: Prepare for deployment
+  import_tasks: prepare.yml
+  run_once: true
+  delegate_to: "{{ master_hosts[0] }}"
+
+#- name: Deploy
+#  import_tasks: deploy.yml
+#  run_once: true
+#  delegate_to: "{{ master_hosts[0] }}"
+   

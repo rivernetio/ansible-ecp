@@ -1,0 +1,22 @@
+---
+- name: Create gluster directory
+  file: path={{ kube_glusterfs_dir }} state=directory
+
+- name: Ensure directory structure exists
+  file:
+    path: '{{ kube_glusterfs_dir }}/{{ item.path }}'
+    state: directory
+  with_filetree: '{{ role_path }}/deploy'
+  when: item.state == 'directory'
+
+- name: Copy the gk-deploy script
+  copy:
+    src: '{{ role_path }}/deploy/gk-deploy'
+    dest: '{{ kube_glusterfs_dir }}/gk-deploy'
+    mode: 755
+
+- name: Populate the rest of files from templates
+  template:  src={{ item.src }}  dest={{ kube_glusterfs_dir }}/{{ item.path | regex_replace('\.j2', '') }} 
+  with_filetree: '{{ role_path }}/deploy'
+  when: item.state == 'file' and item.path.find('gk-deploy') == -1
+
