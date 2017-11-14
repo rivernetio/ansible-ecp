@@ -21,6 +21,8 @@ spec:
       - name: firmament-lyra
         image: {{ lyra_image }}
         imagePullPolicy: Always
+        securityContext:
+          privileged: true
         env:
            - name: ETCD_URL
              valueFrom:
