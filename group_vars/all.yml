@@ -42,7 +42,8 @@ ecp_charts_url: https://github.com/rivernetio/charts/raw/master/repo/stable
 # logging
 canes_image: docker.io/rivernet/canes:20170626
 elasticsearch_image: docker.io/rivernet/elasticsearch:1.5.2
-fluentd_image: docker.io/rivernet/fluentd-elasticsearch:1.22
+fluentd_image: docker.io/rivernet/fluentd-elasticsearch:v2.0.2
+kibana_image: docker.io/rivernet/kibana:4.1.2
 # events
 events_image: docker.io/rivernet/events:20170626
 # license
@@ -65,6 +66,11 @@ river_image: docker.io/rivernet/river:20170626
 # sas
 keystone_image: docker.io/rivernet/keystone:20161108
 sas_image: docker.io/rivernet/skyform-sas:20170626
+# harbor
+harbor_mysql_image: docker.io/rivernet/harbor-mysql:20170626
+harbor_registry_image: docker.io/rivernet/harbor-registry:20170626
+harbor_ui_image: docker.io/rivernet/harbor-ui:20170626
+harbor_proxy_image: docker.io/rivernet/harbor-proxy:20170626 
 #############################################################################
 
 service_subnet: 10.96.0
