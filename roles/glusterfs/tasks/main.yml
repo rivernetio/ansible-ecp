@@ -29,8 +29,8 @@
   run_once: true
   delegate_to: "{{ master_hosts[0] }}"
 
-#- name: Deploy
-#  import_tasks: deploy.yml
-#  run_once: true
-#  delegate_to: "{{ master_hosts[0] }}"
+- name: Deploy
+  import_tasks: deploy.yml
+  run_once: true
+  delegate_to: "{{ master_hosts[0] }}"
    
