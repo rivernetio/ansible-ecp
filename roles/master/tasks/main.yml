@@ -4,8 +4,7 @@
 
 - name: Init Kubernetes cluster
   shell: |
-    kubeadm init --config={{ kubeadm_config }} \
-                 --skip-preflight-checks
+    kubeadm init --config={{ kubeadm_config }}
   run_once: true
   register: init_cluster
 
