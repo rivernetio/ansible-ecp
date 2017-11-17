@@ -16,19 +16,19 @@ apt_kubeadm_version: 1.7.5-00
 apt_glusterfs_repo: "ppa:gluster/glusterfs-3.8"
 ###########################################################################
 # Configuration for kubeadm
-kubeadm_image_repository: gcr.io/google_containers
+kubeadm_image_repository: rivernet
 kube_version: v1.7.5
 token: b0f7b8.8d1767876297d85c
 ############################################################################
 # Configuration for k8s dashboard
-k8s_dashboard_image: gcr.io/google_containers/kubernetes-dashboard-amd64:v1.6.3
+k8s_dashboard_image: rivernet/kubernetes-dashboard-amd64:v1.6.3
 ############################################################################
 # Configuration for networks
-calico_etcd_image: quay.io/coreos/etcd:v3.1.10
-calico_node_image: quay.io/calico/node:v2.4.1
-calico_cni_image: quay.io/calico/cni:v1.10.0
-calico_policy_controller_image: quay.io/calico/kube-policy-controller:v0.7.0
-flannel_image: quay.io/coreos/flannel:v0.7.1-amd64
+calico_etcd_image: rivernet/etcd:v3.1.10
+calico_node_image: rivernet/node:v2.4.1
+calico_cni_image: rivernet/cni:v1.10.0
+calico_policy_controller_image: rivernet/kube-policy-controller:v0.7.0
+flannel_image: rivernet/flannel:v0.7.1-amd64
 ############################################################################
 # Configuration for ECP
 # Docker registry
@@ -36,35 +36,35 @@ registry_domain: docker.io
 # ECP namespace
 ecp_namespace: sky-firmament
 # appstore
-rudder_image: docker.io/rivernet/rudder:20170626
-tiller_image: docker.io/rivernet/tiller:v2.2.3
+rudder_image: rivernet/rudder:20170626
+tiller_image: rivernet/tiller:v2.2.3
 ecp_charts_url: https://github.com/rivernetio/charts/raw/master/repo/stable
 # logging
-canes_image: docker.io/rivernet/canes:20170626
-elasticsearch_image: docker.io/rivernet/elasticsearch:1.5.2
-fluentd_image: docker.io/rivernet/fluentd-elasticsearch:1.22
+canes_image: rivernet/canes:20170626
+elasticsearch_image: rivernet/elasticsearch:1.5.2
+fluentd_image: rivernet/fluentd-elasticsearch:1.22
 # events
-events_image: docker.io/rivernet/events:20170626
+events_image: rivernet/events:20170626
 # license
-license_image: docker.io/rivernet/license:20170626
+license_image: rivernet/license:20170626
 # lyra
-lyra_image: docker.io/rivernet/lyra:20170626
+lyra_image: rivernet/lyra:20170626
 # mysql
-mysql_image: docker.io/rivernet/mysql-sky:20170626
+mysql_image: rivernet/mysql-sky:20170626
 # prometheus
-grafana_image: docker.io/rivernet/grafana-sky:20170626
-docker_image: docker.io/rivernet/docker
-kubestatemetrics_image: quay.io/coreos/kube-state-metrics:v0.5.0
-nodeexporter_image: quay.io/prometheus/node-exporter:0.12.0
-kubeapiexporter_image: docker.io/rivernet/kube-api-exporter
-prometheus_image: quay.io/prometheus/prometheus:v1.5.2
+grafana_image: rivernet/grafana-sky:20170626
+docker_image: rivernet/docker
+kubestatemetrics_image: rivernet/kube-state-metrics:v0.5.0
+nodeexporter_image: rivernet/node-exporter:0.12.0
+kubeapiexporter_image: rivernet/kube-api-exporter
+prometheus_image: rivernet/prometheus:v1.5.2
 # pyxis
-pyxis_image: docker.io/rivernet/pyxis:20170626
+pyxis_image: rivernet/pyxis:20170626
 # river
-river_image: docker.io/rivernet/river:20170626
+river_image: rivernet/river:20170626
 # sas
-keystone_image: docker.io/rivernet/keystone:20161108
-sas_image: docker.io/rivernet/skyform-sas:20170626
+keystone_image: rivernet/keystone:20161108
+sas_image: rivernet/skyform-sas:20170626
 #############################################################################
 
 service_subnet: 10.96.0
