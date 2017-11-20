@@ -1,0 +1,69 @@
+---
+- name: Remove kubeadmin
+  when: ansible_os_family == "RedHat"
+  yum: name={{item}} state=removed
+  with_items:
+    - kubectl
+    - kubeadm
+    - kubelet
+    - kubernetes-cni
+  ignore_errors: True
+
+- name: Remove kubeadmin
+  when: ansible_os_family == "Debian"
+  apt: name={{item}} state=removed
+  with_items:
+    - kubectl
+    - kubeadm
+    - kubelet
+    - kubernetes-cni
+  ignore_errors: True
+
+- name: Remove data directory
+  file: path={{item}} state=absent
+  with_items:
+    - /var/lib/kubelet
+    - /etc/kubernetes
+    - /var/etcd
+    - /var/lib/etcd
+    - /usr/db_data
+    - /var/run/calico
+    - /etc/systemd/system/kubelet.service.d/
+  ignore_errors: True
+
+- name: Destroy GlusterFS
+  shell: |
+    {{ kube_glusterfs_dir }}/gk-deploy -gy abort
+  ignore_errors: True
+
+- name: Remove GlusterFS directory
+  file: path={{item}} state=absent
+  with_items:
+    - /etc/glusterfs 
+    - /var/lib/glusterd
+    - /var/lib/heketi
+  ignore_errors: True
+
+- name: Get GlusterFS volumes
+  shell: "pvs | grep vg_"
+  register: vgs_result
+  ignore_errors: True
+
+- name: Remove pvs and vgs
+  shell: "vgremove -f {{ item.strip().split()[1] }} && pvremove -f {{ item.strip().split()[0] }}"
+  with_items:
+    - "{{ vgs_result.stdout_lines }}"
+  ignore_errors: True
+
+- name: Flush IP tables
+  iptables:
+    table: nat
+    flush: true
+  ignore_errors: True
+    
+- name: Restart docker services
+  systemd:
+    state: restarted
+    name: docker
+    daemon_reload: yes
+
