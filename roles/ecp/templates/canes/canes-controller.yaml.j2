@@ -23,18 +23,18 @@ spec:
         env:
            - name: ELASTICSEARCH_HOST
              value: elasticsearch-logging
-#           - name: FILE_SERVER
-#             valueFrom:
-#               configMapKeyRef:
-#                 name: ecp-config
-#                 key: file-server.url
+           - name: FILE_SERVER
+             valueFrom:
+               configMapKeyRef:
+                 name: ecp-config
+                 key: file-server.url
         resources:
           limits:
             cpu: 1000m
             memory: 400Mi
           requests:
-            cpu: 1000m
-            memory: 400Mi
+            cpu: 100m
+            memory: 100Mi
         ports:
         - containerPort: 8080
         volumeMounts:

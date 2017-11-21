@@ -26,11 +26,11 @@ spec:
                configMapKeyRef:
                  name: ecp-config
                  key: kubernetes.url
-#           - name: harbor_host
-#             valueFrom:
-#               configMapKeyRef:
-#                 name: ecp-config
-#                 key: harbor.host
+           - name: harbor_host
+             valueFrom:
+               configMapKeyRef:
+                 name: ecp-config
+                 key: harbor.external.host
         resources:
           limits:
             #cpu: 500m

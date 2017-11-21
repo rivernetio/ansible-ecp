@@ -72,9 +72,9 @@ The following image still needs to be pulled on all hosts manually and then tagg
 
 ```gcr.io/google_containers/pause-amd64:3.0```
 
-### Run the `site.yml` playbook:
+### Run the `install.yml` playbook:
 ```sh
-$ ansible-playbook -v site.yml
+$ ansible-playbook -v install.yml
 ...
 TASK [ecp : Create pyxis rc] ************************************************************************************************************
 changed: [10.211.64.107] => {"changed": true, "cmd": "kubectl --kubeconfig=/etc/kubernetes/admin.conf create -f /etc/kubernetes/ecp/pyxis/pyxis-controller.yaml", "delta": "0:00:00.249539", "end": "2017-10-20 21:35:58.130390", "rc": 0, "start": "2017-10-20 21:35:57.880851", "stderr": "", "stderr_lines": [], "stdout": "replicationcontroller \"firmament-pyxis\" created", "stdout_lines": ["replicationcontroller \"firmament-pyxis\" created"]}

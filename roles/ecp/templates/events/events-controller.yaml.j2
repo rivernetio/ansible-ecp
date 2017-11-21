@@ -16,6 +16,7 @@ spec:
         app: firmament-events
         version: v0.1
     spec:
+      serviceAccountName: events
       volumes:
       - name: config-volume
         hostPath:
@@ -33,13 +34,26 @@ spec:
              valueFrom:
                configMapKeyRef:
                  name: ecp-config
-                 key: kubernetes.url           
+                 key: kubernetes.url
+           - name: EMAIL_HOST
+             valueFrom:
+               configMapKeyRef:
+                 name: ecp-config
+                 key: email.host
+           - name: EMAIL_SENDER
+             valueFrom:
+               configMapKeyRef:
+                 name: ecp-config
+                 key: email.sender
+           - name: EMAIL_PASS
+             valueFrom:
+               configMapKeyRef:
+                 name: ecp-config
+                 key: email.password                 
         ports:
         - containerPort: 8080
         volumeMounts:
         - name: config-volume
           mountPath: /etc/prometheus
-      nodeSelector:
-        prometheus: "yes"
       nodeSelector:
         prometheus: "yes"

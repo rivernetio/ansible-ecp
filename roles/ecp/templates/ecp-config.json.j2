@@ -11,3 +11,9 @@ data:
   file-server.url: {{ master_hosts[0] }}:31085\/fornax
   registry.url: {{ registry_domain }}
   reg.domain: {{ registry_domain }}
+  harbor.host: http:\/\/{{ master_hosts[0] }}:31096
+  harbor.url: http://{{ master_hosts[0] }}:31096
+  harbor.external.host: http:\/\/{{ public_ip }}:31096
+  email.host: {{ email_host }}
+  email.sender: {{ email_sender }}
+  email.password: {{ email_password }}

@@ -6,6 +6,14 @@
   template: src={{ item }} dest={{ kube_ecp_dir }}/events/{{ item | basename | regex_replace('\.j2', '') }}
   with_fileglob:
     - ../templates/events/*.j2
+    
+- name: Check if events service account already exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get sa --namespace={{ ecp_namespace }} | grep events
+  run_once: true
+  register: check_events_sa
+  failed_when: check_events_sa.rc != 0 and check_events_sa.rc != 1
 
 - name: Check if events rc already exists
   shell: |
@@ -17,9 +25,15 @@
 - name: Check if events service already exists
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
-            get svc -namespace={{ ecp_namespace }} | grep events-firmament-com
+            get svc --namespace={{ ecp_namespace }} | grep events-firmament-com
   register: check_events_svc
   failed_when: check_events_svc.rc != 0 and check_events_svc.rc != 1
+  
+- name: Create events RBAC
+  when: check_events_sa.rc != 0
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} create -f {{ kube_ecp_dir }}/events/events-rbac.yaml
+  run_once: true
     
 - name: Create events rc
   when: check_events_rc.rc != 0

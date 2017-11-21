@@ -45,7 +45,7 @@ ecp_local_charts: /home/vagrant/charts/repo/local
 # logging
 canes_image: rivernet/canes:20170626
 elasticsearch_image: rivernet/elasticsearch:1.5.2
-fluentd_image: rivernet/fluentd-elasticsearch:1.22
+fluentd_image: rivernet/fluentd-elasticsearch:v2.0.2
 kibana_image: rivernet/kibana:4.1.2
 # events
 events_image: rivernet/events:20170626
@@ -73,7 +73,14 @@ sas_image: rivernet/skyform-sas:20170626
 harbor_mysql_image: rivernet/harbor-mysql:20170626
 harbor_registry_image: rivernet/harbor-registry:20170626
 harbor_ui_image: rivernet/harbor-ui:20170626
-harbor_proxy_image: rivernet/harbor-proxy:20170626 
+harbor_proxy_image: rivernet/harbor-proxy:20170626
+ara_image: rivernet/ara:20170626
+# email for alert
+email_host: smtp.xxx.com
+email_sender: xxx@example.com
+email_password: xxxxxx
+# public ip
+public_ip: 10.211.64.107
 #############################################################################
 
 service_subnet: 10.96.0
@@ -94,3 +101,4 @@ pod_run_retry: 300
 # Pod starting retry delay
 pod_run_retry_delay: 5
 
+ecp: true
