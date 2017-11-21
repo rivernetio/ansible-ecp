@@ -91,6 +91,23 @@ spec:
         volumeMounts:
         - mountPath: /opt/rudder/helm
           name: repo
+{% if ecp is defined and ecp %}
+      - name: helm
+        image: {{ helm_image }}
+        imagePullPolicy: Always
+        args:
+        - --address=127.0.0.1:8879
+        - --repo-path=/opt/helm/repository/local
+        ports:
+        - containerPort: 8879
+          name: repo
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /root/.kube/config
+          name: kubecfg
+        - mountPath: /opt/helm/repository
+          name: repo
+{% endif %}
       volumes:
       - name: kubecfg
         configMap:
