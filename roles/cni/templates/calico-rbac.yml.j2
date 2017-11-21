@@ -16,7 +16,6 @@ kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
   name: calico-cni-plugin
-  namespace: kube-system
 rules:
   - apiGroups: [""]
     resources:
@@ -34,21 +33,20 @@ metadata:
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
-  name: calico-policy-controller
+  name: calico-kube-controllers
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: calico-policy-controller
+  name: calico-kube-controllers
 subjects:
 - kind: ServiceAccount
-  name: calico-policy-controller
+  name: calico-kube-controllers
   namespace: kube-system
 ---
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
-  name: calico-policy-controller
-  namespace: kube-system
+  name: calico-kube-controllers
 rules:
   - apiGroups:
     - ""
@@ -64,5 +62,5 @@ rules:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: calico-policy-controller
+  name: calico-kube-controllers
   namespace: kube-system

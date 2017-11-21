@@ -2,31 +2,33 @@
 ###########################################################################
 # Configuration for yum/apt repository
 yum_k8s_repo: "http://yum.kubernetes.io/repos/kubernetes-el7-x86_64"
-yum_kubectl_version: 1.7.5-0
-yum_kubelet_version: 1.7.5-0
+yum_kubectl_version: 1.8.3-0
+yum_kubelet_version: 1.8.3-0
 yum_kubernetes_cni_version: 0.5.1-0
-yum_kubeadm_version: 1.7.5-0
+yum_kubeadm_version: 1.8.3-0
 ###########################################################################
 apt_k8s_repo: "deb http://apt.kubernetes.io/ kubernetes-xenial main"
 apt_k8s_key: "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
-apt_kubectl_version: 1.7.5-00
-apt_kubelet_version: 1.7.5-00
+apt_kubectl_version: 1.8.3-00
+apt_kubelet_version: 1.8.3-00
 apt_kubernetes_cni_version: 0.5.1-00
-apt_kubeadm_version: 1.7.5-00
+apt_kubeadm_version: 1.8.3-00
 apt_glusterfs_repo: "ppa:gluster/glusterfs-3.8"
 ###########################################################################
 # Configuration for kubeadm
-kubeadm_image_repository: docker.io/rivernet
-kube_version: v1.7.5
+#kubeadm_image_repository: docker.io/rivernet
+kubeadm_image_repository: gcr.io/google_containers
+kube_version: v1.8.3
 token: b0f7b8.8d1767876297d85c
 ############################################################################
 # Configuration for k8s dashboard
-k8s_dashboard_image: rivernet/kubernetes-dashboard-amd64:v1.6.3
+k8s_dashboard_image: rivernet/kubernetes-dashboard-amd64:v1.7.1
 ############################################################################
 # Configuration for networks
 calico_etcd_image: rivernet/etcd:v3.1.10
-calico_node_image: rivernet/node:v2.4.1
-calico_cni_image: rivernet/cni:v1.10.0
+calico_node_image: rivernet/node:v2.6.2
+calico_cni_image: rivernet/cni:v1.11.0
+calico_kube_controllers_image: rivernet/kube-controllers:v1.0.0
 calico_policy_controller_image: rivernet/kube-policy-controller:v0.7.0
 flannel_image: rivernet/flannel:v0.7.1-amd64
 ############################################################################
