@@ -39,19 +39,23 @@
     - ecp_appstore
 
 # Needs to verify
-- name: Create logging service
-  when: not opensource
-  import_tasks: logging.yml
-  tags:
-    - ecp_logging
+#- name: Create logging service
+#  when: 
+#    - ecp is defined
+#    - ecp | bool
+#  import_tasks: logging.yml
+#  tags:
+#    - ecp_logging
 
 # Event image needs to update k8s Java client
 # Existing one is outdated causing client exception
-- name: Create events service
-  when: not opensource
-  import_tasks: events.yml
-  tags:
-    - ecp_events
+#- name: Create events service
+#  when:
+#    - ecp is defined
+#    - ecp | bool
+#  import_tasks: events.yml
+#  tags:
+#    - ecp_events
 
 - name: Create prometheus services
   import_tasks: prometheus.yml

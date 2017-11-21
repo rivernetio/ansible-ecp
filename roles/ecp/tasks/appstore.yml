@@ -2,6 +2,28 @@
 - name: Create appstore directory
   file: path={{ kube_ecp_dir }}/appstore state=directory
 
+- name: Create repository directory
+  file: path={{ kube_ecp_dir }}/repository state=directory
+
+- name: Overwrite ecp helm charts local repository
+  when:
+    - ecp is defined
+    - ecp | bool
+  set_fact: ecp_charts_url="http://127.0.0.1:8879/charts"
+
+- name: Copy repository yaml file
+  template: src={{ item }} dest={{ kube_ecp_dir }}/repository/{{ item | basename | regex_replace('\.j2', '') }}
+  with_fileglob:
+    - ../templates/repository/*.j2
+
+- name: Copy ecp helm charts
+  when:
+    - ecp is defined
+    - ecp | bool
+  copy:
+    src: "{{ ecp_local_charts }}"
+    dest: "{{ kube_ecp_dir }}/repository/"
+
 - name: Copy appstore yaml file
   template: src={{ item }} dest={{ kube_ecp_dir }}/appstore/{{ item | basename | regex_replace('\.j2', '') }}
   with_fileglob:
@@ -20,16 +42,11 @@
   run_once: true
   delegate_to: "{{ appstore_host }}"
 
-- slurp:
-    src: "{{ kube_ecp_dir }}/appstore/repositories.yaml"
-  register: repositories
-
-- name: Create repository configuration on appstore host
-  copy:
-    dest: /etc/repository/repositories.yaml
-    content: "{{ repositories.content | b64decode }}"
-    mode: 0644
-  run_once: true
+- name: Copy file to appstore host
+  synchronize:
+    src: "{{ kube_ecp_dir }}/repository"
+    dest: "/etc/"
+    mode: pull
   delegate_to: "{{ appstore_host }}"
 
 - name: Check if rudder pod already exists
