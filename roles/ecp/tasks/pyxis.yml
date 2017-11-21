@@ -25,7 +25,7 @@
 - name: Check if pyxis service already exists
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
-            get svc --namespace={{ ecp_namespace }} | grep firmament-pyxis
+            get svc --namespace={{ ecp_namespace }} | grep pyxis-firmament-com
   run_once: true
   register: check_pyxis_svc
   failed_when: check_pyxis_svc.rc != 0 and check_pyxis_svc.rc != 1

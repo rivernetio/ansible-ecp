@@ -55,15 +55,33 @@
     mode: 0644
   run_once: true
   delegate_to: "{{ prometheus_host }}"
+  
+- name: Check if prometheus service account already exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get sa --namespace={{ ecp_namespace }} | grep prometheus
+  run_once: true
+  register: check_prometheus_sa
+  failed_when: check_prometheus_sa.rc != 0 and check_prometheus_sa.rc != 1
 
 - name: Create prometheus RBAC
+  when: check_prometheus_sa.rc != 0
   shell: "{{ item }}"
   with_items:
     - kubectl --kubeconfig={{ kubeadmin_config }} create -f {{ kube_ecp_dir }}/prometheus/prometheus-rbac.yml
     - kubectl --kubeconfig={{ kubeadmin_config }} create -f {{ kube_ecp_dir }}/prometheus/prometheus-k8s-rbac.yml
   run_once: true
+  
+- name: Check if prometheus deployment already exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get deploy --namespace={{ ecp_namespace }} | grep prometheus
+  run_once: true
+  register: check_prometheus_deploy
+  failed_when: check_prometheus_deploy.rc != 0 and check_prometheus_deploy.rc != 1
 
 - name: Create prometheus, exporters, and grafana
+  when: check_prometheus_deploy.rc != 0
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
             create -f {{ kube_ecp_dir }}/prometheus/manifests-all.yaml

@@ -49,10 +49,24 @@
             create -f {{ kube_ecp_dir }}/canes/es-service-internal-svc.yaml
   run_once: true
 
+- name: Check if fluentd configmap already exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get cm --namespace={{ ecp_namespace }} | grep fluentd-es-config
+  register: check_fluentd_cm
+  failed_when: check_fluentd_cm.rc !=0 and check_fluentd_cm.rc != 1
+
+- name: Create fluentd configmap
+  when: check_fluentd_cm.rc != 0
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            create -f {{ kube_ecp_dir }}/canes/fluentd-es-configmap.yaml
+  run_once: true
+
 - name: Check if fluentd daemonset already exists
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
-            get ds --namespace={{ ecp_namespace }} | grep fluentd-daemonset
+            get ds --namespace={{ ecp_namespace }} | grep fluentd-es
   register: check_fluentd_ds
   failed_when: check_fluentd_ds.rc !=0 and check_fluentd_ds.rc != 1
 
@@ -60,6 +74,34 @@
   when: check_fluentd_ds.rc != 0
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
-            create -f {{ kube_ecp_dir }}/canes/fluentd-ds.yaml
+            create -f {{ kube_ecp_dir }}/canes/fluentd-es-ds.yaml
+  run_once: true
+  
+- name: Check if kibana deployment already exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get deploy --namespace={{ ecp_namespace }} | grep kibana-logging
+  register: check_kibana_deploy
+  failed_when: check_kibana_deploy.rc != 0 and check_kibana_deploy.rc != 1
+
+- name: Create canes deployment
+  when: check_kibana_deploy.rc != 0
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            create -f {{ kube_ecp_dir }}/canes/kibana-deployment.yaml
+  run_once: true
+  
+- name: Check if kibana service already exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get svc --namespace={{ ecp_namespace }} | grep kibana-logging
+  register: check_kibana_svc
+  failed_when: check_kibana_svc.rc != 0 and check_kibana_svc.rc != 1
+
+- name: Create kibana service
+  when: check_kibana_svc.rc != 0
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            create -f {{ kube_ecp_dir }}/canes/kibana-service.yaml
   run_once: true
 
