@@ -1,10 +1,16 @@
 ---
+- name: Destroy GlusterFS
+  shell: |
+    {{ kube_glusterfs_dir }}/gk-deploy -gy abort {{ kube_glusterfs_dir }}/topology.json
+  delegate_to: "{{ master_hosts[0] }}"
+  ignore_errors: True
+
 - name: Reset kubeadm
   shell: |
     kubeadm reset
   ignore_errors: True
 
-- name: Remove kubeadmn
+- name: Remove kubeadm
   when: ansible_os_family == "RedHat"
   yum: name={{item}} state=removed
   with_items:
@@ -20,7 +26,7 @@
     yum versionlock clear
   ignore_errors: True
 
-- name: Remove kubeadmn
+- name: Remove kubeadm
   when: ansible_os_family == "Debian"
   apt: name={{item}} state=removed
   with_items:
@@ -46,11 +52,6 @@
     - /usr/db_data
     - /var/run/calico
     - /etc/systemd/system/kubelet.service.d/
-  ignore_errors: True
-
-- name: Destroy GlusterFS
-  shell: |
-    {{ kube_glusterfs_dir }}/gk-deploy -gy abort
   ignore_errors: True
 
 - name: Remove GlusterFS directory
