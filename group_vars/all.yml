@@ -15,9 +15,10 @@ apt_kubernetes_cni_version: 0.5.1-00
 apt_kubeadm_version: 1.8.3-00
 apt_glusterfs_repo: "ppa:gluster/glusterfs-3.8"
 ###########################################################################
+# configuration for docker image archive (offline install only)
+###########################################################################
 # Configuration for kubeadm
-#kubeadm_image_repository: docker.io/rivernet
-kubeadm_image_repository: gcr.io/google_containers
+kubeadm_image_repository: docker.io/rivernet
 kube_version: v1.8.3
 token: b0f7b8.8d1767876297d85c
 ############################################################################
