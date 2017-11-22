@@ -33,4 +33,10 @@
   import_tasks: deploy.yml
   run_once: true
   delegate_to: "{{ master_hosts[0] }}"
+
+# GlusterFS deploy somehow disables the following
+- name: Pass bridged IPv4/IPv6 traffic to iptables’ chains
+  shell: |
+    sysctl net.bridge.bridge-nf-call-iptables=1
+    sysctl net.bridge.bridge-nf-call-ip6tables=1
    

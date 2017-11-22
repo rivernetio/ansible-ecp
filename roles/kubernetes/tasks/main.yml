@@ -71,8 +71,10 @@
     regexp: '^/[\S]+\s+[\S]+\s+swap '
     state: absent
 
-- name: Pass bridged IPv4 traffic to iptables’ chains
-  shell: "sysctl net.bridge.bridge-nf-call-iptables=1"
+- name: Pass bridged IPv4/IPv6 traffic to iptables’ chains
+  shell: |
+    sysctl net.bridge.bridge-nf-call-iptables=1
+    sysctl net.bridge.bridge-nf-call-ip6tables=1
 
 - name: Override config file directory for Debian
   when: ansible_os_family == "Debian"
