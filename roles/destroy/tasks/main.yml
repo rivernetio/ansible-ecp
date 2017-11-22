@@ -1,5 +1,10 @@
 ---
-- name: Remove kubeadmin
+- name: Reset kubeadm
+  shell: |
+    kubeadm reset
+  ignore_errors: True
+
+- name: Remove kubeadmn
   when: ansible_os_family == "RedHat"
   yum: name={{item}} state=removed
   with_items:
@@ -9,7 +14,13 @@
     - kubernetes-cni
   ignore_errors: True
 
-- name: Remove kubeadmin
+- name: Clear versionlock
+  when: ansible_os_family == "RedHat"
+  shell: |
+    yum versionlock clear
+  ignore_errors: True
+
+- name: Remove kubeadmn
   when: ansible_os_family == "Debian"
   apt: name={{item}} state=removed
   with_items:
@@ -17,6 +28,12 @@
     - kubeadm
     - kubelet
     - kubernetes-cni
+  ignore_errors: True
+
+- name: Unhold kubernetes packages
+  when: ansible_os_family == "Debian"
+  shell: |
+    apt-mark unhold kubectl kubelet kubernetes-cni kubeadm
   ignore_errors: True
 
 - name: Remove data directory
