@@ -19,6 +19,9 @@ apt_glusterfs_repo: "ppa:gluster/glusterfs-3.8"
 kubeadm_image_repository: docker.io/rivernet
 kube_version: v1.7.5
 token: b0f7b8.8d1767876297d85c
+###########################################################################
+# Configuration for kubelet
+kubelet_pod_infra_image: docker.io/rivernet/pause-amd64:3.0
 ############################################################################
 # Configuration for k8s dashboard
 k8s_dashboard_image: rivernet/kubernetes-dashboard-amd64:v1.6.3
