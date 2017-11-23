@@ -19,7 +19,6 @@ spec:
       containers:
       - name: firmament-canes
         image: {{ canes_image }}
-        imagePullPolicy: Always
         env:
            - name: ELASTICSEARCH_HOST
              value: elasticsearch-logging

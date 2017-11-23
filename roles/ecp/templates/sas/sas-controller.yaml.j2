@@ -73,7 +73,6 @@ spec:
         - containerPort: 35357
       - name: skyform-sas
         image: {{ sas_image }}
-        imagePullPolicy: Always
         env:
            - name: SAS_XMS
              value: '100'

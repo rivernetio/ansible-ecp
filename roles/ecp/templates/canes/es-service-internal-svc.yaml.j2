@@ -32,7 +32,6 @@ spec:
     spec:
       containers:
       - image: {{ elasticsearch_image }}
-        imagePullPolicy: Always
         name: elasticsearch-logging
         env:
         - name: ES_MIN_MEM

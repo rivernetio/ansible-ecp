@@ -24,7 +24,6 @@ spec:
       containers:
       - name: firmament-events
         image: {{ events_image }}
-        imagePullPolicy: Always
         env:
            - name: ELASTICSEARCH_HOST
              value: elasticsearch-logging
