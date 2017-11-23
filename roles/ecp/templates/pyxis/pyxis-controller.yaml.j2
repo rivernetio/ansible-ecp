@@ -19,7 +19,6 @@ spec:
       containers:
       - name: firmament-pyxis
         image: {{ pyxis_image }}
-        imagePullPolicy: Always
         env:
            - name: KUBERNETES_URL
              valueFrom:

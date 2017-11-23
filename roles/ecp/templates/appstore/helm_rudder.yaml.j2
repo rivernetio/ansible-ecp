@@ -81,7 +81,6 @@ spec:
         - name: RUDDER_HELM_REPO_FILE
           value: /opt/rudder/helm/repositories.yaml
         image: {{ rudder_image }}
-        imagePullPolicy: Always
         args:
         - --insecure=true
         ports:
@@ -94,7 +93,6 @@ spec:
 {% if ecp is defined and ecp %}
       - name: helm
         image: {{ helm_image }}
-        imagePullPolicy: Always
         args:
         - --address=127.0.0.1:8879
         - --repo-path=/opt/helm/repository/local

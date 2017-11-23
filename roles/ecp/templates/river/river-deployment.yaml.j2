@@ -24,7 +24,6 @@ spec:
       containers:
       - name: river
         image: {{ river_image }}
-        imagePullPolicy: Always
         ports:
         - containerPort: 8000
           name: api

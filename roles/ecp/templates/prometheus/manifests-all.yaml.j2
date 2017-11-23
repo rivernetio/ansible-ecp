@@ -18,7 +18,6 @@ spec:
     spec:
       containers:
         - image: {{ grafana_image }}
-          imagePullPolicy: Always
           name: grafana-core
           # env:
           resources:
@@ -133,7 +132,6 @@ spec:
       containers:
       - name: grafana-import-dashboards
         image: {{ docker_image }}
-        imagePullPolicy: Always
         command: ["/bin/sh", "-c"]
         workingDir: /opt/grafana-import-dashboards
         args:
@@ -307,7 +305,6 @@ spec:
       containers:
       - name: kube-api-exporter
         image: {{ kubeapiexporter_image }}
-        imagePullPolicy: Always
         ports:
         - containerPort: 80
 ---
