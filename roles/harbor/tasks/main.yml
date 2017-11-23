@@ -15,7 +15,7 @@
 - name: Label harbor on the first master node
   shell: "{{ item }}"
   with_items:
-    - kubectl label --overwrite=true nodes {{ master_nodes[0] }} habor=yes
+    - kubectl label --overwrite=true nodes {{ master_nodes[0] }} harbor=yes
 
 - name: Create harbor directory
   file: path={{ kube_harbor_dir }} state=directory
