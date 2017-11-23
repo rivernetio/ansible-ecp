@@ -1,0 +1,187 @@
+---
+
+- name: Get master nodes of multi-nodes cluster
+  when: master_hosts | length  >= 1
+  shell: |
+    kubectl get nodes -l kubeadm.alpha.kubernetes.io/role=master \
+        -o jsonpath='{.items[*].status.addresses[?(@.type=="Hostname")].address}'
+  register: master_nodes_result
+  until: master_nodes_result.stdout != ""
+  retries: 20
+  delay: 15
+  
+- set_fact: master_nodes={{ master_nodes_result.stdout.split(" ") }}
+  
+- name: Label harbor on the first master node
+  shell: "{{ item }}"
+  with_items:
+    - kubectl label --overwrite=true nodes {{ master_nodes[0] }} habor=yes
+
+- name: Create harbor directory
+  file: path={{ kube_harbor_dir }} state=directory
+  tags:
+    - harbor_dir
+  
+- name: Copy harbor yaml file
+  template: src={{ item }} dest={{ kube_harbor_dir }}/{{ item | basename | regex_replace('\.j2', '') }}
+  with_fileglob:
+    - ../templates/*.j2
+
+- name: Check namespace
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get namespaces | grep harbor
+  run_once: true
+  register: check_namespace
+  failed_when: check_namespace.rc != 0 and check_namespace.rc != 1
+
+- name: Create namespace
+  when: check_namespace.rc != 0
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            create -f {{ kube_harbor_dir }}/harbor.json
+    
+- name: Check if mysql rc already exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get rc --namespace=harbor | grep mysql
+  register: check_mysql_rc
+  failed_when: check_mysql_rc.rc != 0 and check_mysql_rc.rc != 1
+
+- name: Check if mysql service already exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get svc --namespace=harbor | grep mysql
+  register: check_mysql_svc
+  failed_when: check_mysql_svc.rc != 0 and check_mysql_svc.rc != 1
+
+- name: Check if registry rc already exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get rc --namespace=harbor | grep registry
+  register: check_registry_rc
+  failed_when: check_registry_rc.rc != 0 and check_registry_rc.rc != 1
+
+- name: Check if registry service already exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get svc --namespace=harbor | grep registry
+  register: check_registry_svc
+  failed_when: check_registry_svc.rc != 0 and check_registry_svc.rc != 1
+  
+- name: Check if ui rc already exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get rc --namespace=harbor | grep ui
+  register: check_ui_rc
+  failed_when: check_ui_rc.rc != 0 and check_ui_rc.rc != 1
+
+- name: Check if ui service already exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get svc --namespace=harbor | grep ui
+  register: check_ui_svc
+  failed_when: check_ui_svc.rc != 0 and check_ui_svc.rc != 1
+  
+- name: Check if proxy rc already exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get rc --namespace=harbor | grep proxy
+  register: check_proxy_rc
+  failed_when: check_proxy_rc.rc != 0 and check_proxy_rc.rc != 1
+
+- name: Check if proxy service already exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get svc --namespace=harbor | grep proxy
+  register: check_proxy_svc
+  failed_when: check_proxy_svc.rc != 0 and check_proxy_svc.rc != 1
+  
+- name: Create mysql rc
+  when: check_mysql_rc.rc != 0
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            create -f {{ kube_harbor_dir }}/mysql-rc.yaml
+  run_once: true
+
+- name: Create mysql service
+  when: check_mysql_svc.rc != 0
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            create -f {{ kube_harbor_dir }}/mysql-svc.yaml
+  run_once: true
+  
+- name: Create registry rc
+  when: check_registry_rc.rc != 0
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            create -f {{ kube_harbor_dir }}/registry-rc.yaml
+  run_once: true
+
+- name: Create registry service
+  when: check_registry_svc.rc != 0
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            create -f {{ kube_harbor_dir }}/registry-svc.yaml
+  run_once: true
+  
+- name: Create ui rc
+  when: check_ui_rc.rc != 0
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            create -f {{ kube_harbor_dir }}/ui-rc.yaml
+  run_once: true
+
+- name: Create ui service
+  when: check_ui_svc.rc != 0
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            create -f {{ kube_harbor_dir }}/ui-svc.yaml
+  run_once: true
+  
+- name: Create proxy rc
+  when: check_proxy_rc.rc != 0
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            create -f {{ kube_harbor_dir }}/proxy-rc.yaml
+  run_once: true
+
+- name: Create proxy service
+  when: check_proxy_svc.rc != 0
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            create -f {{ kube_harbor_dir }}/proxy-svc.yaml
+  run_once: true
+  
+- name: Get registry service clusterIP
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} get service registry --namespace=harbor|grep registry|awk '{print $2}'
+  register: get_harbor_registry_clusterip
+  until: get_harbor_registry_clusterip.stderr == "" and get_harbor_registry_clusterip.stdout != ""
+  retries: 20
+  delay: 15
+  tags:
+    - set_harbor_registry_clusterip
+    
+- name: Set registry service clusterIP
+  set_fact:
+    harbor_registry_clusterip: "{{ get_harbor_registry_clusterip.stdout }}"
+  tags:
+    - set_harbor_registry_clusterip
+  
+- name: Get ui service clusterIP
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} get service ui --namespace=harbor|grep ui|awk '{print $2}'
+  register: get_harbor_ui_clusterip
+  until: get_harbor_ui_clusterip.stderr == "" and get_harbor_ui_clusterip.stdout != ""
+  retries: 20
+  delay: 15
+  tags:
+    - set_harbor_ui_clusterip
+  
+- name: Set ui service clusterIP
+  set_fact:
+    harbor_ui_clusterip: "{{ get_harbor_ui_clusterip.stdout }}"
+  tags:
+    - set_harbor_ui_clusterip
+

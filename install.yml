@@ -24,10 +24,21 @@
   gather_facts: yes
   roles:
     - { role: glusterfs, tags: glusterfs}
+    
+- hosts: masters[0]
+  gather_facts: no
+  become: yes
+  roles:
+    - { role: harbor, tags: harbor }
+
+- hosts: cluster
+  gather_facts: yes
+  become: yes
+  roles:
+    - { role: harbor2, tags: harbor }
 
 - hosts: masters[0]
   gather_facts: no
   become: yes
   roles:
     - { role: ecp, tags: ecp }
-
