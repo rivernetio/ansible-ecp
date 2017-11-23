@@ -1,0 +1,21 @@
+---
+    
+- name: Add registry service clusterIP to /etc/hosts
+  shell: |
+    cat /etc/hosts | grep registry.harbor > /dev/null 2>&1
+    i=$?
+    if [ $i -ne 0 ]; then
+        echo "{{ hostvars[groups['masters'][0]]['harbor_registry_clusterip'] }}  registry  registry.harbor" >> /etc/hosts
+    else
+        sed -i "s/.*registry.harbor.*/{{ hostvars[groups['masters'][0]]['harbor_registry_clusterip'] }}  registry  registry.harbor/" /etc/hosts
+    fi
+  
+- name: Add ui service clusterIP to /etc/hosts
+  shell: |
+    cat /etc/hosts | grep ui.harbor > /dev/null 2>&1
+    i=$?
+    if [ $i -ne 0 ]; then
+        echo "{{ hostvars[groups['masters'][0]]['harbor_ui_clusterip'] }}  ui  ui.harbor" >> /etc/hosts
+    else
+        sed -i "s/.*ui.harbor.*/{{ hostvars[groups['masters'][0]]['harbor_ui_clusterip'] }}  ui  ui.harbor/" /etc/hosts
+    fi
