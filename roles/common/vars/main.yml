@@ -1,4 +1,5 @@
 ---
+kube_num_version: "{{ kube_version | replace('v', '') }}"
 master_hosts: "{{ groups.masters | default([]) }}"
 node_hosts: "{{ groups.nodes | default([]) }}"
 cluster_hosts: "{{ groups.cluster | default([]) }}"
