@@ -1,0 +1,15 @@
+---
+- name: Pull images
+  shell: |
+    docker pull "{{ item }}"
+  with_items: "{{ app_images }}"
+
+- name: Tag images
+  shell: |
+    docker tag "{{ item }}" "{{ item | replace('docker.io/rivernet', 'registry.harbor:5000/sky-firmament') }}"
+  with_items: "{{ app_images }}"
+
+- name: Push images
+  shell: |
+    docker push "{{ item | replace('docker.io/rivernet', 'registry.harbor:5000/sky-firmament') }}"
+  with_items: "{{ app_images }}"
