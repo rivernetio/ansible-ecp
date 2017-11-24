@@ -88,7 +88,18 @@ email_password: xxxxxx
 # public ip
 public_ip: 10.211.64.107
 #############################################################################
+# Images used for applications in the appstore
+# All images must start with docker.io/rivernet
+app_images:
+  - docker.io/rivernet/tensorflow:4.1
+  - docker.io/rivernet/jupyter:4.1
+  - docker.io/rivernet/web-vote-app:v0.1
+  - docker.io/rivernet/redis
+  - docker.io/rivernet/redis_exporter
+  - docker.io/rivernet/docker
+  - docker.io/rivernet/tomcat:8.0.47-r0
 
+#############################################################################
 service_subnet: 10.96.0
 service_cidr: "{{ service_subnet }}.0/12"
 dns_name: cluster.local
