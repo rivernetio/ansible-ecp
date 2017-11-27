@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: ui
-        image: rivernet/harbor-ui:20170626
+        image: {{ harbor_ui_image }}
         env:
           - name: MYSQL_HOST
             value: mysql

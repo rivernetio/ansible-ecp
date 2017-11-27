@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: mysql
-        image: rivernet/harbor-mysql:20170626
+        image: {{ harbor_mysql_image }}
         ports:
         - containerPort: 3306
         env:
