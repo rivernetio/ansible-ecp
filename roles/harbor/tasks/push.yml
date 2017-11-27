@@ -1,5 +1,6 @@
 ---
 - name: Pull images
+  when: offline is not defined or not offline | bool
   shell: |
     docker pull "{{ item }}"
   with_items: "{{ app_images }}"

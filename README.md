@@ -39,34 +39,34 @@ calico_cni_image: quay.io/calico/cni:v1.10.0
 calico_policy_controller_image: quay.io/calico/kube-policy-controller:v0.7.0
 # Configuration for ECP
 # appstore
-rudder_image: docker.io/rivernet/rudder:20170626
+rudder_image: docker.io/rivernet/rudder:4.1
 tiller_image: docker.io/rivernet/tiller:v2.2.3
 # logging
-canes_image: docker.io/rivernet/canes:20170626
+canes_image: docker.io/rivernet/canes:4.1
 elasticsearch_image: docker.io/rivernet/elasticsearch:1.5.2
 fluentd_image: docker.io/rivernet/fluentd-elasticsearch:1.22
 # events
-events_image: docker.io/rivernet/events:20170626
+events_image: docker.io/rivernet/events:4.1
 # license
-license_image: docker.io/rivernet/license:20170626
+license_image: docker.io/rivernet/license:4.1
 # lyra
-lyra_image: docker.io/rivernet/lyra:20170626
+lyra_image: docker.io/rivernet/lyra:4.1
 # mysql
-mysql_image: docker.io/rivernet/mysql-sky:20170626
+mysql_image: docker.io/rivernet/mysql-sky:4.1
 # prometheus
-grafana_image: docker.io/rivernet/grafana-sky:20170626
+grafana_image: docker.io/rivernet/grafana-sky:4.1
 docker_image: docker.io/rivernet/docker
 kubestatemetrics_image: quay.io/coreos/kube-state-metrics:v0.5.0
 nodeexporter_image: quay.io/prometheus/node-exporter:0.12.0
 kubeapiexporter_image: docker.io/rivernet/kube-api-exporter
 prometheus_image: quay.io/prometheus/prometheus:v1.5.2
 # pyxis
-pyxis_image: docker.io/rivernet/pyxis:20170626
+pyxis_image: docker.io/rivernet/pyxis:4.1
 # river
-river_image: docker.io/rivernet/river:20170626
+river_image: docker.io/rivernet/river:4.1
 # sas
 keystone_image: docker.io/rivernet/keystone:20161108
-sas_image: docker.io/rivernet/skyform-sas:20170626
+sas_image: docker.io/rivernet/skyform-sas:4.1
 ```
 The following image still needs to be pulled on all hosts manually and then tagged **exactly** like the following, as ``kubeadm`` cannot get this image from ``kubeadm_image_repository``
 

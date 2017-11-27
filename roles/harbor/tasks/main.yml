@@ -1,28 +1,6 @@
 ---
-- name: Create harbor rc and services
-  import_tasks: create.yml
-  run_once: true
-  delegate_to: "{{ master_hosts[0] }}"
 
-- name: Set up harbor registry hosts
-  import_tasks: hosts.yml
-
-- name: Login to harbor registry
-  shell: |
-    docker login -u admin -p password registry.harbor:5000
-  register: login_to_harbor_registry
-  until: login_to_harbor_registry.rc == 0
-  retries: 20
-  delay: 15
-  run_once: true
-  delegate_to: "{{ master_hosts[0] }}"
-
-- name: Push app images
-  import_tasks: push.yml
-  run_once: true
-  delegate_to: "{{ master_hosts[0] }}"
-  tags:
-    - push
-
-
-
+- import_tasks: harbor.yml
+  when:
+    - ecp is defined
+    - ecp | bool

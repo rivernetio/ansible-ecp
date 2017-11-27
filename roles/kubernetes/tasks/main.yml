@@ -1,60 +1,16 @@
----
-
-- name: Add Kubernetes APT GPG key
-  when: ansible_os_family == "Debian"
-  apt_key:
-    url: "{{ apt_k8s_key }}"
-    state: present
-
-- name: Add Kubernetes APT repository
-  when: ansible_os_family == "Debian"
-  apt_repository:
-    repo: "{{ apt_k8s_repo }}"
-    state: present
-    filename: 'kubernetes'
-
-- name: Add Kubernetes yum repository
-  when: ansible_os_family == "RedHat"
-  yum_repository:
-    name: Kubernetes
-    description: Kubernetes Repository
-    file: kubernetes
-    baseurl: "{{ yum_k8s_repo }}"
-    enabled: yes
-    gpgcheck: no
-
 - name: Disable selinux
   when: ansible_os_family == "RedHat"
   selinux: policy=targeted state=permissive
 
-- name: Install kubernetes packages (RHEL/CentOS)
-  when: ansible_os_family == "RedHat"
-  yum:
-    name: "{{ item }}"
-    update_cache: yes
-    state: present
-  with_items:
-    - yum-versionlock
-    - kubectl-{{ yum_kubectl_version }}
-    - kubelet-{{ yum_kubelet_version }}
-    - kubernetes-cni-{{ yum_kubernetes_cni_version }}
-    - kubeadm-{{ yum_kubeadm_version }}
+- name: Install binaries online
+  import_tasks: online.yml
+  when: offline is not defined or not offline | bool
 
-- name: Lock the version of kubernetes packages
-  when: ansible_os_family == "RedHat"
-  shell: yum versionlock add kubectl kubelet kubernetes-cni kubeadm
-
-- name: Install kubernetes packages (Debian/Ubuntu)
-  when: ansible_os_family == "Debian"
-  apt:
-    name: "{{ item }}"
-    update_cache: yes
-    state: present
-  with_items:
-    - kubectl={{ apt_kubectl_version }}
-    - kubelet={{ apt_kubelet_version }}
-    - kubernetes-cni={{ apt_kubernetes_cni_version }}
-    - kubeadm={{ apt_kubeadm_version }}
+- name: Install binaries offline
+  import_tasks: offline.yml
+  when:
+    - offline is defined
+    - offline | bool
 
 - name: Lock the version of kubernetes packages
   when: ansible_os_family == "Debian"
@@ -101,3 +57,4 @@
     state: restarted
     enabled: yes
 
+  
