@@ -1,0 +1,10 @@
+---
+- name: Install offline package
+  when:
+    - ansible_os_family == "RedHat"
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - "{{ ecp_rpm_dir }}/glusterfs-fuse-3.8.4-18.4.el7.centos.x86_64.rpm"
+

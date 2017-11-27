@@ -1,0 +1,15 @@
+- name: Create image directory
+  file: path={{ ecp_image_dir }} state=directory
+
+- name: Copy docker images to all hosts
+  copy:
+    src: "{{ ecp_docker_images }}"
+    dest: "{{ ecp_image_dir }}"
+
+- name: Load docker images
+  shell: |
+    docker load -i {{ item.src }}
+  with_filetree: "{{ ecp_image_dir }}"
+  when:
+    - item.state == 'file'
+

@@ -1,0 +1,7 @@
+- import_tasks: load.yml
+  when:
+    - offline is defined
+    - offline | bool
+
+  
+

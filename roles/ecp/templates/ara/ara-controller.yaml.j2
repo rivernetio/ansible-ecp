@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: firmament-ara
+  namespace: {{ ecp_namespace }}
+  labels:
+    app: firmament-ara
+    version: v0.3
+spec:
+  replicas: 1
+  selector:
+    app: firmament-ara
+  template:
+    metadata:
+      labels:
+        app: firmament-ara
+        version: v0.3
+    spec:
+      containers:
+      - name: firmament-ara
+        image: {{ ara_image }}
+        env:
+           - name: ETCD_URL
+             valueFrom:
+               configMapKeyRef:
+                 name: ecp-config
+                 key: etcd.url
+           - name: HARBOR_URL
+             valueFrom:
+               configMapKeyRef:
+                  name: ecp-config
+                  key: harbor.host
+           - name: reg_domain
+             valueFrom:
+               configMapKeyRef:
+                  name: ecp-config
+                  key: reg.domain
+        resources:
+          limits:
+            cpu: 400m
+            memory: 400Mi
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        ports:
+        - containerPort: 8080

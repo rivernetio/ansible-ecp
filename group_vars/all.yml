@@ -42,45 +42,45 @@ registry_domain: docker.io
 # ECP namespace
 ecp_namespace: sky-firmament
 # appstore
-rudder_image: rivernet/rudder:20170626
+rudder_image: rivernet/rudder:4.1
 helm_image: rivernet/helm:v2.2.3
 tiller_image: rivernet/tiller:v2.2.3
 ecp_charts_url: https://github.com/rivernetio/charts/raw/master/repo/stable
 # Do NOT add the final slash to 'local'
 ecp_local_charts: /home/vagrant/charts/repo/local
 # logging
-canes_image: rivernet/canes:20170626
+canes_image: rivernet/canes:4.1
 elasticsearch_image: rivernet/elasticsearch:1.5.2
 fluentd_image: rivernet/fluentd-elasticsearch:v2.0.2
 kibana_image: rivernet/kibana:4.1.2
 # events
-events_image: rivernet/events:20170626
+events_image: rivernet/events:4.1
 # license
-license_image: rivernet/license:20170626
+license_image: rivernet/license:4.1
 # lyra
-lyra_image: rivernet/lyra:20170626
+lyra_image: rivernet/lyra:4.1
 # mysql
-mysql_image: rivernet/mysql-sky:20170626
+mysql_image: rivernet/mysql-sky:4.1
 # prometheus
-grafana_image: rivernet/grafana-sky:20170626
+grafana_image: rivernet/grafana-sky:4.1
 docker_image: rivernet/docker
 kubestatemetrics_image: rivernet/kube-state-metrics:v0.5.0
 nodeexporter_image: rivernet/node-exporter:0.12.0
 kubeapiexporter_image: rivernet/kube-api-exporter
 prometheus_image: rivernet/prometheus:v1.5.2
 # pyxis
-pyxis_image: rivernet/pyxis:20170626
+pyxis_image: rivernet/pyxis:4.1
 # river
-river_image: rivernet/river:20170626
+river_image: rivernet/river:4.1
 # sas
 keystone_image: rivernet/keystone:20161108
-sas_image: rivernet/skyform-sas:20170626
+sas_image: rivernet/skyform-sas:4.1
 # harbor
-harbor_mysql_image: rivernet/harbor-mysql:20170626
-harbor_registry_image: rivernet/harbor-registry:20170626
-harbor_ui_image: rivernet/harbor-ui:20170626
-harbor_proxy_image: rivernet/harbor-proxy:20170626
-ara_image: rivernet/ara:20170626
+harbor_mysql_image: rivernet/harbor-mysql:4.1
+harbor_registry_image: rivernet/harbor-registry:4.1
+harbor_ui_image: rivernet/harbor-ui:4.1
+harbor_proxy_image: rivernet/harbor-proxy:4.1
+ara_image: rivernet/ara:4.1
 # email for alert
 email_host: smtp.xxx.com
 email_sender: xxx@example.com
@@ -119,3 +119,7 @@ pod_run_retry: 300
 pod_run_retry_delay: 5
 
 ecp: true
+offline: true
+# Must add a slash to the following directory, otherwise the directory itself will be copied to remote hosts
+ecp_docker_images: /media/sf_vagrant-devmachines-centos7/images/
+ecp_rpms: /media/sf_vagrant-devmachines-centos7/rpms/

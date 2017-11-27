@@ -10,3 +10,5 @@ kube_ecp_dir: /etc/kubernetes/ecp
 kubeadm_config: /etc/kubernetes/kubeadm.yaml
 kube_glusterfs_dir: /etc/kubernetes/glusterfs
 kube_harbor_dir: /etc/kubernetes/harbor
+ecp_image_dir: /etc/kubernetes/image
+ecp_rpm_dir: /etc/kubernetes/rpm
