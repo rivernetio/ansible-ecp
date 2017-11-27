@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: proxy
-        image: rivernet/harbor-proxy:20170626
+        image: {{ harbor_proxy_image }}
         ports:
         - containerPort: 80
         - containerPort: 443

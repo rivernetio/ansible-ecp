@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: registry
-        image: rivernet/harbor-registry:20170626
+        image: {{ harbor_registry_image }}
         ports:
         - containerPort: 5000
         - containerPort: 5001
