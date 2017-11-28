@@ -1,10 +1,10 @@
 ---
 
-#- hosts: cluster
-#  gather_facts: no
-#  become: yes
-#  roles:
-#    - { role: load, tags: load }
+- hosts: cluster
+  gather_facts: no
+  become: yes
+  roles:
+    - { role: load, tags: load }
 
 - hosts: masters[0]
   gather_facts: yes
