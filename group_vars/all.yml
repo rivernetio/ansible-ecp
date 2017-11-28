@@ -29,8 +29,10 @@ kubelet_pod_infra_image: docker.io/rivernet/pause-amd64:3.0
 k8s_dashboard_image: rivernet/kubernetes-dashboard-amd64:v1.7.1
 ############################################################################
 # Configuration for glusterfs
-glusterfs_image: gluster/gluster-centos:gluster3u9_centos7
-heketi_image: heketi/heketi:dev
+# docker pull rivernet/gluster-centos:latest
+glusterfs_image: rivernet/gluster-centos@sha256:5e86156d721ddeaf75972299efd000794cf7bc3da8cbd5aae4ddfd73e36c4534
+# docker pull rivernet/heketi:dev
+heketi_image: rivernet/heketi@sha256:44f5a6c2fd037f06dd74ac52daf67a8633f88f0c1f5419cbeea22872ecc76ba8
 ############################################################################
 # Configuration for networks
 calico_etcd_image: rivernet/etcd:v3.1.10
@@ -122,7 +124,7 @@ pod_run_retry: 300
 # Pod starting retry delay
 pod_run_retry_delay: 5
 
-ecp: true
+#ecp: true
 #offline: true
 # Must add a slash to the following directory, otherwise the directory itself will be copied to remote hosts
 ecp_docker_images: /media/sf_vagrant-devmachines-centos7/images/
