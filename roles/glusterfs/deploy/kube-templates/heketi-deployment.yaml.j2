@@ -2,43 +2,43 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: deploy-heketi
+  name: heketi
   labels:
     glusterfs: heketi-service
-    deploy-heketi: service
+    heketi: service
   annotations:
     description: Exposes Heketi Service
 spec:
   selector:
-    deploy-heketi: pod
+    glusterfs: heketi-pod
   ports:
-  - name: deploy-heketi
+  - name: heketi
     port: 8080
     targetPort: 8080
 ---
 kind: Deployment
 apiVersion: extensions/v1beta1
 metadata:
-  name: deploy-heketi
+  name: heketi
   labels:
     glusterfs: heketi-deployment
-    deploy-heketi: deployment
+    heketi: deployment
   annotations:
     description: Defines how to deploy Heketi
 spec:
   replicas: 1
   template:
     metadata:
-      name: deploy-heketi
+      name: heketi
       labels:
         glusterfs: heketi-pod
-        deploy-heketi: pod
+        heketi: pod
     spec:
       serviceAccountName: heketi-service-account
       containers:
-      - image: heketi/heketi:dev
+      - image: {{ heketi_image }}
         imagePullPolicy: IfNotPresent
-        name: deploy-heketi
+        name: heketi
         env:
         - name: HEKETI_USER_KEY
           value: ${HEKETI_USER_KEY}
@@ -73,6 +73,9 @@ spec:
             port: 8080
       volumes:
       - name: db
+        glusterfs:
+          endpoints: heketi-storage-endpoints
+          path: heketidbstorage
       - name: config
         secret:
           secretName: heketi-config-secret

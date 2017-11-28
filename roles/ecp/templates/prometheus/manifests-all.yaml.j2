@@ -131,7 +131,7 @@ spec:
     spec:
       containers:
       - name: grafana-import-dashboards
-        image: {{ docker_image }}
+        image: {{ curl_image }}
         command: ["/bin/sh", "-c"]
         workingDir: /opt/grafana-import-dashboards
         args:

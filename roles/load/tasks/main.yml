@@ -1,7 +1,12 @@
+- debug:
+    msg: "You did not specify offline mode. Skip copying docker images to remote hosts."
+  when: offline is not defined or not offline | bool
+
 - import_tasks: load.yml
   when:
     - offline is defined
     - offline | bool
+
 
   
 

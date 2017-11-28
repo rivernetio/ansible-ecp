@@ -28,6 +28,10 @@ kubelet_pod_infra_image: docker.io/rivernet/pause-amd64:3.0
 # Configuration for k8s dashboard
 k8s_dashboard_image: rivernet/kubernetes-dashboard-amd64:v1.7.1
 ############################################################################
+# Configuration for glusterfs
+glusterfs_image: gluster/gluster-centos:gluster3u9_centos7
+heketi_image: heketi/heketi:dev
+############################################################################
 # Configuration for networks
 calico_etcd_image: rivernet/etcd:v3.1.10
 calico_node_image: rivernet/node:v2.6.2
@@ -63,10 +67,10 @@ lyra_image: rivernet/lyra:4.1
 mysql_image: rivernet/mysql-sky:4.1
 # prometheus
 grafana_image: rivernet/grafana-sky:4.1
-docker_image: rivernet/docker
+curl_image: rivernet/curl:ubuntu-precise
 kubestatemetrics_image: rivernet/kube-state-metrics:v0.5.0
 nodeexporter_image: rivernet/node-exporter:0.12.0
-kubeapiexporter_image: rivernet/kube-api-exporter
+kubeapiexporter_image: rivernet/kube-api-exporter:master-2fe5dfb
 prometheus_image: rivernet/prometheus:v1.5.2
 # pyxis
 pyxis_image: rivernet/pyxis:4.1
@@ -94,9 +98,9 @@ app_images:
   - docker.io/rivernet/tensorflow:4.1
   - docker.io/rivernet/jupyter:4.1
   - docker.io/rivernet/web-vote-app:v0.1
-  - docker.io/rivernet/redis
-  - docker.io/rivernet/redis_exporter
-  - docker.io/rivernet/docker
+  - docker.io/rivernet/redis:3.0
+  - docker.io/rivernet/redis_exporter:v0.14
+  - docker.io/rivernet/curl:ubuntu-precise
   - docker.io/rivernet/tomcat:8.0.47-r0
 
 #############################################################################
@@ -119,7 +123,7 @@ pod_run_retry: 300
 pod_run_retry_delay: 5
 
 ecp: true
-offline: true
+#offline: true
 # Must add a slash to the following directory, otherwise the directory itself will be copied to remote hosts
 ecp_docker_images: /media/sf_vagrant-devmachines-centos7/images/
 ecp_rpms: /media/sf_vagrant-devmachines-centos7/rpms/
