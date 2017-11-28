@@ -2,9 +2,10 @@
   file: path={{ ecp_image_dir }} state=directory
 
 - name: Copy docker images to all hosts
-  copy:
+  synchronize:
     src: "{{ ecp_docker_images }}"
     dest: "{{ ecp_image_dir }}"
+    checksum: yes
 
 - name: Load docker images
   shell: |
