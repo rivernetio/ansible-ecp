@@ -118,11 +118,13 @@ spec:
              value: 'false'
            - name: TOKEN_ENABLE
              value: 'false'
-#           - name: HARBOR_URL
-#             valueFrom:
-#               configMapKeyRef:
-#                 name: config
-#                 key: harbor.url
+{% if ecp is defined and ecp | bool %}
+           - name: HARBOR_URL
+             valueFrom:
+               configMapKeyRef:
+                 name: ecp-config
+                 key: harbor.url
+{% endif %}
            - name: SAS_DEBUG_PORT
              value: '8998'
            - name: SERVICE_TYPE
