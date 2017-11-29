@@ -1,0 +1,27 @@
+---
+- name: Wait until kubedns starts to run
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get po --namespace=kube-system --no-headers=true -l k8s-app=kube-dns
+  register: check_kubedns
+  until: check_kubedns.rc == 0 and check_kubedns.stdout.find("Running") != -1
+  retries: "{{ pod_run_retry | int }}"
+  delay: "{{ pod_run_retry_delay | int }}"
+  run_once: true
+  delegate_to: "{{ master_hosts[0] }}"
+
+- name: Get kubedns address
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get po --namespace=kube-system --no-headers=true -l k8s-app=kube-dns -o wide | awk '{print $6}'
+  register: get_kube_dns_pod_ip
+  run_once: true
+  delegate_to: "{{ master_hosts[0] }}"
+
+- name: Ping kubedns POD ip from all hosts to validate POD network
+  command: 'ping -c 3 {{ get_kube_dns_pod_ip.stdout }}'
+  register: check_ping
+  until: check_ping.rc == 0
+  retries: 60
+  delay: 5
+
