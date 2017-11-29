@@ -48,12 +48,3 @@
   delegate_to: "{{ master_hosts[0] }}"
   run_once: true
 
-- name: Wait until kubedns starts to run
-  shell: |
-    kubectl --kubeconfig={{ kubeadmin_config }} \
-            get po --namespace=kube-system | grep kube-dns
-  register: check_kubedns
-  until: check_kubedns.rc == 0 and check_kubedns.stdout.find("Running") != -1
-  retries: "{{ pod_run_retry | int }}"
-  delay: "{{ pod_run_retry_delay | int }}"
-

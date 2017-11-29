@@ -1,0 +1,27 @@
+---
+- name: Wait until calico-etcd starts to run
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get po --namespace=kube-system --no-headers=true -l k8s-app=calico-etcd
+  register: check_calico_etcd
+  until: check_calico_etcd.rc == 0 and check_calico_etcd.stdout.find("Running") != -1
+  retries: "{{ pod_run_retry | int }}"
+  delay: "{{ pod_run_retry_delay | int }}"
+
+- name: Copy calicoctl binary
+  copy:
+    src: "../binary/calicoctl"
+    dest: "{{ network_dir }}"
+    mode: 0755
+
+- name: Validate calico profile, timeout in 5 minutes
+  command: "{{ network_dir }}/calicoctl get profile"
+  environment:
+    ETCD_ENDPOINTS: 'http://{{ master_hosts[0] }}:6666'
+  register: get_calico_profile
+  until: 
+    - get_calico_profile.stdout.find("k8s_ns.default") != -1
+    - get_calico_profile.stdout.find("k8s_ns.kube-system") != -1
+  retries: 60
+  delay: 5
+

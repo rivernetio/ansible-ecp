@@ -1,0 +1,11 @@
+---
+- import_tasks: calico.yml
+  run_once: true
+  delegate_to: "{{ master_hosts[0] }}"
+
+- import_tasks: kubedns.yml
+
+- import_tasks: k8s.yml
+  run_once: true
+  delegate_to: "{{ master_hosts[0] }}"
+
