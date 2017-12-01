@@ -1,0 +1,36 @@
+---
+- name: Create ara directory
+  file: path={{ kube_ecp_dir }}/ara state=directory
+
+- name: Copy ara yaml file
+  template: src={{ item }} dest={{ kube_ecp_dir }}/ara/{{ item | basename | regex_replace('\.j2', '') }}
+  with_fileglob:
+    - ../templates/ara/*.j2
+
+- name: Check if ara rc already exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get rc --namespace={{ ecp_namespace }} | grep firmament-ara
+  register: check_ara_rc
+  failed_when: check_ara_rc.rc != 0 and check_ara_rc.rc != 1
+
+- name: Check if ara service already exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get svc --namespace={{ ecp_namespace }} | grep ara-firmament-com
+  register: check_ara_svc
+  failed_when: check_ara_svc.rc != 0 and check_ara_svc.rc != 1
+    
+- name: Create ara rc
+  when: check_ara_rc.rc != 0
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            create -f {{ kube_ecp_dir }}/ara/ara-controller.yaml
+  run_once: true
+
+- name: Create ara service
+  when: check_ara_svc.rc != 0
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            create -f {{ kube_ecp_dir }}/ara/ara-service.yaml
+  run_once: true

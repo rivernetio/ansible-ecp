@@ -137,10 +137,13 @@ scrape_configs:
     regex: __meta_kubernetes_service_label_(.+)
   - source_labels: [__meta_kubernetes_namespace]
     action: replace
-    target_label: kubernetes_namespace
+    target_label: namespace
   - source_labels: [__meta_kubernetes_service_name]
     action: replace
-    target_label: kubernetes_name
+    target_label: service
+  - source_labels: [__meta_kubernetes_pod_name]
+    action: replace
+    target_label: pod
   - source_labels: [__meta_kubernetes_pod_node_name]
     action: replace
     target_label: kubernetes_io_hostname

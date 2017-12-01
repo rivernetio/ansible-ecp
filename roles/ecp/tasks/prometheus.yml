@@ -79,12 +79,27 @@
   run_once: true
   register: check_prometheus_deploy
   failed_when: check_prometheus_deploy.rc != 0 and check_prometheus_deploy.rc != 1
+  
+- name: Check if custom-metrics-apiserver deployment already exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get deploy --namespace={{ ecp_namespace }} | grep custom-metrics-apiserver
+  run_once: true
+  register: check_custom_metrics_apiserver_deploy
+  failed_when: check_custom_metrics_apiserver_deploy.rc != 0 and check_custom_metrics_apiserver_deploy.rc != 1
 
 - name: Create prometheus, exporters, and grafana
   when: check_prometheus_deploy.rc != 0
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
             create -f {{ kube_ecp_dir }}/prometheus/manifests-all.yaml
+  run_once: true
+  
+- name: Create custom-metrics-apiserver
+  when: check_custom_metrics_apiserver_deploy.rc != 0
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            create -f {{ kube_ecp_dir }}/prometheus/custom-metrics.yaml
   run_once: true
 
 - name: Wait until grafana pod starts to run
@@ -105,7 +120,7 @@
   retries: "{{ pod_run_retry | int }}"
   delay: "{{ pod_run_retry_delay | int }}"
 
-- name: Wait until prometheus podd starts to run
+- name: Wait until prometheus pod starts to run
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
             get po --namespace={{ ecp_namespace }} | grep prometheus
@@ -114,3 +129,11 @@
   retries: "{{ pod_run_retry | int }}"
   delay: "{{ pod_run_retry_delay | int }}"
 
+- name: Wait until custom-metrics-apiserver pod starts to run
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get po --namespace={{ ecp_namespace }} | grep custom-metrics-apiserver
+  register: check_custom_metrics_apiserver
+  until: check_custom_metrics_apiserver.rc == 0 and check_custom_metrics_apiserver.stdout.find("Running") != -1
+  retries: "{{ pod_run_retry | int }}"
+  delay: "{{ pod_run_retry_delay | int }}"
