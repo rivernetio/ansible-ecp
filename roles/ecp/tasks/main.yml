@@ -38,14 +38,6 @@
   tags:
     - ecp_appstore
 
-- name: Create logging service
-  when: 
-    - ecp is defined
-    - ecp | bool
-  import_tasks: logging.yml
-  tags:
-    - ecp_logging
-
 - name: Create events service
   when:
     - ecp is defined
@@ -78,4 +70,12 @@
   import_tasks: pyxis.yml
   tags:
     - ecp_pyxis
+
+- name: Create logging service
+  when: 
+    - ecp is defined
+    - ecp | bool
+  import_tasks: logging.yml
+  tags:
+    - ecp_logging
 
