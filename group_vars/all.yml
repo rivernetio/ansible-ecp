@@ -96,6 +96,26 @@ email_password: xxxxxx
 # public ip
 public_ip: 10.211.64.107
 #############################################################################
+# NodePorts:
+k8s_dashboard_nodeport: 30080
+rudder_nodeport: 32000
+canes_nodeport: 30907
+elasticsearch_nodeport: 30905
+kibana_nodeport: 30906
+events_nodeport: 30901
+license_nodeport: 32081
+lyra_nodeport: 31083
+mysql_nodeport: 31036
+grafana_nodeport: 31000
+kubestatemetrics_nodeport: 30869
+prometheus_nodeport: 30900
+pyxis_nodeport: 31081
+sas_api_nodeport: 31898
+sas_http_nodeport: 31899
+harbor_http_nodeport: 31095
+harbor_http4ecp_nodeport: 31096
+harbor_https_nodeport: 31443
+#############################################################################
 # Images used for applications in the appstore
 # All images must start with docker.io/rivernet
 app_images:

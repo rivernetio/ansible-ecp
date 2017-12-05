@@ -67,7 +67,7 @@ spec:
   type: NodePort
   ports:
     - port: 3000
-      nodePort: 31000
+      nodePort: {{ grafana_nodeport }}
   selector:
     app: grafana
     component: core
@@ -219,6 +219,7 @@ spec:
   ports:
   - name: kube-state-metrics
     port: 8080
+    nodePort: {{ kubestatemetrics_nodeport }}
 ---
 apiVersion: v1
 kind: Service
@@ -234,7 +235,7 @@ spec:
   type: NodePort
   ports:
     - port: 9090
-      nodePort: 30900
+      nodePort: {{ prometheus_nodeport }}
       protocol: TCP
       name: webui
   selector:

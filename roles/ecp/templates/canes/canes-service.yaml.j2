@@ -11,5 +11,6 @@ spec:
   ports:
   - port: 8084
     targetPort: 8080
+    nodePort: {{ canes_nodeport }}
   type:
     NodePort

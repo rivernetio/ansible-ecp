@@ -46,7 +46,7 @@ spec:
     port: 5000
     protocol: TCP
     targetPort: 5000
-    nodePort: 31051
+    nodePort: {{ rudder_nodeport }}
   selector:
     app: helm-rudder
     type: api
