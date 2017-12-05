@@ -11,6 +11,7 @@ spec:
   - port: 5601
     protocol: TCP
     targetPort: ui
+    nodePort: {{ kibana_nodeport }}
   type:
     NodePort
   selector:

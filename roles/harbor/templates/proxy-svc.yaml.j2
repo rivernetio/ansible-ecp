@@ -10,11 +10,12 @@ spec:
   ports:
     - name: http
       port: 80
-      nodePort: 31095
+      nodePort: {{ harbor_http_nodeport }}
     - name: http4ecp
       port: 8080
-      nodePort: 31096
+      nodePort: {{ harbor_http4ecp_nodeport }}
     - name: https
       port: 443
+      nodePort: {{ harbor_https_nodeport }}
   selector:
     name: proxy

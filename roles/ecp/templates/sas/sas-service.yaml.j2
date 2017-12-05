@@ -12,8 +12,9 @@ spec:
   - name: api
     port: 8980
     targetPort: 8980
-    nodePort: 31898
+    nodePort: {{ sas_api_nodeport }}
   - name: http
     port: 8999
     targetPort: 8999
+    nodePort: {{ sas_http_nodeport }}
   type: NodePort
