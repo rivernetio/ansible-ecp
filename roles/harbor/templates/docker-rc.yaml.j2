@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: docker
+  labels:
+    name: docker
+  namespace: harbor
+spec:
+  replicas: 1
+  selector:
+    name: docker
+  template:
+    metadata:
+      labels:
+        name: docker
+    spec:
+      containers:
+      - name: docker
+        image: {{ harbor_docker_image }}
+        ports:
+        - containerPort: 2375
+        args:
+        - --storage-driver=overlay
+        - --insecure-registry=registry.harbor:5000
+        securityContext:
+          privileged: true
+      nodeSelector:
+        harbor: "yes"

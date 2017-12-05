@@ -97,6 +97,21 @@
   register: check_proxy_svc
   failed_when: check_proxy_svc.rc != 0 and check_proxy_svc.rc != 1
   
+  
+- name: Check if docker rc already exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get rc --namespace=harbor | grep docker
+  register: check_docker_rc
+  failed_when: check_docker_rc.rc != 0 and check_docker_rc.rc != 1
+
+- name: Check if docker service already exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get svc --namespace=harbor | grep docker
+  register: check_docker_svc
+  failed_when: check_docker_svc.rc != 0 and check_docker_svc.rc != 1
+  
 - name: Create mysql rc
   when: check_mysql_rc.rc != 0
   shell: |
@@ -187,6 +202,29 @@
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
             create -f {{ kube_harbor_dir }}/proxy-svc.yaml
+  run_once: true
+  
+- name: Create docker rc
+  when: check_docker_rc.rc != 0
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            create -f {{ kube_harbor_dir }}/docker-rc.yaml
+  run_once: true
+
+- name: Wait until docker pod starts to run
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get po --namespace=harbor | grep docker
+  register: check_harbor_docker
+  until: check_harbor_docker.rc == 0 and check_harbor_docker.stdout.find("Running") != -1
+  retries: "{{ pod_run_retry | int }}"
+  delay: "{{ pod_run_retry_delay | int }}"
+
+- name: Create docker service
+  when: check_docker_svc.rc != 0
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            create -f {{ kube_harbor_dir }}/docker-svc.yaml
   run_once: true
   
 - name: Get registry service clusterIP
