@@ -1,10 +1,9 @@
 ---
-
 - hosts: cluster
   gather_facts: no
   become: yes
   roles:
-    - { role: load, tags: load }
+    - { role: prerequisite, tags: prerequisite }
 
 - hosts: masters[0]
   gather_facts: yes

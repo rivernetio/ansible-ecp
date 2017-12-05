@@ -1,0 +1,17 @@
+---
+- name: Install required software
+  when: ansible_os_family == "RedHat"
+  yum:
+    name: "{{ item }}"
+    update_cache: yes
+    state: present
+  with_items: "{{ required_softwares }}"
+
+- name: Install required software 
+  when: ansible_os_family == "Debian"
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+    state: present
+  with_items: "{{ required_softwares }}"
+
