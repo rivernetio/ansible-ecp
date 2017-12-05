@@ -51,7 +51,7 @@ ecp_namespace: sky-firmament
 # appstore
 rudder_image: rivernet/rudder:4.1
 helm_image: rivernet/helm:v2.2.3
-tiller_image: rivernet/tiller:v2.2.3
+tiller_image: rivernet/tiller:v2.6.2
 ecp_charts_url: https://github.com/rivernetio/charts/raw/master/repo/stable
 # Do NOT add the final slash to 'local'
 ecp_local_charts: /home/vagrant/charts/repo/local
