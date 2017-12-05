@@ -229,7 +229,7 @@
   
 - name: Get registry service clusterIP
   shell: |
-    kubectl --kubeconfig={{ kubeadmin_config }} get service registry --namespace=harbor|grep registry|awk '{print $2}'
+    kubectl --kubeconfig={{ kubeadmin_config }} get svc registry -n harbor -ojsonpath='{.spec.clusterIP}'
   register: get_harbor_registry_clusterip
   until: get_harbor_registry_clusterip.stderr == "" and get_harbor_registry_clusterip.stdout != ""
   retries: 20
@@ -245,7 +245,7 @@
   
 - name: Get ui service clusterIP
   shell: |
-    kubectl --kubeconfig={{ kubeadmin_config }} get service ui --namespace=harbor|grep ui|awk '{print $2}'
+    kubectl --kubeconfig={{ kubeadmin_config }} get svc ui -n harbor -ojsonpath='{.spec.clusterIP}'
   register: get_harbor_ui_clusterip
   until: get_harbor_ui_clusterip.stderr == "" and get_harbor_ui_clusterip.stdout != ""
   retries: 20
