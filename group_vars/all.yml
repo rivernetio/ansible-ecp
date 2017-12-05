@@ -83,6 +83,7 @@ harbor_mysql_image: rivernet/harbor-mysql:4.1
 harbor_registry_image: rivernet/harbor-registry:4.1
 harbor_ui_image: rivernet/harbor-ui:4.1
 harbor_proxy_image: rivernet/harbor-proxy:4.1
+harbor_docker_image: rivernet/docker:stable-dind
 ara_image: rivernet/ara:4.1
 # email for alert
 email_host: smtp.xxx.com
