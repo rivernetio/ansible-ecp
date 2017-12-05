@@ -42,6 +42,10 @@ calico_kube_controllers_image: rivernet/kube-controllers:v1.0.0
 calico_policy_controller_image: rivernet/kube-policy-controller:v0.7.0
 flannel_image: rivernet/flannel:v0.7.1-amd64
 ############################################################################
+# Required softwares to be installed on all hosts
+required_softwares:
+  - rsync
+############################################################################
 # Configuration for ECP
 # Docker registry
 registry_domain: docker.io
@@ -105,7 +109,6 @@ app_images:
   - docker.io/rivernet/redis_exporter:v0.14
   - docker.io/rivernet/curl:ubuntu-precise
   - docker.io/rivernet/tomcat:8.0.47-r0
-
 #############################################################################
 service_subnet: 10.96.0
 service_cidr: "{{ service_subnet }}.0/12"
