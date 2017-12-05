@@ -60,6 +60,14 @@
   import_tasks: sas.yml
   tags:
     - ecp_sas
+    
+- name: Create ara service
+  when:
+    - ecp is defined
+    - ecp | bool
+  import_tasks: ara.yml
+  tags:
+    - ecp_ara
 
 - name: Create pyxis service
   import_tasks: pyxis.yml
