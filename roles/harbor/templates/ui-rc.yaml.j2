@@ -18,6 +18,8 @@ spec:
       - name: ui
         image: {{ harbor_ui_image }}
         env:
+          - name: DOCKER_HOST_URL
+            value: http://docker:2375
           - name: MYSQL_HOST
             value: mysql
           - name: MYSQL_PORT
