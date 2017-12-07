@@ -60,6 +60,10 @@ spec:
         env:
         - name: FLUENTD_ARGS
           value: --no-supervisor -q
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
         resources:
           limits:
             memory: 500Mi
