@@ -75,6 +75,7 @@ kubestatemetrics_image: rivernet/kube-state-metrics:v0.5.0
 nodeexporter_image: rivernet/node-exporter:0.12.0
 kubeapiexporter_image: rivernet/kube-api-exporter:master-2fe5dfb
 prometheus_image: rivernet/prometheus:v1.5.2
+prometheus_adapter_image: rivernet/k8s-prometheus-adapter:v0.2.0-beta.0
 # pyxis
 pyxis_image: rivernet/pyxis:4.1
 # river

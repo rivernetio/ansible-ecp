@@ -84,7 +84,7 @@ spec:
       serviceAccountName: custom-metrics-apiserver
       containers:
       - name: custom-metrics-server
-        image: luxas/k8s-prometheus-adapter
+        image: {{ prometheus_adapter_image }}
         args:
         - --prometheus-url=http://prometheus.sky-firmament:9090
         - --metrics-relist-interval=30s
