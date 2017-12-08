@@ -285,7 +285,7 @@ data:
       filters [{ "_SYSTEMD_UNIT": "docker.service" }]
       pos_file /var/log/gcp-journald-docker.pos
       read_from_head true
-      tag docker
+      tag "system.#{ENV['NODE_NAME']}"
     </source>
 
     <source>
@@ -293,7 +293,7 @@ data:
       filters [{ "_SYSTEMD_UNIT": "kubelet.service" }]
       pos_file /var/log/gcp-journald-kubelet.pos
       read_from_head true
-      tag kubelet
+      tag "system.#{ENV['NODE_NAME']}"
     </source>
 
     <source>
@@ -301,7 +301,7 @@ data:
       filters [{ "_SYSTEMD_UNIT": "node-problem-detector.service" }]
       pos_file /var/log/gcp-journald-node-problem-detector.pos
       read_from_head true
-      tag node-problem-detector
+      tag "system.#{ENV['NODE_NAME']}"
     </source>
   forward.input.conf: |-
     # Takes the messages sent over TCP
