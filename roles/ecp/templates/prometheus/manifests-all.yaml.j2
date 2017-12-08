@@ -52,6 +52,8 @@ spec:
       - name: grafana-persistent-storage
         hostPath:
           path: /grafanaData
+      nodeSelector:
+        prometheus: "yes"
 ---
 apiVersion: v1
 kind: Service
@@ -370,7 +372,5 @@ spec:
         hostPath:
           # directory location on host
           path: /prometheusData
-      nodeSelector:
-        prometheus: "yes"
       nodeSelector:
         prometheus: "yes"

@@ -38,3 +38,5 @@ spec:
       - name: mysql-persistent-storage
         hostPath:
           path: /usr/db_data
+      nodeSelector:
+        mysql: "yes"

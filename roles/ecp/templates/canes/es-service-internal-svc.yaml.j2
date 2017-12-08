@@ -57,3 +57,5 @@ spec:
       - hostPath:
           path: /opt/es_data
         name: es-persistent-storage
+      nodeSelector:
+        elasticsearch: "yes"

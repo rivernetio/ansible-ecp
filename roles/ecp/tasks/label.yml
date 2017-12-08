@@ -5,6 +5,8 @@
   with_items:
     - kubectl label --overwrite=true nodes {{ ansible_hostname }} appstore=yes
     - kubectl label --overwrite=true nodes {{ ansible_hostname }} prometheus=yes
+    - kubectl label --overwrite=true nodes {{ ansible_hostname }} mysql=yes
+    - kubectl label --overwrite=true nodes {{ ansible_hostname }} elasticsearch=yes
 
 - set_fact:
     worker_nodes="[]"
@@ -30,11 +32,15 @@
   with_items:
     - kubectl label --overwrite=true nodes {{ worker_nodes[0] }} appstore=yes
     - kubectl label --overwrite=true nodes {{ worker_nodes[0] }} prometheus=yes
+    - kubectl label --overwrite=true nodes {{ worker_nodes[0] }} mysql=yes
+    - kubectl label --overwrite=true nodes {{ worker_nodes[0] }} elasticsearch=yes
 
 - name: Label cluster with multi-worker nodes
   when: worker_nodes | length > 1
   shell: "{{ item }}"
   with_items:
     - kubectl label --overwrite=true nodes {{ worker_nodes[0] }} appstore=yes
+    - kubectl label --overwrite=true nodes {{ worker_nodes[0] }} elasticsearch=yes
     - kubectl label --overwrite=true nodes {{ worker_nodes[1] }} prometheus=yes
+    - kubectl label --overwrite=true nodes {{ worker_nodes[1] }} mysql=yes
 
