@@ -54,7 +54,7 @@ helm_image: rivernet/helm:v2.2.3
 tiller_image: rivernet/tiller:v2.6.2
 ecp_charts_url: https://github.com/rivernetio/charts/raw/master/repo/stable
 # Do NOT add the final slash to 'local'
-ecp_local_charts: /home/vagrant/charts/repo/local
+ecp_local_charts: /home/vagrant/charts/repo/
 # logging
 canes_image: rivernet/canes:4.1
 elasticsearch_image: rivernet/elasticsearch:1.5.2
