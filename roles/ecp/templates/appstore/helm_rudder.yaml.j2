@@ -80,6 +80,8 @@ spec:
           value: tiller.kube-system:44134
         - name: RUDDER_HELM_REPO_FILE
           value: /opt/rudder/helm/repositories.yaml
+        - name: RUDDER_HELM_CHART_IMAGE_DIR
+          value: /opt/rudder/helm/image
         image: {{ rudder_image }}
         args:
         - --insecure=true
