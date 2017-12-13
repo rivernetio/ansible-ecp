@@ -23,7 +23,7 @@
   copy:
     src: "{{ ecp_local_charts }}/local"
     dest: "{{ kube_ecp_dir }}/repository/"
-	
+
 - name: Copy ecp chart images
   when:
     - ecp is defined
