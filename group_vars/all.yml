@@ -120,6 +120,7 @@ harbor_https_nodeport: 31443
 # Images used for applications in the appstore
 # All images must start with docker.io/rivernet
 app_images:
+  - docker.io/rivernet/serving:4.1
   - docker.io/rivernet/tensorflow:4.1
   - docker.io/rivernet/jupyter:4.1
   - docker.io/rivernet/web-vote-app:v0.1
