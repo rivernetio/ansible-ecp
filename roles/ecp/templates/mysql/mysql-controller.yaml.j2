@@ -20,13 +20,13 @@ spec:
         env:
           # $ kubectl create secret generic mysql-pass --from-file=password.txt
           # make sure password.txt does not have a trailing newline
-        - name: MYSQL_ROOT_PASSWORD
+        - name: MYSQL_ROOT_PWD
           value: password
-        - name: MYSQL_DATABASE
+        - name: MYSQL_USER_DB
           value: keystone
         - name: MYSQL_USER
           value: keystone
-        - name: MYSQL_PASSWORD
+        - name: MYSQL_USER_PWD
           value: password 
         ports:
         - containerPort: 3306
@@ -37,6 +37,6 @@ spec:
       volumes:
       - name: mysql-persistent-storage
         hostPath:
-          path: /usr/db_data
+          path: /var/lib/mysql
       nodeSelector:
         mysql: "yes"
