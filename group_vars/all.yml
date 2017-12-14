@@ -125,7 +125,7 @@ app_images:
   - docker.io/rivernet/web-vote-app:v0.1
   - docker.io/rivernet/redis:3.0
   - docker.io/rivernet/redis_exporter:v0.14
-  - docker.io/rivernet/curl:ubuntu-precise
+  - docker.io/rivernet/curl:latest
   - docker.io/rivernet/tomcat:8.0.47-r0
 #############################################################################
 service_subnet: 10.96.0
