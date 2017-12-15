@@ -25,6 +25,7 @@ spec:
           mountPath: /storage
       volumes:
       - name: storage
-        emptyDir: {}
+        hostPath:
+          path: /storage
       nodeSelector:
         harbor: "yes"
