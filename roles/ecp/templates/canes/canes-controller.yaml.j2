@@ -16,9 +16,12 @@ spec:
         app: firmament-canes
         version: v0.3
     spec:
+      nodeSelector:
+        management: "yes"
       containers:
       - name: firmament-canes
         image: {{ canes_image }}
+        imagePullPolicy: IfNotPresent
         env:
            - name: ELASTICSEARCH_HOST
              value: elasticsearch-logging

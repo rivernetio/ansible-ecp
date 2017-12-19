@@ -82,9 +82,12 @@ spec:
         value: arm64
         effect: NoSchedule
       serviceAccountName: custom-metrics-apiserver
+      nodeSelector:
+        management: "yes"
       containers:
       - name: custom-metrics-server
         image: {{ prometheus_adapter_image }}
+        imagePullPolicy: IfNotPresent
         args:
         - --prometheus-url=http://prometheus.sky-firmament:9090
         - --metrics-relist-interval=30s

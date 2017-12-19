@@ -16,9 +16,12 @@ spec:
         app: firmament-pyxis
         version: v0.3
     spec:
+      nodeSelector:
+        management: "yes"
       containers:
       - name: firmament-pyxis
         image: {{ pyxis_image }}
+        imagePullPolicy: IfNotPresent
         env:
            - name: KUBERNETES_URL
              valueFrom:

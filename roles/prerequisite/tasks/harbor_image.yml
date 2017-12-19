@@ -1,0 +1,16 @@
+---
+- name: Create image directory
+  file: path="{{ image_tars_dir }}/harbor" state=directory
+
+- name: Copy harbor docker image tars
+  synchronize:
+    src: "{{ harbor_image_tars_dir }}/"
+    dest: "{{ image_tars_dir }}/harbor"
+    checksum: yes
+
+- name: Load docker images
+  shell: |
+    docker load -i {{ item.src }}
+  with_filetree: "{{ image_tars_dir }}/harbor"
+  when:
+    - item.state == 'file'

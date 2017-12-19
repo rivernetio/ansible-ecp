@@ -57,6 +57,7 @@ spec:
       containers:
       - name: fluentd-es
         image: {{ fluentd_image }}
+        imagePullPolicy: IfNotPresent
         env:
         - name: FLUENTD_ARGS
           value: --no-supervisor -q

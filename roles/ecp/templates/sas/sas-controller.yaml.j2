@@ -14,10 +14,12 @@ spec:
       labels:
         app: skyform-sas 
     spec:
+      nodeSelector:
+        management: "yes"
       containers:
       - name: firmament-keystone
         image: {{ keystone_image }}
-        
+        imagePullPolicy: IfNotPresent
         env:
            - name: OS_TENANT_NAME
              value: admin
@@ -73,6 +75,7 @@ spec:
         - containerPort: 35357
       - name: skyform-sas
         image: {{ sas_image }}
+        imagePullPolicy: IfNotPresent
         env:
            - name: SAS_XMS
              value: '100'

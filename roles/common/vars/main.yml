@@ -1,7 +1,7 @@
 ---
 kube_num_version: "{{ kube_version | replace('v', '') }}"
 master_hosts: "{{ groups.masters | default([]) }}"
-node_hosts: "{{ groups.nodes | default([]) }}"
+worker_hosts: "{{ groups.workers | default([]) }}"
 cluster_hosts: "{{ groups.cluster | default([]) }}"
-new_node_hosts: "{{ groups.new_nodes | default([]) }}"
-glusterfs_hosts: "{{ groups.glusterfs_nodes | default([]) }}"
+new_worker_hosts: "{{ groups.new_workers | default([]) }}"
+glusterfs_hosts: "{{ groups.glusterfs | default([]) }}"

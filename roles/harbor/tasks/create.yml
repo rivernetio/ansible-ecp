@@ -1,22 +1,4 @@
 ---
-
-- name: Get master nodes of multi-nodes cluster
-  when: master_hosts | length  >= 1
-  shell: |
-    kubectl get nodes -l kubeadm.alpha.kubernetes.io/role=master \
-        -o jsonpath='{.items[*].status.addresses[?(@.type=="Hostname")].address}'
-  register: master_nodes_result
-  until: master_nodes_result.stdout != ""
-  retries: 20
-  delay: 15
-  
-- set_fact: master_nodes={{ master_nodes_result.stdout.split(" ") }}
-  
-- name: Label harbor on the first master node
-  shell: "{{ item }}"
-  with_items:
-    - kubectl label --overwrite=true nodes {{ master_nodes[0] }} harbor=yes
-
 - name: Create harbor directory
   file: path={{ kube_harbor_dir }} state=directory
   tags:

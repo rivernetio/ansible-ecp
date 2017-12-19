@@ -1,8 +1,3 @@
-- name: Label nodes
-  import_tasks: label.yml
-  tags:
-    - ecp_label
-
 - name: Create ecp directory
   file: path={{ kube_ecp_dir }} state=directory
   tags:
@@ -22,6 +17,21 @@
   import_tasks: license.yml
   tags:
     - ecp_license
+
+- name: Create mysql service
+  import_tasks: mysql.yml
+  tags:
+    - ecp_mysql
+
+- name: Create sas service
+  import_tasks: sas.yml
+  tags:
+    - ecp_sas
+    
+- name: Create pyxis service
+  import_tasks: pyxis.yml
+  tags:
+    - ecp_pyxis
 
 - name: Create lyra service
   import_tasks: lyra.yml
@@ -51,16 +61,6 @@
   tags:
     - ecp_prometheus
 
-- name: Create mysql service
-  import_tasks: mysql.yml
-  tags:
-    - ecp_mysql
-
-- name: Create sas service
-  import_tasks: sas.yml
-  tags:
-    - ecp_sas
-    
 - name: Create ara service
   when:
     - ecp is defined
@@ -68,11 +68,6 @@
   import_tasks: ara.yml
   tags:
     - ecp_ara
-
-- name: Create pyxis service
-  import_tasks: pyxis.yml
-  tags:
-    - ecp_pyxis
 
 - name: Create logging service
   when: 

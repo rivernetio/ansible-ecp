@@ -8,4 +8,3 @@
   when:
     - offline is defined
     - offline | bool
-

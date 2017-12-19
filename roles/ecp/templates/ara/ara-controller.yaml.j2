@@ -16,9 +16,12 @@ spec:
         app: firmament-ara
         version: v0.3
     spec:
+      nodeSelector:
+        management: "yes"
       containers:
       - name: firmament-ara
         image: {{ ara_image }}
+        imagePullPolicy: IfNotPresent
         env:
            - name: ETCD_URL
              valueFrom:

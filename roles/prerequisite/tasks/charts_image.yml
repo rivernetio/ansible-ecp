@@ -1,0 +1,16 @@
+---
+- name: Create image directory
+  file: path="{{ image_tars_dir }}/charts" state=directory
+
+- name: Copy charts docker image tars
+  synchronize:
+    src: "{{ charts_image_tars_dir }}/"
+    dest: "{{ image_tars_dir }}/charts"
+    checksum: yes
+
+- name: Load docker images
+  shell: |
+    docker load -i {{ item.src }}
+  with_filetree: "{{ image_tars_dir }}/charts"
+  when:
+    - item.state == 'file'

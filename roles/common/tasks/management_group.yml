@@ -1,0 +1,25 @@
+---
+- add_host:
+    name: "{{ master_hosts[0] }}"
+    groups: managements
+  when:
+    - cluster_hosts | length >= 1 
+    - master_hosts | length >= 1
+
+- add_host:
+    name: "{{ worker_hosts[0] }}"
+    groups: managements
+  when:
+    - cluster_hosts | length >= 2
+    - worker_hosts | length == 1
+
+- add_host:
+    name: "{{ item }}"
+    groups: managements
+  with_items:
+    - "{{ worker_hosts[0] }}"
+    - "{{ worker_hosts[1] }}"
+  when:
+    - cluster_hosts | length >= 3
+    - worker_hosts | length >= 2
+

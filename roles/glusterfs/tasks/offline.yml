@@ -6,5 +6,9 @@
     name: "{{ item }}"
     state: present
   with_items:
-    - "{{ ecp_rpm_dir }}/glusterfs-fuse-3.8.4-18.4.el7.centos.x86_64.rpm"
+    - "{{ rpm_dir }}/attr-2.4.46-12.el7.x86_64.rpm"
+    - "{{ rpm_dir }}/glusterfs-client-xlators-3.8.4-18.4.el7.centos.x86_64.rpm"
+    - "{{ rpm_dir }}/glusterfs-libs-3.8.4-18.4.el7.centos.x86_64.rpm"
+    - "{{ rpm_dir }}/glusterfs-3.8.4-18.4.el7.centos.x86_64.rpm"
+    - "{{ rpm_dir }}/glusterfs-fuse-3.8.4-18.4.el7.centos.x86_64.rpm"
 

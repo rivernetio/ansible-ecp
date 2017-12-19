@@ -18,6 +18,7 @@ spec:
     spec:
       containers:
         - image: {{ grafana_image }}
+          imagePullPolicy: IfNotPresent
           name: grafana-core
           # env:
           resources:
@@ -131,9 +132,12 @@ spec:
         app: grafana
         component: import-dashboards
     spec:
+      nodeSelector:
+        management: "yes"
       containers:
       - name: grafana-import-dashboards
         image: {{ curl_image }}
+        imagePullPolicy: IfNotPresent
         command: ["/bin/sh", "-c"]
         workingDir: /opt/grafana-import-dashboards
         args:
@@ -184,10 +188,13 @@ spec:
       labels:
         app: kube-state-metrics
     spec:
+      nodeSelector:
+        management: "yes"
       serviceAccountName: kube-state-metrics
       containers:
       - name: kube-state-metrics
         image: {{ kubestatemetrics_image }}
+        imagePullPolicy: IfNotPresent
         ports:
         - name: exporter
           containerPort: 8080
@@ -262,6 +269,7 @@ spec:
     spec:
       containers:
       - image: {{ nodeexporter_image }}
+        imagePullPolicy: IfNotPresent
         name: prometheus-node-exporter
         ports:
         - name: prom-node-exp
@@ -304,10 +312,13 @@ spec:
       labels:
         name: kube-api-exporter
     spec:
+      nodeSelector:
+        management: "yes"
       serviceAccountName: kube-state-metrics
       containers:
       - name: kube-api-exporter
         image: {{ kubeapiexporter_image }}
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80
 ---
@@ -351,6 +362,7 @@ spec:
       containers:
       - name: prometheus
         image: {{ prometheus_image }}
+        imagePullPolicy: IfNotPresent
         args:
           - '-storage.local.retention=6h'
           - '-storage.local.memory-chunks=500000'

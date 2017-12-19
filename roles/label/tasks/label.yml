@@ -1,0 +1,61 @@
+---
+- set_fact:
+    management_hosts="{{ groups.managements | default([]) }}"
+
+- fail: msg="Failed to determin management hosts"
+  when: management_hosts | length == 0
+
+- name: Get management node 1
+  when:
+    - management_hosts | length  >= 1
+  shell: |
+    kubectl get nodes -o json | jq '.items[].status.addresses | select(.[].address=="{{ management_hosts[0] }}") | .[] | select(.type=="Hostname") | .address'
+  register: management_node1
+  until: management_node1.rc == 0 and management_node1.stdout != ""
+  retries: 20
+
+- name: Get management node 2
+  when:
+    - management_hosts | length  >= 2
+  shell: |
+    kubectl get nodes -o json | jq '.items[].status.addresses | select(.[].address=="{{ management_hosts[1] }}") | .[] | select(.type=="Hostname") | .address'
+  register: management_node2
+  until: management_node2.rc == 0 and management_node2.stdout != ""
+  retries: 20
+
+- name: Get management node 3
+  when:
+    - management_hosts | length  >= 3
+  shell: |
+    kubectl get nodes -o json | jq '.items[].status.addresses | select(.[].address=="{{ management_hosts[2] }}") | .[] | select(.type=="Hostname") | .address'
+  register: management_node3
+  until: management_node3.rc == 0 and management_node3.stdout != ""
+  retries: 20
+
+- name: Label cluster with one management node
+  when: 
+    - management_hosts | length == 1
+  shell: "kubectl label --overwrite=true nodes {{ management_node1.stdout }} {{ item }}"
+  with_items:
+    - appstore=yes
+    - prometheus=yes
+    - mysql=yes
+    - elasticsearch=yes
+    - management=yes
+    - k8s-app=kubernetes-dashboard
+    - harbor=yes
+
+- name: Label cluster with two management nodes
+  when: management_hosts | length == 2
+  shell: "{{ item }}"
+  with_items:
+    - kubectl label --overwrite=true nodes {{ management_node1.stdout }} management=yes k8s-app=kubernetes-dashboard harbor=yes
+    - kubectl label --overwrite=true nodes {{ management_node2.stdout }} management=yes appstore=yes prometheus=yes mysql=yes elasticsearch=yes
+
+- name: Label cluster with three or more management nodes
+  when: management_hosts | length >= 3
+  shell: "{{ item }}"
+  with_items:
+    - kubectl label --overwrite=true nodes {{ management_node1.stdout }} management=yes k8s-app=kubernetes-dashboard harbor=yes
+    - kubectl label --overwrite=true nodes {{ management_node2.stdout }} management=yes appstore=yes elasticsearch=yes
+    - kubectl label --overwrite=true nodes {{ management_node3.stdout }} management=yes prometheus=yes mysql=yes

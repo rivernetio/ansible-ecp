@@ -1,0 +1,15 @@
+- name: Create image directory
+  file: path="{{ image_tars_dir }}/cluster" state=directory
+
+- name: Copy cluster docker image tars
+  synchronize:
+    src: "{{ cluster_image_tars_dir }}/"
+    dest: "{{ image_tars_dir }}/cluster"
+    checksum: yes
+
+- name: Load docker images
+  shell: |
+    docker load -i {{ item.src }}
+  with_filetree: "{{ image_tars_dir }}/cluster"
+  when:
+    - item.state == 'file'

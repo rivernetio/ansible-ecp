@@ -1,12 +1,13 @@
 ---
 ###########################################################################
-# Configuration for yum/apt repository
+# Configuration for yum repository for CentOS 7
 yum_k8s_repo: "http://yum.kubernetes.io/repos/kubernetes-el7-x86_64"
 yum_kubectl_version: 1.7.5-0
 yum_kubelet_version: 1.7.5-0
 yum_kubernetes_cni_version: 0.5.1-0
 yum_kubeadm_version: 1.7.5-0
 ###########################################################################
+# Configuration for apt repository for Ubuntu 16.04
 apt_k8s_repo: "deb http://apt.kubernetes.io/ kubernetes-xenial main"
 apt_k8s_key: "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
 apt_kubectl_version: 1.7.5-00
@@ -27,10 +28,10 @@ kubelet_pod_infra_image: docker.io/rivernet/pause-amd64:3.0
 k8s_dashboard_image: rivernet/kubernetes-dashboard-amd64:v1.6.3
 ############################################################################
 # Configuration for glusterfs
-# docker pull rivernet/gluster-centos:latest
-glusterfs_image: rivernet/gluster-centos@sha256:5e86156d721ddeaf75972299efd000794cf7bc3da8cbd5aae4ddfd73e36c4534
-# docker pull rivernet/heketi:dev
-heketi_image: rivernet/heketi@sha256:44f5a6c2fd037f06dd74ac52daf67a8633f88f0c1f5419cbeea22872ecc76ba8
+# docker pull rivernet/gluster-centos@sha256:5e86156d721ddeaf75972299efd000794cf7bc3da8cbd5aae4ddfd73e36c4534
+glusterfs_image: rivernet/gluster-centos:latest
+# docker pull rivernet/heketi@sha256:44f5a6c2fd037f06dd74ac52daf67a8633f88f0c1f5419cbeea22872ecc76ba8
+heketi_image: rivernet/heketi:dev
 ############################################################################
 # Configuration for networks
 calico_etcd_image: rivernet/etcd:v3.1.10
@@ -38,66 +39,75 @@ calico_node_image: rivernet/node:v2.4.1
 calico_cni_image: rivernet/cni:v1.10.0
 calico_policy_controller_image: rivernet/kube-policy-controller:v0.7.0
 flannel_image: rivernet/flannel:v0.7.1-amd64
+
+# Network implementation('flannel', 'calico')
+network: calico
+pod_network_cidr: 192.168.0.0/16
+cni_opts: interface=enp0s8 # flannel: --iface=enp0s8, calico: interface=enp0s8
+service_subnet: 10.96.0
+service_cidr: "{{ service_subnet }}.0/12"
+dns_name: cluster.local
+dns_ip: "{{ service_subnet }}.10"
 ############################################################################
-# Required softwares to be installed on all hosts
+# Configuration for required softwares to be installed on all hosts
 required_softwares:
   - rsync
 ############################################################################
 # Configuration for ECP
-# Docker registry
+
+# ECP - Docker registry
 registry_domain: docker.io
-# ECP namespace
+# ECP - Namespace
 ecp_namespace: sky-firmament
-# appstore
+# ECP - Appstore
 rudder_image: rivernet/rudder:4.1
 helm_image: rivernet/helm:v2.2.3
 tiller_image: rivernet/tiller:v2.6.2
 ecp_charts_url: https://github.com/rivernetio/charts/raw/master/repo/stable
-# Do NOT add the final slash to 'local'
-ecp_local_charts: /home/vagrant/charts/repo/
-# logging
+ecp_local_charts_repo: /home/vagrant/charts/repo/
+# ECP - Logging
 canes_image: rivernet/canes:4.1
 elasticsearch_image: rivernet/elasticsearch:1.5.2
 fluentd_image: rivernet/fluentd-elasticsearch:v2.0.2
 kibana_image: rivernet/kibana:4.1.2
-# events
+# ECP - Events
 events_image: rivernet/events:4.1
-# license
+# ECP - License
 license_image: rivernet/license:4.1
-# lyra
+# ECP - Lyra
 lyra_image: rivernet/lyra:4.1
-# mysql
+# ECP - Mysql
 mysql_image: rivernet/mysql-sky:4.1
-# prometheus
+# ECP - Prometheus
 grafana_image: rivernet/grafana-sky:4.1
-curl_image: rivernet/curl
+curl_image: rivernet/curl:latest
 kubestatemetrics_image: rivernet/kube-state-metrics:v0.5.0
 nodeexporter_image: rivernet/node-exporter:0.12.0
 kubeapiexporter_image: rivernet/kube-api-exporter:master-2fe5dfb
 prometheus_image: rivernet/prometheus:v1.5.2
 prometheus_adapter_image: rivernet/k8s-prometheus-adapter:v0.2.0-beta.0
-# pyxis
+# ECP - Pyxis GUI
 pyxis_image: rivernet/pyxis:4.1
-# river
+# ECP - River Websocket
 river_image: rivernet/river:4.1
-# sas
+# ECP - Sas Authentication
 keystone_image: rivernet/keystone:20161108
 sas_image: rivernet/skyform-sas:4.1
-# harbor
+# ECP - Harbor Image Repository
 harbor_mysql_image: rivernet/harbor-mysql:4.1
 harbor_registry_image: rivernet/harbor-registry:4.1
 harbor_ui_image: rivernet/harbor-ui:4.1
 harbor_proxy_image: rivernet/harbor-proxy:4.1
 harbor_docker_image: rivernet/docker:stable-dind
 ara_image: rivernet/ara:4.1
-# email for alert
+# ECP - Email for alert
 email_host: smtp.xxx.com
 email_sender: xxx@example.com
 email_password: xxxxxx
-# public ip
+# ECP - External IP
 public_ip: 10.211.64.107
-#############################################################################
-# NodePorts:
+
+# ECP - NodePorts:
 k8s_dashboard_nodeport: 30080
 rudder_nodeport: 32000
 canes_nodeport: 30907
@@ -116,9 +126,8 @@ sas_http_nodeport: 31899
 harbor_http_nodeport: 31095
 harbor_http4ecp_nodeport: 31096
 harbor_https_nodeport: 31443
-#############################################################################
-# Images used for applications in the appstore
-# All images must start with docker.io/rivernet
+
+# ECP - Appstore Images.  All images must start with docker.io/rivernet
 app_images:
   - docker.io/rivernet/tensorflow-serving:4.1
   - docker.io/rivernet/tensorflow:4.1
@@ -129,26 +138,46 @@ app_images:
   - docker.io/rivernet/curl:latest
   - docker.io/rivernet/tomcat:8.0.47-r0
 #############################################################################
-service_subnet: 10.96.0
-service_cidr: "{{ service_subnet }}.0/12"
-dns_name: cluster.local
-dns_ip: "{{ service_subnet }}.10"
-
-# Network implementation('flannel', 'calico')
-network: calico
-pod_network_cidr: 192.168.0.0/16
-cni_opts: interface=enp0s8 # flannel: --iface=enp0s8, calico: interface=enp0s8
-
 # Tain master
 taint_master: true
-
+#############################################################################
 # Pod starting retries
 pod_run_retry: 300
 # Pod starting retry delay
 pod_run_retry_delay: 5
-
-#ecp: true
-#offline: true
-# Must add a slash to the following directory, otherwise the directory itself will be copied to remote hosts
-ecp_docker_images: /media/sf_vagrant-devmachines-centos7/images/
-ecp_rpms: /media/sf_vagrant-devmachines-centos7/rpms/
+#############################################################################
+# Enable ECP Enterprise version
+ecp: true
+#############################################################################
+# Enable Offline install
+offline: true
+# Docker image tar files
+src_image_tars_dir: "/vagrant/image_tars"
+# Image for all cluster nodes
+cluster_image_tars_dir: "{{ src_image_tars_dir }}/cluster"
+# Image for management nodes
+management_image_tars_dir: "{{ src_image_tars_dir }}/management"
+# Image for GlusterFS nodes
+glusterfs_image_tars_dir: "{{ src_image_tars_dir }}/gluster"
+# Image for Harbor node
+harbor_image_tars_dir: "{{ src_image_tars_dir }}/harbor"
+# Image for Appstore charts
+charts_image_tars_dir: "{{ src_image_tars_dir }}/charts"
+#############################################################################
+# RPM files
+src_rpms_dir: "/vagrant/rpms/"
+#############################################################################
+# Required RPM files for offline install:
+# ---------------------------------------------------------------------------
+# attr-2.4.46-12.el7.x86_64.rpm
+# glusterfs-3.8.4-18.4.el7.centos.x86_64.rpm
+# glusterfs-client-xlators-3.8.4-18.4.el7.centos.x86_64.rpm
+# glusterfs-fuse-3.8.4-18.4.el7.centos.x86_64.rpm
+# glusterfs-libs-3.8.4-18.4.el7.centos.x86_64.rpm
+# kubeadm-1.7.5-0.x86_64.rpm
+# kubectl-1.7.5-0.x86_64.rpm
+# kubelet-1.7.5-0.x86_64.rpm
+# kubernetes-cni-0.5.1-0.x86_64.rpm
+# socat-1.7.3.2-2.el7.x86_64.rpm
+# yum-plugin-versionlock-1.1.31-42.el7.noarch.rpm
+#############################################################################

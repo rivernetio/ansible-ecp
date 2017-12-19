@@ -20,10 +20,13 @@ spec:
         type: api
       name: river
     spec:
+      nodeSelector:
+        management: "yes"
       serviceAccountName: river
       containers:
       - name: river
         image: {{ river_image }}
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8000
           name: api

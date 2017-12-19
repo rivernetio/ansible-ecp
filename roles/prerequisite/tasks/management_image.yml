@@ -1,0 +1,16 @@
+---
+- name: Create image directory
+  file: path="{{ image_tars_dir }}/management" state=directory
+
+- name: Copy management docker image tars
+  synchronize:
+    src: "{{ management_image_tars_dir }}/"
+    dest: "{{ image_tars_dir }}/management"
+    checksum: yes
+
+- name: Load docker images
+  shell: |
+    docker load -i {{ item.src }}
+  with_filetree: "{{ image_tars_dir }}/management"
+  when:
+    - item.state == 'file'

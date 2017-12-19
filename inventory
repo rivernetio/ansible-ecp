@@ -1,17 +1,34 @@
+# Must specify all hosts in IPv4 address format. Host name is not supported.
+# All hosts must have passwordless ssh between other as root.
+# Make sure to modify group_vars/all.yml to correctly specify all values.
+
+# Kubernetes master node.
+# Currently HA mode is not supported.
 [masters]
 10.211.64.107
 
-[nodes]
+# Kubernetes worker (non-master) nodes.
+# Currently you must specify at least two worker nodes, such that there are
+# at least three nodes in the cluster. Gluster FS, which requires at least
+# 3 hosts  will be installed in the same cluster.
+[workers]
 10.211.64.109
 10.211.64.111
 
-[new_nodes]
-
 [cluster:children]
 masters
-nodes
+workers
 
-[glusterfs_nodes]
+# Inventory for Gluster FS nodes. This is hyperconverged installation,
+# meaning all Gluster FS nodes must also be kubernetes nodes.
+# 
+# The glusterfs_devices and glusterfs_hostname variables are used by the
+# installer to generate the proper topology file for glusterfs deployment.
+[glusterfs]
 10.211.64.107 glusterfs_devices='["/dev/sdb"]' glusterfs_hostname='kube07'
 10.211.64.109 glusterfs_devices='["/dev/sdb"]' glusterfs_hostname='kube09'
 10.211.64.111 glusterfs_devices='["/dev/sdb"]' glusterfs_hostname='kube11'
+
+# Specify new worker nodes during scale up
+[new_workers]
+

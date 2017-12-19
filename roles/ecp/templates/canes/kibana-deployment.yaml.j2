@@ -15,9 +15,12 @@ spec:
       labels:
         k8s-app: kibana-logging
     spec:
+      nodeSelector:
+        management: "yes"
       containers:
       - name: kibana-logging
         image: {{ kibana_image }}
+        imagePullPolicy: IfNotPresent
         resources:
           # need more cpu upon initialization, therefore burstable class
           limits:

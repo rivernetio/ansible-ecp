@@ -16,6 +16,7 @@ spec:
     spec:
       containers:
       - image: {{ mysql_image }}
+        imagePullPolicy: IfNotPresent
         name: mysql
         env:
           # $ kubectl create secret generic mysql-pass --from-file=password.txt

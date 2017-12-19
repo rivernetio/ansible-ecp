@@ -1,0 +1,20 @@
+---
+- name: Create image directory
+  file: path="{{ image_tars_dir }}/glusterfs" state=directory
+
+- name: Copy glusterfs docker image tars
+  synchronize:
+    src: "{{ glusterfs_image_tars_dir }}/"
+    dest: "{{ image_tars_dir }}/glusterfs"
+    checksum: yes
+
+- name: Load docker images
+  shell: |
+    docker load -i {{ item.src }}
+  with_filetree: "{{ image_tars_dir }}/glusterfs"
+  when:
+    - item.state == 'file'
+
+- name: Retag heketi image
+  shell: |
+    docker tag {{ heketi_image }} docker.io/heketi/heketi:dev

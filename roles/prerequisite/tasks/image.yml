@@ -1,16 +1,14 @@
-- name: Create image directory
-  file: path={{ ecp_image_dir }} state=directory
+- include_tasks: cluster_image.yml
+  when: "'cluster' in group_names"
 
-- name: Copy docker images to all hosts
-  synchronize:
-    src: "{{ ecp_docker_images }}"
-    dest: "{{ ecp_image_dir }}"
-    checksum: yes
+- include_tasks: glusterfs_image.yml
+  when: "'glusterfs' in group_names"
 
-- name: Load docker images
-  shell: |
-    docker load -i {{ item.src }}
-  with_filetree: "{{ ecp_image_dir }}"
-  when:
-    - item.state == 'file'
+- include_tasks: harbor_image.yml
+  when: "'masters' in group_names"
 
+- include_tasks: charts_image.yml
+  when: "'masters' in group_names"
+
+- include_tasks: management_image.yml
+  when: "'managements' in group_names"

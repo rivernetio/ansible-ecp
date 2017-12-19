@@ -29,3 +29,5 @@
   when: ansible_os_family == "Debian"
   set_fact:
     system_env_dir: "/etc/default"
+
+- import_tasks: management_group.yml

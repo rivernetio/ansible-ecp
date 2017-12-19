@@ -12,16 +12,17 @@
     - { role: master, tags: master }
     - { role: cni, tags: cni }
 
-- hosts: nodes
+- hosts: workers
   gather_facts: no
   become: yes
   roles:
-    - { role: node, tags: node }
+    - { role: worker, tags: worker }
 
 - hosts: masters[0]
   gather_facts: no
   become: yes
   roles:
+    - { role: label, tags: label }
     - { role: addon, tags: addon }
 
 - hosts: cluster
@@ -41,3 +42,4 @@
   become: yes
   roles:
     - { role: ecp, tags: ecp }
+

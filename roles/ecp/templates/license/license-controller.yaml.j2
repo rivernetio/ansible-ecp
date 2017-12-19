@@ -16,9 +16,12 @@ spec:
         app: firmament-license
         version: v0.1
     spec:
+      nodeSelector:
+        management: "yes"
       containers:
       - name: firmament-license
         image: {{ license_image }}
+        imagePullPolicy: IfNotPresent
         resources:
           limits:
             memory: 600Mi
