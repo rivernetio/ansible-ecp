@@ -14,3 +14,6 @@
   with_filetree: "{{ image_tars_dir }}/harbor"
   when:
     - item.state == 'file'
+
+- name: Remove harbor docker image tars
+  file: path="{{ image_tars_dir }}/harbor" state=absent

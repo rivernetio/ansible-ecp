@@ -14,3 +14,6 @@
   with_filetree: "{{ image_tars_dir }}/charts"
   when:
     - item.state == 'file'
+
+- name: Remove charts docker image tars
+  file: path="{{ image_tars_dir }}/charts" state=absent
