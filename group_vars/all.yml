@@ -137,6 +137,7 @@ app_images:
   - docker.io/rivernet/redis_exporter:v0.14
   - docker.io/rivernet/curl:latest
   - docker.io/rivernet/tomcat:8.0.47-r0
+  - docker.io/rivernet/mnist-demo:4.1
 #############################################################################
 # Tain master
 taint_master: true
