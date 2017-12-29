@@ -25,7 +25,7 @@ spec:
         app: helm
         name: tiller
     spec:
-      serviceAccountName: tiller
+      serviceAccountName: appstore
       containers:
       - image: {{ tiller_image }}
         livenessProbe:

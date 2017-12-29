@@ -92,7 +92,7 @@
   when: check_tiller_sa.rc != 0
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
-            create -f {{ kube_ecp_dir }}/appstore/tiller-k8s-rbac.yaml
+            create -f {{ kube_ecp_dir }}/appstore/appstore-k8s-rbac.yaml
   run_once: true
 
 - name: Create tiller
