@@ -27,6 +27,9 @@ spec:
       - name: river
         image: {{ river_image }}
         imagePullPolicy: IfNotPresent
+        args:
+        - -v=8
+        - -logtostderr=true
         ports:
         - containerPort: 8000
           name: api
