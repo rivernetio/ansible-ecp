@@ -25,9 +25,6 @@
     dest: "{{ kube_ecp_dir }}/repository/"
 
 - name: Copy ecp chart images
-  when:
-    - ecp is defined
-    - ecp | bool
   copy:
     src: "{{ ecp_local_charts_repo }}/image"
     dest: "{{ kube_ecp_dir }}/repository/"
