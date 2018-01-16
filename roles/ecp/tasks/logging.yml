@@ -49,7 +49,7 @@
             create -f {{ kube_ecp_dir }}/canes/es-service-internal-svc.yaml
   run_once: true
 
- - name: Check if curator cronjob already exists
+- name: Check if curator cronjob already exists
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
             get cronjobs --namespace={{ ecp_namespace }} | grep curator
