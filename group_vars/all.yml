@@ -67,9 +67,10 @@ ecp_charts_url: https://github.com/rivernetio/charts/raw/master/repo/stable
 ecp_local_charts_repo: /home/vagrant/charts/repo/
 # ECP - Logging
 canes_image: rivernet/canes:4.1
-elasticsearch_image: rivernet/elasticsearch:1.5.2
+elasticsearch_image: rivernet/elasticsearch:5.6.4
 fluentd_image: rivernet/fluentd-elasticsearch:v2.0.2
-kibana_image: rivernet/kibana:4.1.2
+kibana_image: rivernet/kibana:5.6.4
+elasticsearch_curator_image: rivernet/docker-elasticsearch-curator:5.4.1
 # ECP - Events
 events_image: rivernet/events:4.1
 # ECP - License

@@ -49,6 +49,34 @@
             create -f {{ kube_ecp_dir }}/canes/es-service-internal-svc.yaml
   run_once: true
 
+ - name: Check if curator cronjob already exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get cronjobs --namespace={{ ecp_namespace }} | grep curator
+  register: check_curator_cronjob
+  failed_when: check_curator_cronjob.rc != 0 and check_curator_cronjob.rc != 1
+
+- name: Create curator cronjob
+  when: check_curator_cronjob.rc != 0
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            create -f {{ kube_ecp_dir }}/canes/es-curator-cronjob.yaml
+  run_once: true
+  
+- name: Check if curator configmap already exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get cm --namespace={{ ecp_namespace }} | grep curator-config
+  register: check_curator_cm
+  failed_when: check_curator_cm.rc !=0 and check_curator_cm.rc != 1
+
+- name: Create curator configmap
+  when: check_curator_cm.rc != 0
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            create -f {{ kube_ecp_dir }}/canes/es-curator-config.yaml
+  run_once: true
+
 - name: Check if fluentd configmap already exists
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \

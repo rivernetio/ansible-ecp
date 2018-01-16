@@ -35,10 +35,8 @@ spec:
       - image: {{ elasticsearch_image }}
         name: elasticsearch-logging
         env:
-        - name: ES_MIN_MEM
-          value: 1g
-        - name: ES_MAX_MEM
-          value: 4g      
+        - name: ES_JAVA_OPTS
+          value: -Xms1g -Xmx4g
         resources:
           # keep request = limit to keep this container in guaranteed class
           limits:
