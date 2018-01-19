@@ -1,0 +1,36 @@
+---
+- name: Create rpm directory
+  file: path={{ rpm_dir }} state=directory
+
+- name: Copy rpm files to all hosts
+  synchronize:
+    src: "{{ docker_rpms_dir }}/"
+    dest: "{{ rpm_dir }}"
+    checksum: yes
+
+- name: Install offline package
+  when:
+    - ansible_os_family == "RedHat"
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - "{{ rpm_dir }}/audit-libs-python-2.7.6-3.el7.x86_64.rpm"
+    - "{{ rpm_dir }}/checkpolicy-2.5-4.el7.x86_64.rpm"
+    - "{{ rpm_dir }}/container-selinux-2.33-1.git86f33cd.el7.noarch.rpm"
+    - "{{ rpm_dir }}/container-storage-setup-0.8.0-3.git1d27ecf.el7.noarch.rpm"
+    - "{{ rpm_dir }}/docker-1.12.6-68.gitec8512b.el7.centos.x86_64.rpm"
+    - "{{ rpm_dir }}/docker-client-1.12.6-68.gitec8512b.el7.centos.x86_64.rpm"
+    - "{{ rpm_dir }}/docker-common-1.12.6-68.gitec8512b.el7.centos.x86_64.rpm"
+    - "{{ rpm_dir }}/libcgroup-0.41-13.el7.x86_64.rpm"
+    - "{{ rpm_dir }}/libsemanage-python-2.5-8.el7.x86_64.rpm"
+    - "{{ rpm_dir }}/oci-register-machine-0-3.13.gitcd1e331.el7.x86_64.rpm"
+    - "{{ rpm_dir }}/oci-systemd-hook-0.1.14-1.git1ba44c6.el7.x86_64.rpm"
+    - "{{ rpm_dir }}/oci-umount-2.3.0-1.git51e7c50.el7.x86_64.rpm"
+    - "{{ rpm_dir }}/policycoreutils-python-2.5-17.1.el7.x86_64.rpm"
+    - "{{ rpm_dir }}/python-IPy-0.75-6.el7.noarch.rpm"
+    - "{{ rpm_dir }}/setools-libs-3.3.8-1.1.el7.x86_64.rpm"
+    - "{{ rpm_dir }}/skopeo-containers-0.1.26-2.dev.git2e8377a.el7.centos.x86_64.rpm"
+    - "{{ rpm_dir }}/yajl-2.0.4-4.el7.x86_64.rpm"
+
+

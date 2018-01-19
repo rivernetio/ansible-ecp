@@ -64,7 +64,7 @@ rudder_image: rivernet/rudder:4.1
 helm_image: rivernet/helm:v2.2.3
 tiller_image: rivernet/tiller:v2.6.2
 ecp_charts_url: https://github.com/rivernetio/charts/raw/master/repo/stable
-ecp_local_charts_repo: /home/vagrant/charts/repo/
+ecp_local_charts_repo: "{{ playbook_dir }}/depends/charts/repo"
 # ECP - Logging
 canes_image: rivernet/canes:4.1
 elasticsearch_image: rivernet/elasticsearch:5.6.4
@@ -132,13 +132,16 @@ harbor_https_nodeport: 31443
 app_images:
   - docker.io/rivernet/tensorflow-serving:4.1
   - docker.io/rivernet/tensorflow:4.1
-  - docker.io/rivernet/jupyter:4.1
+  - docker.io/rivernet/jupyter:4.1.1
   - docker.io/rivernet/web-vote-app:v0.1
   - docker.io/rivernet/redis:3.0
   - docker.io/rivernet/redis_exporter:v0.14
   - docker.io/rivernet/curl:latest
   - docker.io/rivernet/tomcat:8.0.47-r0
   - docker.io/rivernet/mnist-demo:4.1
+
+# Harbor registry
+insecure_registry: registry.harbor:5000
 #############################################################################
 # Tain master
 taint_master: true
@@ -154,7 +157,7 @@ ecp: true
 # Enable Offline install
 offline: true
 # Docker image tar files
-src_image_tars_dir: "/vagrant/image_tars"
+src_image_tars_dir: "{{ playbook_dir }}/depends/image_tars"
 # Image for all cluster nodes
 cluster_image_tars_dir: "{{ src_image_tars_dir }}/cluster"
 # Image for management nodes
@@ -167,7 +170,10 @@ harbor_image_tars_dir: "{{ src_image_tars_dir }}/harbor"
 charts_image_tars_dir: "{{ src_image_tars_dir }}/charts"
 #############################################################################
 # RPM files
-src_rpms_dir: "/vagrant/rpms/"
+src_rpms_dir: "{{ playbook_dir }}/depends/rpm"
+kubernetes_rpms_dir: "{{ src_rpms_dir }}/kubernetes"
+glusterfs_rpms_dir: "{{ src_rpms_dir }}/glusterfs"
+docker_rpms_dir: "{{ src_rpms_dir }}/docker"
 #############################################################################
 # Required RPM files for offline install:
 # ---------------------------------------------------------------------------

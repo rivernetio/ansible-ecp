@@ -7,10 +7,10 @@
 
 - name: Tag images
   shell: |
-    docker tag "{{ item }}" "{{ item | replace('docker.io/rivernet', 'registry.harbor:5000/sky-firmament') }}"
+    docker tag {{ item }} {{ item | replace("docker.io/rivernet", insecure_registry + "/sky-firmament") }}
   with_items: "{{ app_images }}"
 
 - name: Push images
   shell: |
-    docker push "{{ item | replace('docker.io/rivernet', 'registry.harbor:5000/sky-firmament') }}"
+    docker push {{ item | replace("docker.io/rivernet", insecure_registry + "/sky-firmament") }}
   with_items: "{{ app_images }}"

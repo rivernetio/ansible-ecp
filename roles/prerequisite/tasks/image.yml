@@ -10,5 +10,10 @@
 - include_tasks: charts_image.yml
   when: "'masters' in group_names"
 
+- stat: path={{ management_image_tars_dir }}
+  register: p
+
 - include_tasks: management_image.yml
-  when: "'managements' in group_names"
+  when: 
+    - "'managements' in group_names"
+    - p.stat.isdir is defined and p.stat.isdir

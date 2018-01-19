@@ -8,16 +8,17 @@
     dest: "{{ image_tars_dir }}/glusterfs"
     checksum: yes
 
+- name: Find docker images
+  find:
+    paths: "{{ image_tars_dir }}/glusterfs"
+    patterns: '*.tar'
+  register: glusterfs_images_result
+
 - name: Load docker images
   shell: |
-    docker load -i {{ item.src }}
-  with_filetree: "{{ image_tars_dir }}/glusterfs"
-  when:
-    - item.state == 'file'
+    docker load -i "{{ item.path }}"
+  with_items: "{{ glusterfs_images_result.files }}"
 
 - name: Retag heketi image
   shell: |
     docker tag {{ heketi_image }} docker.io/heketi/heketi:dev
-
-- name: Remove glusterfs docker image tars
-  file: path="{{ image_tars_dir }}/glusterfs" state=absent

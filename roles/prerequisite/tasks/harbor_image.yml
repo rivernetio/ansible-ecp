@@ -8,12 +8,14 @@
     dest: "{{ image_tars_dir }}/harbor"
     checksum: yes
 
+- name: Find docker images
+  find:
+    paths: "{{ image_tars_dir }}/harbor"
+    patterns: '*.tar'
+  register: harbor_images_result
+
 - name: Load docker images
   shell: |
-    docker load -i {{ item.src }}
-  with_filetree: "{{ image_tars_dir }}/harbor"
-  when:
-    - item.state == 'file'
+    docker load -i "{{ item.path }}"
+  with_items: "{{ harbor_images_result.files }}"
 
-- name: Remove harbor docker image tars
-  file: path="{{ image_tars_dir }}/harbor" state=absent

@@ -21,7 +21,7 @@ spec:
         - containerPort: 2375
         args:
         - --storage-driver=overlay
-        - --insecure-registry=registry.harbor:5000
+        - --insecure-registry={{ insecure_registry }}
         securityContext:
           privileged: true
       nodeSelector:

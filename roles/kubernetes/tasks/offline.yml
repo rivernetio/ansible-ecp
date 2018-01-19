@@ -3,7 +3,7 @@
 
 - name: Copy rpm files to all hosts
   synchronize:
-    src: "{{ src_rpms_dir }}/"
+    src: "{{ kubernetes_rpms_dir }}/"
     dest: "{{ rpm_dir }}"
     checksum: yes
 

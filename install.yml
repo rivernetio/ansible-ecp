@@ -3,6 +3,12 @@
   gather_facts: no
   become: yes
   roles:
+    - { role: docker, tags: docker }
+
+- hosts: cluster
+  gather_facts: no
+  become: yes
+  roles:
     - { role: prerequisite, tags: prerequisite }
 
 - hosts: masters[0]

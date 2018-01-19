@@ -7,12 +7,14 @@
     dest: "{{ image_tars_dir }}/cluster"
     checksum: yes
 
+- name: Find docker images
+  find:
+    paths: "{{ image_tars_dir }}/cluster"
+    patterns: '*.tar'
+  register: cluster_images_result
+
 - name: Load docker images
   shell: |
-    docker load -i {{ item.src }}
-  with_filetree: "{{ image_tars_dir }}/cluster"
-  when:
-    - item.state == 'file'
+    docker load -i "{{ item.path }}"
+  with_items: "{{ cluster_images_result.files }}"
 
-- name: Remove cluster docker image tars
-  file: path="{{ image_tars_dir }}/cluster" state=absent

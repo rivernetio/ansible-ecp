@@ -29,11 +29,11 @@ spec:
           - name: MYSQL_PWD
             value: root123
           - name: REGISTRY_URL
-            value: http://registry:5000
+            value: http://{{ insecure_registry }}
           - name: CONFIG_PATH
             value: /etc/ui/app.conf
           - name: HARBOR_REG_URL
-            value: registry.harbor:5000
+            value: {{ insecure_registry }}
           - name: HARBOR_ADMIN_PASSWORD
             value: password
           - name: HARBOR_URL
