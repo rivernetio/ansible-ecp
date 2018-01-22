@@ -82,22 +82,11 @@ GOOGLE_IMAGES=(
 	etcd-amd64:3.0.17
 )
 
-CLUSTER_IMAGES=(
-	docker.io/rivernet/k8s-dns-sidecar-amd64:1.14.4
-	docker.io/rivernet/k8s-dns-kube-dns-amd64:1.14.4
-	docker.io/rivernet/k8s-dns-dnsmasq-nanny-amd64:1.14.4
+MANAGEMENT_IMAGES=(
 	docker.io/rivernet/kube-apiserver-amd64:v1.7.5
 	docker.io/rivernet/kube-controller-manager-amd64:v1.7.5
 	docker.io/rivernet/kube-scheduler-amd64:v1.7.5
-	docker.io/rivernet/kube-proxy-amd64:v1.7.5
 	docker.io/rivernet/etcd-amd64:3.0.17
-	docker.io/rivernet/pause-amd64:3.0
-	docker.io/rivernet/kubernetes-dashboard-amd64:v1.6.3
-	docker.io/rivernet/etcd:v3.1.10
-	docker.io/rivernet/node:v2.4.1
-	docker.io/rivernet/cni:v1.10.0
-	docker.io/rivernet/kube-policy-controller:v0.7.0
-	docker.io/rivernet/flannel:v0.7.1-amd64
 	docker.io/rivernet/rudder:4.1
 	docker.io/rivernet/tiller:v2.6.2
 	docker.io/rivernet/helm:v2.2.3
@@ -105,14 +94,13 @@ CLUSTER_IMAGES=(
 	docker.io/rivernet/elasticsearch:5.6.4
 	docker.io/rivernet/kibana:5.6.4
 	docker.io/rivernet/docker-elasticsearch-curator:5.4.1
-	docker.io/rivernet/fluentd-elasticsearch:v2.0.2
 	docker.io/rivernet/events:4.1
 	docker.io/rivernet/license:4.1
 	docker.io/rivernet/lyra:4.1
 	docker.io/rivernet/mysql-sky:4.1
+	docker.io/rivernet/curl:latest
 	docker.io/rivernet/grafana-sky:4.1
 	docker.io/rivernet/kube-state-metrics:v0.5.0
-	docker.io/rivernet/node-exporter:0.12.0
 	docker.io/rivernet/kube-api-exporter:master-2fe5dfb
 	docker.io/rivernet/prometheus:v1.5.2
 	docker.io/rivernet/k8s-prometheus-adapter:v0.2.0-beta.0
@@ -121,7 +109,22 @@ CLUSTER_IMAGES=(
 	docker.io/rivernet/keystone:20161108
 	docker.io/rivernet/skyform-sas:4.1
 	docker.io/rivernet/ara:4.1
-	docker.io/rivernet/curl:latest
+)
+
+CLUSTER_IMAGES=(
+	docker.io/rivernet/k8s-dns-sidecar-amd64:1.14.4
+	docker.io/rivernet/k8s-dns-kube-dns-amd64:1.14.4
+	docker.io/rivernet/k8s-dns-dnsmasq-nanny-amd64:1.14.4
+	docker.io/rivernet/kube-proxy-amd64:v1.7.5
+	docker.io/rivernet/pause-amd64:3.0
+	docker.io/rivernet/kubernetes-dashboard-amd64:v1.6.3
+	docker.io/rivernet/etcd:v3.1.10
+	docker.io/rivernet/node:v2.4.1
+	docker.io/rivernet/cni:v1.10.0
+	docker.io/rivernet/kube-policy-controller:v0.7.0
+	docker.io/rivernet/flannel:v0.7.1-amd64
+	docker.io/rivernet/fluentd-elasticsearch:v2.0.2
+	docker.io/rivernet/node-exporter:0.12.0
 )
 
 HARBOR_IMAGES=(
@@ -175,10 +178,9 @@ function retry() {
 ###############################################
 function create_x86_64_package() {
 
-	mkdir -p image_tars/cluster image_tars/charts image_tars/harbor image_tars/gluster
+	mkdir -p image_tars/{cluster,management,charts,harbor,gluster}
 
-	local imageNames=
-
+	# Generate images for all hosts in the cluster
 	local images=
 	for image in ${CLUSTER_IMAGES[@]}; do
 		retry docker pull $image
@@ -193,10 +195,30 @@ function create_x86_64_package() {
 	done
 
 	echo
-	echo "Generating cluster images, this may take a while."
+	echo "Generating cluster nodes images, this may take a while."
 	echo
 	docker save  $images > image_tars/cluster/ecp-cluster.tar
 
+	# Generate images for management hosts
+	images=""
+	for image in ${MANAGEMENT_IMAGES[@]}; do
+		retry docker pull $image
+		is_google_image $image
+		if [ "$googleImage" ]; then
+			echo "tag $image to gcr.io/google_containers/$googleImage"
+			docker tag $image gcr.io/google_containers/$googleImage
+			images="$images gcr.io/google_containers/$googleImage"
+		else
+			images="$images $image"
+		fi
+	done
+
+	echo
+	echo "Generating management nodes images, this may take a while."
+	echo
+	docker save  $images > image_tars/management/ecp-management.tar
+
+	# Generate images for harbor hosts
 	images=""
 	for image in ${HARBOR_IMAGES[@]}; do
 		retry docker pull $image
@@ -208,6 +230,7 @@ function create_x86_64_package() {
 	echo
 	docker save  $images > image_tars/harbor/ecp-harbor.tar
 
+	# Generate images for application store
 	images=""
 	for image in ${APP_IMAGES[@]}; do
 		retry docker pull $image
@@ -225,6 +248,7 @@ function create_x86_64_package() {
 		images="$images $image"
 	done
 
+	# Generate images for glusterfs hosts
 	echo
 	echo "Generating gluster images, this may take a while."
 	echo

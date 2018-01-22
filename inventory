@@ -5,13 +5,14 @@
 # Kubernetes master node.
 # Currently HA mode is not supported.
 [masters]
-10.211.64.107
+10.211.64.105
 
 # Kubernetes worker (non-master) nodes.
 # Currently you must specify at least two worker nodes, such that there are
 # at least three nodes in the cluster. Gluster FS, which requires at least
 # 3 hosts  will be installed in the same cluster.
 [workers]
+10.211.64.107
 10.211.64.109
 10.211.64.111
 
