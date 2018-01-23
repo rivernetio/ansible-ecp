@@ -28,6 +28,6 @@ spec:
       volumes:
       - name: mysql-storage
         hostPath:
-          path: /var/lib/mysql/harbor
+          path: {{ ecp_share_dir }}/harbor/mysql-storage
       nodeSelector:
-        harbor: "yes"
+        management: "yes"

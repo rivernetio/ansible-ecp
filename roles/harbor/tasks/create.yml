@@ -8,6 +8,14 @@
   template: src={{ item }} dest={{ kube_harbor_dir }}/{{ item | basename | regex_replace('\.j2', '') }}
   with_fileglob:
     - ../templates/*.j2
+    
+- name: Create image data storage
+  file: path={{ ecp_share_dir }}/harbor/storage state=directory
+  run_once: true
+  
+- name: Create mysql data storage
+  file: path={{ ecp_share_dir }}/harbor/mysql-storage state=directory
+  run_once: true
 
 - name: Check namespace
   shell: |

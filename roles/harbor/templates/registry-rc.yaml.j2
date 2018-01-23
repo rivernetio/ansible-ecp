@@ -26,6 +26,6 @@ spec:
       volumes:
       - name: storage
         hostPath:
-          path: /storage
+          path: {{ ecp_share_dir }}/harbor/storage
       nodeSelector:
-        harbor: "yes"
+        management: "yes"
