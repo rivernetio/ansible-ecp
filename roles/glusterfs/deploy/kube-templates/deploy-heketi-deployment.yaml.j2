@@ -35,6 +35,8 @@ spec:
         deploy-heketi: pod
     spec:
       serviceAccountName: heketi-service-account
+      nodeSelector:
+        storagenode: glusterfs
       containers:
       - image: {{ heketi_image }}
         imagePullPolicy: IfNotPresent
