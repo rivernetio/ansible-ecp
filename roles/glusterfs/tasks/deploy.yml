@@ -2,5 +2,22 @@
 - name: Deploy glusterfs
   shell: |
     {{ kube_glusterfs_dir }}/gk-deploy -gy {{ kube_glusterfs_dir }}/topology.json
+    
+- name: Check if ecp_share volume exists
+  shell: |
+    heketi_pod=$(kubectl --kubeconfig={{ kubeadmin_config }} \
+                    get pod --no-headers --show-all --selector='heketi' | awk '{print $1}')
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+                    exec -i $heketi_pod -- heketi-cli -s http://localhost:8080 \
+                    volume list | grep ecp_share
+  register: check_volume
+  failed_when: check_volume.rc != 0 and check_volume.rc != 1
   
-  
+- name: Create a volume ecp_share
+  shell: |
+    heketi_pod=$(kubectl --kubeconfig={{ kubeadmin_config }} \
+                    get pod --no-headers --show-all --selector='heketi' | awk '{print $1}')
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+                    exec -i $heketi_pod -- heketi-cli -s http://localhost:8080 \
+                    volume create --name=ecp_share --size={{ gluster_ecp_volume_size }}
+  when: check_volume.rc != 0

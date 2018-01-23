@@ -27,11 +27,6 @@
   import_tasks: sas.yml
   tags:
     - ecp_sas
-    
-- name: Create pyxis service
-  import_tasks: pyxis.yml
-  tags:
-    - ecp_pyxis
 
 - name: Create lyra service
   import_tasks: lyra.yml
@@ -47,14 +42,6 @@
   import_tasks: appstore.yml
   tags:
     - ecp_appstore
-
-- name: Create events service
-  when:
-    - ecp is defined
-    - ecp | bool
-  import_tasks: events.yml
-  tags:
-    - ecp_events
 
 - name: Create prometheus services
   import_tasks: prometheus.yml
@@ -76,4 +63,17 @@
   import_tasks: logging.yml
   tags:
     - ecp_logging
+    
+- name: Create pyxis service
+  import_tasks: pyxis.yml
+  tags:
+    - ecp_pyxis
+    
+- name: Create events service
+  when:
+    - ecp is defined
+    - ecp | bool
+  import_tasks: events.yml
+  tags:
+    - ecp_events
 

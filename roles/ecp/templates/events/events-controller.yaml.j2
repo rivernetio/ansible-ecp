@@ -20,7 +20,7 @@ spec:
       volumes:
       - name: config-volume
         hostPath:
-          path: /opt/prometheus_config
+          path: {{ ecp_share_dir }}/prometheus/config
       containers:
       - name: firmament-events
         image: {{ events_image }}
@@ -56,4 +56,4 @@ spec:
         - name: config-volume
           mountPath: /etc/prometheus
       nodeSelector:
-        prometheus: "yes"
+        management: "yes"

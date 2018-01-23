@@ -8,6 +8,12 @@
     dest: "{{ rpm_dir }}"
     checksum: yes
 
+- name: Copy nfs-client rpm files to all hosts
+  synchronize:
+    src: "{{ nfs_client_rpms_dir }}/"
+    dest: "{{ rpm_dir }}"
+    checksum: yes
+    
 - name: Install offline package
   when:
     - ansible_os_family == "RedHat"
@@ -20,4 +26,5 @@
     - "{{ rpm_dir }}/glusterfs-libs-3.8.4-18.4.el7.centos.x86_64.rpm"
     - "{{ rpm_dir }}/glusterfs-3.8.4-18.4.el7.centos.x86_64.rpm"
     - "{{ rpm_dir }}/glusterfs-fuse-3.8.4-18.4.el7.centos.x86_64.rpm"
+    - "{{ rpm_dir }}/nfs-utils-1.3.0-0.48.el7_4.x86_64.rpm"
 

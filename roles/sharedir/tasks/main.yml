@@ -1,0 +1,21 @@
+---
+# create directory for ecp management node share data
+- name: Create ecp share directory
+  file:
+    path: "{{ ecp_share_dir }}"
+    state: directory
+    mode: 0755
+  
+- name: Mount volume ecp_share to management hosts
+  shell: |
+    mount -t glusterfs {{ glusterfs_hosts[0] }}:ecp_share /ecp_share
+  when:
+    - internal_glusterfs is defined
+    - internal_glusterfs | bool
+    
+- name: Mount nfs to management hosts
+  shell: |
+    mount -t nfs {{ nfs_server_shared_dir }} /ecp_share
+  when:
+    - internal_glusterfs is not defined or not internal_glusterfs | bool
+    - nfs_server_shared_dir is defined

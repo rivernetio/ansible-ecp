@@ -37,6 +37,12 @@
   roles:
     - { role: glusterfs, tags: glusterfs}
     
+- hosts: masters
+  become: yes
+  gather_facts: yes
+  roles:
+    - { role: sharedir, tags: sharedir}
+    
 - hosts: cluster
   gather_facts: no
   become: yes

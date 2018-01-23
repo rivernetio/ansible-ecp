@@ -6,6 +6,10 @@
   template: src={{ item }} dest={{ kube_ecp_dir }}/mysql/{{ item | basename | regex_replace('\.j2', '') }}
   with_fileglob:
     - ../templates/mysql/*.j2
+    
+- name: Create mysql data directory
+  file: path={{ ecp_share_dir }}/mysql state=directory
+  run_once: true
 
 - name: Check if mysql rc already exists
   shell: |

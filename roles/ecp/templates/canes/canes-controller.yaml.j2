@@ -44,5 +44,5 @@ spec:
             name: filevolume
       volumes:
       - hostPath:
-          path: /opt/fileserver/download
+          path: {{ ecp_share_dir }}/fileserver_download
         name: filevolume

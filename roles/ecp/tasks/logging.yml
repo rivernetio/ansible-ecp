@@ -6,6 +6,14 @@
   template: src={{ item }} dest={{ kube_ecp_dir }}/canes/{{ item | basename | regex_replace('\.j2', '') }}
   with_fileglob:
     - ../templates/canes/*.j2
+    
+- name: Create es data directory
+  file: path={{ ecp_share_dir }}/es_data state=directory
+  run_once: true
+  
+- name: Create fileserver download directory
+  file: path={{ ecp_share_dir }}/fileserver_download state=directory
+  run_once: true
 
 - name: Check if canes controller already exists
   shell: |
@@ -132,4 +140,13 @@
     kubectl --kubeconfig={{ kubeadmin_config }} \
             create -f {{ kube_ecp_dir }}/canes/kibana-service.yaml
   run_once: true
+  
+- name: Wait until es pod starts to run
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get po --namespace={{ ecp_namespace }} | grep elasticsearch-logging
+  register: check_es
+  until: check_es.rc == 0 and check_es.stdout.find("Running") != -1
+  retries: "{{ pod_run_retry | int }}"
+  delay: "{{ pod_run_retry_delay | int }}"
 

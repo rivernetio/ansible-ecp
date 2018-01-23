@@ -38,6 +38,6 @@ spec:
       volumes:
       - name: mysql-persistent-storage
         hostPath:
-          path: /var/lib/mysql
+          path: {{ ecp_share_dir }}/mysql
       nodeSelector:
-        mysql: "yes"
+        management: "yes"

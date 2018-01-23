@@ -52,9 +52,9 @@ spec:
       volumes:
       - name: grafana-persistent-storage
         hostPath:
-          path: /grafanaData
+          path: {{ kube_ecp_dir }}/prometheus/grafanaData
       nodeSelector:
-        prometheus: "yes"
+        management: "yes"
 ---
 apiVersion: v1
 kind: Service
@@ -379,10 +379,10 @@ spec:
       volumes:
       - name: config-volume
         hostPath:
-          path: /opt/prometheus_config
+          path: {{ ecp_share_dir }}/prometheus/config
       - name: data-volume
         hostPath:
           # directory location on host
-          path: /prometheusData
+          path: {{ ecp_share_dir }}/prometheus/prometheusData
       nodeSelector:
-        prometheus: "yes"
+        management: "yes"

@@ -1,7 +1,8 @@
 ---
 - name: Install binaries online
   import_tasks: online.yml
-  when: offline is not defined or not offline | bool
+  when: 
+    - offline is not defined or not offline | bool
 
 - name: Install binaries offline
   import_tasks: offline.yml
@@ -13,15 +14,20 @@
   import_tasks: prepare.yml
   run_once: true
   delegate_to: "{{ master_hosts[0] }}"
+  when:
+    - internal_glusterfs is defined
+    - internal_glusterfs | bool
 
 - name: Deploy
   import_tasks: deploy.yml
   run_once: true
   delegate_to: "{{ master_hosts[0] }}"
+  when:
+    - internal_glusterfs is defined
+    - internal_glusterfs | bool
 
 # GlusterFS deploy somehow disables the following
 - name: Pass bridged IPv4/IPv6 traffic to iptables’ chains
   shell: |
     sysctl net.bridge.bridge-nf-call-iptables=1
     sysctl net.bridge.bridge-nf-call-ip6tables=1
-   

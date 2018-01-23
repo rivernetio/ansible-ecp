@@ -173,6 +173,7 @@ charts_image_tars_dir: "{{ src_image_tars_dir }}/charts"
 src_rpms_dir: "{{ playbook_dir }}/depends/rpm"
 kubernetes_rpms_dir: "{{ src_rpms_dir }}/kubernetes"
 glusterfs_rpms_dir: "{{ src_rpms_dir }}/glusterfs"
+nfs_client_rpms_dir: "{ src_rpms_dir }}/nfs"
 docker_rpms_dir: "{{ src_rpms_dir }}/docker"
 #############################################################################
 # Required RPM files for offline install:
@@ -189,3 +190,14 @@ docker_rpms_dir: "{{ src_rpms_dir }}/docker"
 # socat-1.7.3.2-2.el7.x86_64.rpm
 # yum-plugin-versionlock-1.1.31-42.el7.noarch.rpm
 #############################################################################
+# By default, ECP uses internal storage: glusterfs
+# If you want to use external NFS, make sure:
+#   1. Set internal_glusterfs: false
+#   2. Set existing NFS server shared directory "nfs_server_shared_dir"
+# If you only have 1 master node, ECP will use host node's filesystem, make sure:
+#   1. Set internal_glusterfs: false
+#   2. Comment "nfs_server_shared_dir"
+internal_glusterfs: true
+gluster_ecp_volume_size: 30
+ecp_share_dir: /ecp_share
+nfs_server_shared_dir: 10.211.58.114:/var/nfsshare 

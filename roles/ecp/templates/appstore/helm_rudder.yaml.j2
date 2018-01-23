@@ -120,6 +120,6 @@ spec:
           name: kubecfg
       - name: repo
         hostPath:
-          path: /etc/repository/
+          path: {{ ecp_share_dir }}/appstore/repository/
       nodeSelector:
-        appstore: "yes"
+        management: "yes"

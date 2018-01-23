@@ -34,25 +34,15 @@
   with_fileglob:
     - ../templates/appstore/*.j2
 
-- name: Get the appstore host
-  shell: |
-    kubectl --kubeconfig={{ kubeadmin_config }} \
-            get nodes --no-headers=true -l appstore=yes | awk '{print $1}'
-  register: get_appstore_host
-
-- set_fact: appstore_host={{ get_appstore_host.stdout }}
-
-- name: Create repository directory on appstore host
-  file: path=/etc/repository state=directory
+- name: Create shared repository directory
+  file: path={{ ecp_share_dir }}/appstore/repository state=directory
   run_once: true
-  delegate_to: "{{ appstore_host }}"
 
-- name: Copy file to appstore host
+- name: Copy file to shared appstore repository
   synchronize:
     src: "{{ kube_ecp_dir }}/repository"
-    dest: "/etc/"
+    dest: "{{ ecp_share_dir }}/appstore/"
     mode: pull
-  delegate_to: "{{ appstore_host }}"
 
 - name: Check if rudder pod already exists
   shell: |

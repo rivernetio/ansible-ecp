@@ -53,7 +53,7 @@ spec:
           mountPath: /usr/share/elasticsearch/data
       volumes:
       - hostPath:
-          path: /opt/es_data
+          path: {{ ecp_share_dir }}/es_data
         name: es-persistent-storage
       nodeSelector:
-        elasticsearch: "yes"
+        management: "yes"
