@@ -173,7 +173,7 @@ charts_image_tars_dir: "{{ src_image_tars_dir }}/charts"
 src_rpms_dir: "{{ playbook_dir }}/depends/rpm"
 kubernetes_rpms_dir: "{{ src_rpms_dir }}/kubernetes"
 glusterfs_rpms_dir: "{{ src_rpms_dir }}/glusterfs"
-nfs_client_rpms_dir: "{ src_rpms_dir }}/nfs"
+nfs_client_rpms_dir: "{{ src_rpms_dir }}/nfs"
 docker_rpms_dir: "{{ src_rpms_dir }}/docker"
 #############################################################################
 # Required RPM files for offline install:
