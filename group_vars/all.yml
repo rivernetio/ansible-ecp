@@ -56,7 +56,7 @@ required_softwares:
 # Configuration for ECP
 
 # ECP - Docker registry
-registry_domain: registry.harbor
+registry_domain: registry.harbor:5000
 # ECP - Namespace
 ecp_namespace: sky-firmament
 # ECP - Appstore
