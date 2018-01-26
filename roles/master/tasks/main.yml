@@ -1,49 +1,10 @@
 ---
-- name: Copy kubeadm.yaml file
-  template: src=kubeadm.yaml.j2  dest={{ kubeadm_config }}
-
-- name: Init Kubernetes cluster
-  shell: |
-    kubeadm init --config={{ kubeadm_config }}
-  run_once: true
-  register: init_cluster
-
-- name: Create Kubernetes config directory
-  file: path=/root/.kube/ state=directory
-
-- name: Copy admin.conf to Home directory
-  when: init_cluster|succeeded
-  copy:
-    src: "{{ kubeadmin_config }}"
-    dest: "/root/.kube/config"
-    owner: root
-    group: root
-    mode: 0755
-    remote_src: True
-  run_once: true
-
-- name: Wait until node is available
-  when:
-    - init_cluster|succeeded
-  shell: kubectl get no | grep {{ ansible_hostname }}
-  register: get_node_result
-  until: get_node_result.rc == 0
-  retries: 10
-  delay: 5
+- name: Check vip
+  fail:
+    msg: "You must define a virtual IP in the inventory file when more than one master host is defined."
+  when: master_hosts|length > 1 and vip is not defined
   
-- name: Taint master node
-  when:
-    - get_node_result|succeeded
-  shell: |
-    kubectl taint nodes --all node-role.kubernetes.io/master-
-  register: taint_master
+- name: Deploy the primary master
+  import_tasks: master.yml
   run_once: true
-
-- name: Set master label
-  when:
-    - taint_master|succeeded
-  shell: |
-    kubectl label node {{ ansible_hostname }} \
-            kubeadm.alpha.kubernetes.io/role=master
-  run_once: true
-
+  delegate_to: "{{ master_hosts[0] }}"

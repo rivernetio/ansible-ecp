@@ -177,8 +177,17 @@ function retry() {
 # x86_64 Package
 ###############################################
 function create_x86_64_package() {
-
-	mkdir -p image_tars/{cluster,management,charts,harbor,gluster}
+	
+	# image_tars/cluster 
+	#  - CLUSTER_IMAGES
+	# image_tars/management
+	#  - MANAGEMENT_IMAGES
+	#  - HARBOR_IMAGES
+	# image_tars/charts
+	#  - APP_IMAGES
+	# image_tars/gluster
+	#  - GLUSTER_IMAGES
+	mkdir -p image_tars/{cluster,management,charts,gluster}
 
 	# Generate images for all hosts in the cluster
 	local images=
@@ -228,7 +237,7 @@ function create_x86_64_package() {
 	echo
 	echo "Generating harbor images, this may take a while."
 	echo
-	docker save  $images > image_tars/harbor/ecp-harbor.tar
+	docker save  $images > image_tars/management/ecp-harbor.tar
 
 	# Generate images for application store
 	images=""

@@ -5,6 +5,7 @@ system_env_dir: /etc/sysconfig
 dropin_dir: /etc/systemd/system
 network_dir: /etc/kubernetes/network
 kubeadmin_config: /etc/kubernetes/admin.conf
+nginx_dir: /etc/kubernetes/nginx
 kube_addon_dir: /etc/kubernetes/addon
 kube_ecp_dir: /etc/kubernetes/ecp
 kubeadm_config: /etc/kubernetes/kubeadm.yaml

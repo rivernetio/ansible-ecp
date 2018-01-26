@@ -1,0 +1,47 @@
+---
+- name: Check etcd directory
+  stat: path=/var/lib/etcd
+  register: p
+
+- name: Create etcd directory if it does not exist
+  file: path=/var/lib/etcd state=directory
+  when: p.stat.exists == False
+
+- name: Empty etcd directory if it already exists
+  file:
+    state: absent
+    path: /var/lib/etcd
+  when: p.stat.isdir is defined and p.stat.isdir
+
+- name: Set current etcd instance name
+  set_fact:
+    etcd_name: "etcd{{ ansible_play_batch.index(inventory_hostname) }}"
+
+- name: Remove the existing etcd instance
+  shell: |
+    docker stop etcd
+    docker rm etcd
+  ignore_errors: true
+
+- name: Start the etcd instance
+  shell: >
+    docker run -d 
+    --restart always 
+    -v /etc/ssl/certs:/etc/ssl/certs 
+    -v /var/lib/etcd:/var/lib/etcd 
+    -p 4001:4001 
+    -p 2380:2380 
+    -p 2379:2379 
+    --name etcd 
+    gcr.io/google_containers/etcd-amd64:3.0.17 
+    etcd --name="{{ etcd_name }}" 
+    --advertise-client-urls=http://{{ inventory_hostname }}:2379,http://{{ inventory_hostname }}:4001 
+    --listen-client-urls=http://0.0.0.0:2379,http://0.0.0.0:4001 
+    --initial-advertise-peer-urls=http://{{ inventory_hostname }}:2380 
+    --listen-peer-urls=http://0.0.0.0:2380 
+    --initial-cluster-token=9477af68bbee1b9ae037d6fd9e7efefd 
+    --initial-cluster="{{ initial_etcd_cluster }}" 
+    --initial-cluster-state=new 
+    --auto-tls 
+    --peer-auto-tls 
+    --data-dir=/var/lib/etcd

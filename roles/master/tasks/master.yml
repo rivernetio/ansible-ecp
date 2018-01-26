@@ -1,0 +1,68 @@
+---
+- name: Copy kubeadm.yaml file
+  template: src=kubeadm.yaml.j2  dest={{ kubeadm_config }}
+
+- name: Init Kubernetes cluster
+  shell: |
+    kubeadm init --config={{ kubeadm_config }}
+  register: init_cluster
+
+- name: Create Kubernetes config directory
+  file: path=/root/.kube/ state=directory
+
+- name: Copy admin.conf to Home directory
+  when: init_cluster|succeeded
+  copy:
+    src: "{{ kubeadmin_config }}"
+    dest: "/root/.kube/config"
+    owner: root
+    group: root
+    mode: 0755
+    remote_src: True
+
+- name: Wait until node is available
+  when:
+    - init_cluster|succeeded
+  shell: kubectl get no | grep {{ ansible_hostname }}
+  register: get_node_result
+  until: get_node_result.rc == 0
+  retries: 10
+  delay: 5
+
+- name: Remove node restrictions
+  replace:
+    path: /etc/kubernetes/manifests/kube-apiserver.yaml
+    regexp: ',NodeRestriction,ResourceQuota'
+    replace: ''
+
+- name: Restart kubelet and docker
+  systemd:
+    name: "{{ item }}"
+    state: restarted
+  with_items:
+    - kubelet
+    - docker
+ 
+- name: Wait until node is available
+  shell: kubectl get no | grep {{ ansible_hostname }}
+  register: get_node_result
+  until: get_node_result.rc == 0
+  retries: 10
+  delay: 5
+
+- name: Taint master node
+  when:
+    - get_node_result|succeeded
+  shell: |
+    kubectl taint nodes --all node-role.kubernetes.io/master-
+  register: taint_master
+
+- name: Set master label
+  when:
+    - taint_master|succeeded
+  shell: |
+    kubectl label --overwrite=true node {{ ansible_hostname }} {{ item }}
+  with_items:
+    - "kubeadm.alpha.kubernetes.io/role=master"
+    - "management=yes"
+

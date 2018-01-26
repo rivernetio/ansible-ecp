@@ -1,14 +1,12 @@
 - include_tasks: cluster_image.yml
   when: "'cluster' in group_names"
 
+- include_tasks: management_image.yml
+  when: "'masters' in group_names"
+
 - include_tasks: glusterfs_image.yml
   when: "'glusterfs' in group_names"
-
-- include_tasks: harbor_image.yml
-  when: "'masters' in group_names"
 
 - include_tasks: charts_image.yml
   when: "'masters' in group_names"
 
-- include_tasks: management_image.yml
-  when: "'managements' in group_names"

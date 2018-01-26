@@ -1,0 +1,33 @@
+global_defs {
+   router_id LVS_k8s
+   enable_script_security
+}
+
+vrrp_script chk_k8s_master {
+    script "/usr/bin/curl -k https://127.0.0.1:6443"
+    interval 3
+    timeout 9
+    fall 2
+    rise 2
+}
+
+vrrp_instance VI_1 {
+    state {{ ha_state }}
+    interface {{ vip_interface }}
+    mcast_src_ip {{ inventory_hostname }}
+    virtual_router_id 61
+    priority {{ ha_priority }}
+    advert_int 1
+    nopreempt
+    authentication {
+        auth_type PASS
+        auth_pass d8331dc3b4c90194d1600c483e10c894
+    }
+    virtual_ipaddress {
+        {{ vip }}
+    }
+    track_script {
+        chk_k8s_master
+    }
+}
+

@@ -44,6 +44,19 @@
     apt-mark unhold kubectl kubelet kubernetes-cni kubeadm
   ignore_errors: True
 
+- name: Stop and remove etcd cluster
+  shell: |
+    docker stop etcd
+    docker rm etcd
+  ignore_errors: True
+  when: "'masters' in group_names"
+
+- name: Remove keepalived
+  yum: name={{item}} state=removed
+  with_items:
+    - keepalived
+  ignore_errors: True
+
 - name: Remove data directory
   file: path={{item}} state=absent
   with_items:
@@ -54,6 +67,7 @@
     - /usr/db_data
     - /var/run/calico
     - /etc/systemd/system/kubelet.service.d/
+    - /etc/keepalived
   ignore_errors: True
   
 - name: Umount ECP share directory

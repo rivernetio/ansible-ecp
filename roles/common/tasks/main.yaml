@@ -1,0 +1,8 @@
+---
+- name: Set OS facts
+  import_tasks: os.yml
+  run_once: true
+
+- name: Set etcd facts
+  import_tasks: etcd.yml
+  run_once: true

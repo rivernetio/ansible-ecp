@@ -1,0 +1,11 @@
+---
+- name: Install keepalived
+  when: ansible_os_family == "RedHat"
+  yum:
+    name: "{{ item }}"
+    update_cache: yes
+    state: present
+  with_items:
+    - keepalived
+    - curl
+

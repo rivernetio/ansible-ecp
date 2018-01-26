@@ -1,0 +1,65 @@
+---
+- name: Copy k8s configuration from primary master to candidates
+  synchronize:
+    src: "/etc/kubernetes"
+    dest: "/etc/"
+    recursive: yes
+    delete: yes
+    checksum: yes
+  delegate_to: "{{ master_hosts[0] }}"
+
+- name: Replace api server advertise address
+  replace:
+    path: "/etc/kubernetes/manifests/kube-apiserver.yaml"
+    regexp: '--advertise-address=.*$'
+    replace: '--advertise-address={{ inventory_hostname }}'
+
+- name: Replace api server address 
+  replace:
+    path: "{{ item }}"
+    regexp: 'server: https://.*$'
+    replace: 'server: https://{{ inventory_hostname }}:6443' 
+  with_items:
+    - /etc/kubernetes/kubelet.conf
+    - /etc/kubernetes/admin.conf
+    - /etc/kubernetes/controller-manager.conf
+    - /etc/kubernetes/scheduler.conf
+
+- name: Create Kubernetes config directory
+  file: path=/root/.kube/ state=directory
+
+- name: Copy admin.conf to Home directory
+  copy:
+    src: "{{ kubeadmin_config }}"
+    dest: "/root/.kube/config"
+    owner: root
+    group: root
+    mode: 0755
+    remote_src: True
+
+- name: Wait until node is available
+  shell: kubectl get no | grep {{ ansible_hostname }}
+  register: get_node_result
+  until: get_node_result.rc == 0
+  retries: 10
+  delay: 5
+
+- name: Check node readiness
+  shell: |
+    kubectl get nodes --no-headers=true | awk '{print $2}' | grep Ready | wc -l
+  register: get_ready
+  until: get_ready.stdout | int == master_hosts | length
+  retries: 20
+  delay: 15
+
+- name: Set master label
+  shell: |
+    kubectl label --overwrite=true node {{ ansible_hostname }} {{ item }}
+  with_items:
+    - "kubeadm.alpha.kubernetes.io/role=master"
+    - "management=yes"
+
+- name: Scale up kube-dns instances
+  shell: |
+    kubectl scale --replicas={{ master_hosts | length }} -n kube-system deployment/kube-dns
+  

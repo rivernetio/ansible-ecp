@@ -1,0 +1,7 @@
+---
+- name: Deploy the master candidates
+  import_tasks: candidate.yml
+  when:
+    - master_hosts | length > 1
+    - inventory_hostname != master_hosts[0]
+

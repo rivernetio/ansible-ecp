@@ -1,0 +1,23 @@
+---
+- name: Override config file directory for Debian
+  when: ansible_os_family == "Debian"
+  set_fact:
+    system_env_dir: "/etc/default"
+
+- name: Initialize etcd-cluster list
+  set_fact:
+    initial_etcd_cluster_list: []
+    etcd_endpoints_list: []
+
+- name: Assign etcd-cluster list
+  set_fact:
+    initial_etcd_cluster_list: "{{ initial_etcd_cluster_list }} + [ 'etcd{{ item.0 }}=http://{{ item.1 }}:2380' ]"
+    etcd_endpoints_list: "{{ etcd_endpoints_list }} + [ 'http://{{ item.1 }}:2379' ] "
+  with_indexed_items: "{{ master_hosts }}"
+
+- name: Convert etcd-cluster list into a string
+  set_fact:
+    initial_etcd_cluster: "{{ initial_etcd_cluster_list | join(',') }}"
+    etcd_endpoints: "{{ etcd_endpoints_list | join(',') }}"
+
+

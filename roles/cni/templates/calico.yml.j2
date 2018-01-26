@@ -12,9 +12,8 @@ metadata:
   name: calico-config
   namespace: kube-system
 data:
-  # The location of your etcd cluster.  This uses the Service clusterIP
-  # defined below.
-  etcd_endpoints: "http://10.96.232.136:6666"
+  # Configure this with the location of your etcd cluster.
+  etcd_endpoints: "{{ etcd_endpoints }}"
 
   # Configure the Calico backend to use.
   calico_backend: "bird"
@@ -33,86 +32,13 @@ data:
         },
         "policy": {
             "type": "k8s",
-             "k8s_api_root": "https://__KUBERNETES_SERVICE_HOST__:__KUBERNETES_SERVICE_PORT__",
-             "k8s_auth_token": "__SERVICEACCOUNT_TOKEN__"
+            "k8s_api_root": "https://__KUBERNETES_SERVICE_HOST__:__KUBERNETES_SERVICE_PORT__",
+            "k8s_auth_token": "__SERVICEACCOUNT_TOKEN__"
         },
         "kubernetes": {
-            "kubeconfig": "/etc/cni/net.d/__KUBECONFIG_FILENAME__"
+            "kubeconfig": "__KUBECONFIG_FILEPATH__"
         }
     }
-
----
-
-# This manifest installs the Calico etcd on the kubeadm master.  This uses a DaemonSet
-# to force it to run on the master even when the master isn't schedulable, and uses
-# nodeSelector to ensure it only runs on the master.
-apiVersion: extensions/v1beta1
-kind: DaemonSet
-metadata:
-  name: calico-etcd
-  namespace: kube-system
-  labels:
-    k8s-app: calico-etcd
-spec:
-  template:
-    metadata:
-      labels:
-        k8s-app: calico-etcd
-      annotations:
-        # Mark this pod as a critical add-on; when enabled, the critical add-on scheduler
-        # reserves resources for critical add-on pods so that they can be rescheduled after
-        # a failure.  This annotation works in tandem with the toleration below.
-        scheduler.alpha.kubernetes.io/critical-pod: ''
-    spec:
-      # Only run this pod on the master.
-      tolerations:
-      - key: node-role.kubernetes.io/master
-        effect: NoSchedule
-      # Allow this pod to be rescheduled while the node is in "critical add-ons only" mode.
-      # This, along with the annotation above marks this pod as a critical add-on.
-      - key: CriticalAddonsOnly
-        operator: Exists
-      nodeSelector:
-        node-role.kubernetes.io/master: ""
-      hostNetwork: true
-      containers:
-        - name: calico-etcd
-          image: {{ calico_etcd_image }}
-          env:
-            - name: CALICO_ETCD_IP
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.podIP
-          command: ["/bin/sh","-c"]
-          args: ["/usr/local/bin/etcd --name=calico --data-dir=/var/etcd/calico-data --advertise-client-urls=http://$CALICO_ETCD_IP:6666 --listen-client-urls=http://0.0.0.0:6666 --listen-peer-urls=http://0.0.0.0:6667"]
-          volumeMounts:
-            - name: var-etcd
-              mountPath: /var/etcd
-      volumes:
-        - name: var-etcd
-          hostPath:
-            path: /var/etcd
-
----
-
-# This manifest installs the Service which gets traffic to the Calico
-# etcd.
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    k8s-app: calico-etcd
-  name: calico-etcd
-  namespace: kube-system
-spec:
-  # Select the calico-etcd pod running on the master.
-  selector:
-    k8s-app: calico-etcd
-  # This ClusterIP needs to be known in advance, since we cannot rely
-  # on DNS to get access to etcd.
-  clusterIP: 10.96.232.136
-  ports:
-    - port: 6666
 
 ---
 
@@ -135,20 +61,13 @@ spec:
       labels:
         k8s-app: calico-node
       annotations:
-        # Mark this pod as a critical add-on; when enabled, the critical add-on scheduler
-        # reserves resources for critical add-on pods so that they can be rescheduled after
-        # a failure.  This annotation works in tandem with the toleration below.
         scheduler.alpha.kubernetes.io/critical-pod: ''
+        scheduler.alpha.kubernetes.io/tolerations: |
+          [{"key": "dedicated", "value": "master", "effect": "NoSchedule" },
+           {"key":"CriticalAddonsOnly", "operator":"Exists"}]
     spec:
       hostNetwork: true
-      tolerations:
-      - key: node-role.kubernetes.io/master
-        effect: NoSchedule
-      # Allow this pod to be rescheduled while the node is in "critical add-ons only" mode.
-      # This, along with the annotation above marks this pod as a critical add-on.
-      - key: CriticalAddonsOnly
-        operator: Exists
-      serviceAccountName: calico-cni-plugin
+      serviceAccountName: calico-node
       containers:
         # Runs calico/node container on each Kubernetes node.  This
         # container programs network policy and routes on each
@@ -162,7 +81,7 @@ spec:
                 configMapKeyRef:
                   name: calico-config
                   key: etcd_endpoints
-            # Enable BGP.  Disable to enforce policy only.
+            # Choose the backend to use.
             - name: CALICO_NETWORKING_BACKEND
               valueFrom:
                 configMapKeyRef:
@@ -270,6 +189,11 @@ metadata:
   namespace: kube-system
   labels:
     k8s-app: calico-policy
+  annotations:
+    scheduler.alpha.kubernetes.io/critical-pod: ''
+    scheduler.alpha.kubernetes.io/tolerations: |
+      [{"key": "dedicated", "value": "master", "effect": "NoSchedule" },
+       {"key":"CriticalAddonsOnly", "operator":"Exists"}]
 spec:
   # The policy controller can only have a single active instance.
   replicas: 1
@@ -280,23 +204,11 @@ spec:
       name: calico-policy-controller
       namespace: kube-system
       labels:
-        k8s-app: calico-policy-controller
-      annotations:
-        # Mark this pod as a critical add-on; when enabled, the critical add-on scheduler
-        # reserves resources for critical add-on pods so that they can be rescheduled after
-        # a failure.  This annotation works in tandem with the toleration below.
-        scheduler.alpha.kubernetes.io/critical-pod: ''
+        k8s-app: calico-policy
     spec:
       # The policy controller must run in the host network namespace so that
       # it isn't governed by policy that would prevent it from working.
       hostNetwork: true
-      tolerations:
-      - key: node-role.kubernetes.io/master
-        effect: NoSchedule
-      # Allow this pod to be rescheduled while the node is in "critical add-ons only" mode.
-      # This, along with the annotation above marks this pod as a critical add-on.
-      - key: CriticalAddonsOnly
-        operator: Exists
       serviceAccountName: calico-policy-controller
       containers:
         - name: calico-policy-controller

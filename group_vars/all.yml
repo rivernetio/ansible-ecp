@@ -27,6 +27,9 @@ kubelet_pod_infra_image: docker.io/rivernet/pause-amd64:3.0
 # Configuration for k8s dashboard
 k8s_dashboard_image: rivernet/kubernetes-dashboard-amd64:v1.6.3
 ############################################################################
+# Configuration for nginx
+nginx_image: rivernet/nginx:1.13.8
+############################################################################
 # Configuration for glusterfs
 # docker pull rivernet/gluster-centos@sha256:5e86156d721ddeaf75972299efd000794cf7bc3da8cbd5aae4ddfd73e36c4534
 glusterfs_image: rivernet/gluster-centos:latest
@@ -52,6 +55,7 @@ dns_ip: "{{ service_subnet }}.10"
 # Configuration for required softwares to be installed on all hosts
 required_softwares:
   - rsync
+  - docker
 ############################################################################
 # Configuration for ECP
 
@@ -107,6 +111,9 @@ email_sender: xxx@example.com
 email_password: xxxxxx
 # ECP - External IP
 public_ip: 10.211.64.107
+
+# nginx - NodePorts:
+nginx_port: 8443
 
 # ECP - NodePorts:
 k8s_dashboard_nodeport: 30080
@@ -175,6 +182,8 @@ kubernetes_rpms_dir: "{{ src_rpms_dir }}/kubernetes"
 glusterfs_rpms_dir: "{{ src_rpms_dir }}/glusterfs"
 nfs_client_rpms_dir: "{{ src_rpms_dir }}/nfs"
 docker_rpms_dir: "{{ src_rpms_dir }}/docker"
+rsync_rpms_dir: "{{ src_rpms_dir }}/rsync"
+keepalived_rpms_dir: "{{ src_rpms_dir }}/keepalived"
 #############################################################################
 # Required RPM files for offline install:
 # ---------------------------------------------------------------------------

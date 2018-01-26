@@ -1,0 +1,52 @@
+---
+
+- name: "Set fact {{ network }} cni variable"
+  set_fact:
+    cni: "{{ vars[network] }}"
+
+- name: Create Kubernetes addon directory
+  file: path={{ network_dir }} state=directory
+
+- name: "Copy {{ cni.name }} RBAC yml file"
+  template: src="{{ cni.template.rbac }}.j2" dest={{ network_dir }}/{{ cni.template.rbac }}
+
+- name: "Copy {{ cni.name }} yml file"
+  template: src="{{ cni.template.ds }}.j2" dest={{ network_dir }}/{{ cni.template.ds }}
+
+- name: "Check {{ cni.name }} cluster role already exists"
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get clusterrole | grep {{ cni.name }}
+  register: check_role
+  failed_when: check_role.rc != 0 and check_role.rc != 1
+
+- name: "Create {{ cni.name }} cluster role"
+  when: check_role.rc != 0
+  shell: |
+    kubectl create --kubeconfig={{ kubeadmin_config }} \
+                   -f {{ network_dir }}/{{ cni.template.rbac }}
+  register: create_role
+
+- name: "Check {{ cni.name }} daemonset is working"
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get ds --all-namespaces | grep {{ cni.name }}
+  register: check_net
+  failed_when: check_net.rc != 0 and check_net.rc != 1
+
+- name: "Create {{ cni.name }} network daemonset"
+  when: check_net.rc != 0
+  shell: |
+    kubectl create --kubeconfig={{ kubeadmin_config }} \
+                   -f {{ network_dir }}/{{ cni.template.ds }}
+
+- name: Check node readiness
+  shell: |
+    kubectl get node --no-headers=true | awk '{print $2}' | grep Ready | wc -l
+  register: get_ready
+  until: get_ready.stdout | int == 1
+  retries: 20
+  delay: 15
+  tags:
+    - cni_test
+

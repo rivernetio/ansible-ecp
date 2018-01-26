@@ -2,23 +2,33 @@
 # All hosts must have passwordless ssh between other as root.
 # Make sure to modify group_vars/all.yml to correctly specify all values.
 
-# Kubernetes master node.
-# Currently HA mode is not supported.
+# Kubernetes master nodes. 
+#
+# High availability is supported when:
+#  - There are more than one master, and
+#  - The IP addresses are all in the same subnet (/24), and
+#  - A virtual IP address (i.e. [masters:vars]) in the 
+#    same subnet is configured.
+#
+# The recommended number of masters are three.
 [masters]
 10.211.64.105
+10.211.64.107
+10.211.64.109
 
 # Kubernetes worker (non-master) nodes.
 # Currently you must specify at least two worker nodes, such that there are
 # at least three nodes in the cluster. Gluster FS, which requires at least
 # 3 hosts  will be installed in the same cluster.
 [workers]
-10.211.64.107
-10.211.64.109
 10.211.64.111
 
 [cluster:children]
 masters
 workers
+
+[cluster:vars]
+vip=10.211.64.120
 
 # Inventory for Gluster FS nodes. This is hyperconverged installation,
 # meaning all Gluster FS nodes must also be kubernetes nodes.

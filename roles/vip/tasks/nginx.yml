@@ -1,0 +1,26 @@
+---
+- name: Create nginx directory
+  file: path={{ nginx_dir }} state=directory
+
+- name: Copy nginx conf and yml files
+  template: src={{ item }} dest={{ nginx_dir }}/{{ item | basename | regex_replace('\.j2', '') }}
+  with_fileglob:
+    - ../templates/nginx/*.j2
+
+- name: Check if nginx daemon set already exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get ds --namespace=kube-system | grep nginx-lb
+  register: check_nginx_ds
+  failed_when: check_nginx_ds.rc != 0 and check_nginx_ds.rc != 1
+  delegate_to: "{{ master_hosts[0] }}"
+  run_once: true
+
+- name: Create nginx daemon set
+  when: check_nginx_ds.rc != 0
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            create -f {{ nginx_dir }}/nginx-ds.yml
+  delegate_to: "{{ master_hosts[0] }}"
+  run_once: true
+

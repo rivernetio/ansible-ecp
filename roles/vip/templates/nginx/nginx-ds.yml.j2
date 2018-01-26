@@ -1,0 +1,31 @@
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: nginx-lb
+  namespace: kube-system
+spec:
+  template:
+    metadata:
+      labels:
+        name: nginx-lb
+    spec:
+      nodeSelector:
+        management: "yes"
+      hostNetwork: true
+      containers:
+      - image: {{ nginx_image }}
+        imagePullPolicy: IfNotPresent
+        name: nginx-lb
+        resources:
+          limits:
+            memory: 500Mi
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        volumeMounts:
+        - mountPath: /etc/nginx/
+          name: configdir
+      volumes:
+      - name: configdir
+        hostPath:
+          path: {{ nginx_dir }}

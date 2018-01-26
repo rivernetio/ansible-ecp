@@ -1,0 +1,23 @@
+---
+- name: Create rpm directory
+  file: path={{ rpm_dir }} state=directory
+
+- name: Copy rpm files to all hosts
+  synchronize:
+    src: "{{ keepalived_rpms_dir }}/"
+    dest: "{{ rpm_dir }}"
+    checksum: yes
+
+- name: Install offline package
+  when:
+    - ansible_os_family == "RedHat"
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - "{{ rpm_dir }}/keepalived-1.3.5-1.el7.x86_64.rpm"
+    - "{{ rpm_dir }}/lm_sensors-libs-3.4.0-4.20160601gitf9185e5.el7.x86_64.rpm"
+    - "{{ rpm_dir }}/net-snmp-agent-libs-5.7.2-28.el7.x86_64.rpm"
+    - "{{ rpm_dir }}/net-snmp-libs-5.7.2-28.el7.x86_64.rpm"
+    - "{{ rpm_dir }}/curl-7.29.0-42.el7_4.1.x86_64.rpm"
+

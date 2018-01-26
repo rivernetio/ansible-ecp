@@ -13,6 +13,6 @@
   shell: |
     kubeadm join --skip-preflight-checks \
                  --token {{ token }} \
-                 {{ master_hosts[0] }}:6443
+                 {{ vip }}:{{ nginx_port }}
   register: join_cluster
 

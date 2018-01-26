@@ -1,0 +1,11 @@
+---
+- import_tasks: keepalived.yml
+  when: master_hosts | length > 1
+  tags:
+    - keepalived
+
+- import_tasks: nginx.yml
+  when: master_hosts | length > 1
+  tags:
+    - nginx
+

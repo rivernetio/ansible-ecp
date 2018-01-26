@@ -19,9 +19,10 @@
   delegate_to: "{{ master_hosts[0] }}"
 
 - name: Ping kubedns POD ip from all hosts to validate POD network
-  command: 'ping -c 3 {{ get_kube_dns_pod_ip.stdout }}'
+  command: 'ping -c 3 {{ item }}'
   register: check_ping
   until: check_ping.rc == 0
   retries: 60
   delay: 5
+  with_items: "{{ get_kube_dns_pod_ip.stdout_lines }}"
 
