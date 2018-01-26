@@ -35,6 +35,12 @@
     regexp: ',NodeRestriction,ResourceQuota'
     replace: ''
 
+- name: Remove node authorization
+  replace:
+    path: /etc/kubernetes/manifests/kube-apiserver.yaml
+    regexp: '--authorization-mode=.*$'
+    replace: '--authorization-mode=RBAC'
+
 - name: Restart kubelet and docker
   systemd:
     name: "{{ item }}"

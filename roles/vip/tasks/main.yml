@@ -1,11 +1,18 @@
 ---
 - import_tasks: keepalived.yml
-  when: master_hosts | length > 1
   tags:
     - keepalived
 
 - import_tasks: nginx.yml
-  when: master_hosts | length > 1
   tags:
     - nginx
 
+- name: Configure kube-proxy to use vip
+  shell: |
+    kubectl get -n kube-system configmap/kube-proxy -o yaml | \
+        sed -e 's#server:.*#server: https://{{ vip }}:{{ nginx_port }}#g' | \
+        kubectl apply -f -
+    kubectl delete pod -n kube-system -l k8s-app=kube-proxy
+  delegate_to: "{{ master_hosts[0] }}"
+  run_once: true
+    

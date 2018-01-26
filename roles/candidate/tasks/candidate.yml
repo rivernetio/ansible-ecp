@@ -59,7 +59,3 @@
     - "kubeadm.alpha.kubernetes.io/role=master"
     - "management=yes"
 
-- name: Scale up kube-dns instances
-  shell: |
-    kubectl scale --replicas={{ master_hosts | length }} -n kube-system deployment/kube-dns
-  

@@ -1,6 +1,5 @@
 ---
 dependencies:
   - { role: common }
-  - { role: label }
   - { role: glusterfs }
 

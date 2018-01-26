@@ -36,9 +36,9 @@ vip=10.211.64.120
 # The glusterfs_devices and glusterfs_hostname variables are used by the
 # installer to generate the proper topology file for glusterfs deployment.
 [glusterfs]
+10.211.64.105 glusterfs_devices='["/dev/sdb"]' glusterfs_hostname='kube05'
 10.211.64.107 glusterfs_devices='["/dev/sdb"]' glusterfs_hostname='kube07'
 10.211.64.109 glusterfs_devices='["/dev/sdb"]' glusterfs_hostname='kube09'
-10.211.64.111 glusterfs_devices='["/dev/sdb"]' glusterfs_hostname='kube11'
 
 # Specify new worker nodes during scale up
 [new_workers]

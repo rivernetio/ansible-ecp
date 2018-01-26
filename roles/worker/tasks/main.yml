@@ -13,6 +13,43 @@
   shell: |
     kubeadm join --skip-preflight-checks \
                  --token {{ token }} \
-                 {{ vip }}:{{ nginx_port }}
-  register: join_cluster
+                 {{ master_hosts[0] }}:6443
+  when: master_hosts|length == 1
 
+- name: Join to Kubernetes cluster
+  shell: |
+    kubeadm join --skip-preflight-checks \
+                 --token {{ token }} \
+                 {{ vip }}:{{ nginx_port }}
+  when: master_hosts|length > 1
+
+- name: Check node readiness
+  shell: |
+    kubectl get node {{ ansible_hostname }} --no-headers=true | awk '{print $2}' | grep Ready | wc -l
+  register: get_ready
+  until: get_ready.stdout | int == 1
+  retries: 20
+  delay: 15
+  delegate_to: "{{ master_hosts[0] }}"
+  tags:
+    - debug_worker
+
+- name: Replace api server  address
+  replace:
+    path: "/etc/kubernetes/kubelet.conf"
+    regexp: 'server:.*$'
+    replace: 'server: https://{{ vip }}:{{ nginx_port}}'
+  when: master_hosts|length > 1
+  tags:
+    - debug_worker
+
+- name: Enable and restart kubelet engine
+  systemd:
+    name: kubelet
+    daemon_reload: yes
+    state: restarted
+    enabled: yes
+  when: master_hosts|length > 1
+  tags:
+    - debug_worker
+ 

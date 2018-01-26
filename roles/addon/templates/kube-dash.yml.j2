@@ -42,6 +42,8 @@ spec:
           initialDelaySeconds: 30
           timeoutSeconds: 30
       serviceAccountName: kubernetes-dashboard
+      nodeSelector:
+        management: "yes"
 ---
 kind: Service
 apiVersion: v1

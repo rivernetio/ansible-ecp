@@ -12,11 +12,11 @@
     - { role: etcd, tags: etcd }
     - { role: master, tags: master }
     - { role: cni, tags: cni }
-    - { role: candidate, tags: candidate }
-    - { role: vip, tags: vip }
+    - { role: candidate, tags: candidate, when: master_hosts|length > 1}
+    - { role: vip, tags: vip, when: master_hosts|length > 1 }
 
 - hosts: workers
-  gather_facts: no
+  gather_facts: yes
   become: yes
   roles:
     - { role: worker, tags: worker }
@@ -25,7 +25,6 @@
   gather_facts: no
   become: yes
   roles:
-    - { role: label, tags: label }
     - { role: addon, tags: addon }
 
 - hosts: cluster
