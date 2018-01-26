@@ -6,3 +6,15 @@
 - name: Set etcd facts
   import_tasks: etcd.yml
   run_once: true
+
+- name: Set k8s api server
+  set_fact:
+    kube_api_server: "{{ master_hosts[0] }}:6443"
+  when: master_hosts|length == 1
+  run_once: true
+
+- name: Set k8s api server
+  set_fact:
+    kube_api_server: "{{ vip }}:{{ nginx_port }}"
+  when: master_hosts|length > 1
+  run_once: true

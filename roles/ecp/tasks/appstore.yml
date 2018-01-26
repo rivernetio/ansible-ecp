@@ -2,8 +2,8 @@
 - name: Create appstore directory
   file: path={{ kube_ecp_dir }}/appstore state=directory
 
-- name: Create repository directory
-  file: path={{ kube_ecp_dir }}/repository state=directory
+- name: Create shared repository directory
+  file: path={{ ecp_share_dir }}/appstore/repository state=directory
 
 - name: Overwrite ecp helm charts local repository
   when:
@@ -12,7 +12,7 @@
   set_fact: ecp_charts_url="http://127.0.0.1:8879/charts"
 
 - name: Copy repository yaml file
-  template: src={{ item }} dest={{ kube_ecp_dir }}/repository/{{ item | basename | regex_replace('\.j2', '') }}
+  template: src={{ item }} dest={{ ecp_share_dir }}/appstore/repository/{{ item | basename | regex_replace('\.j2', '') }}
   with_fileglob:
     - ../templates/repository/*.j2
 
@@ -22,27 +22,17 @@
     - ecp | bool
   copy:
     src: "{{ ecp_local_charts_repo }}/local"
-    dest: "{{ kube_ecp_dir }}/repository/"
+    dest: "{{ ecp_share_dir }}/appstore/repository/"
 
 - name: Copy ecp chart images
   copy:
     src: "{{ ecp_local_charts_repo }}/image"
-    dest: "{{ kube_ecp_dir }}/repository/"
+    dest: "{{ ecp_share_dir }}/appstore/repository/"
 
 - name: Copy appstore yaml file
   template: src={{ item }} dest={{ kube_ecp_dir }}/appstore/{{ item | basename | regex_replace('\.j2', '') }}
   with_fileglob:
     - ../templates/appstore/*.j2
-
-- name: Create shared repository directory
-  file: path={{ ecp_share_dir }}/appstore/repository state=directory
-  run_once: true
-
-- name: Copy file to shared appstore repository
-  synchronize:
-    src: "{{ kube_ecp_dir }}/repository"
-    dest: "{{ ecp_share_dir }}/appstore/"
-    mode: pull
 
 - name: Check if rudder pod already exists
   shell: |
