@@ -6,4 +6,5 @@
     update_cache: yes
     state: present
   with_items:
-    - docker
+    - "{{ required_softwares }}"
+

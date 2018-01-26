@@ -1,0 +1,25 @@
+---
+- name: Create rpm directory
+  file: path={{ rpm_dir }} state=directory
+
+- name: Copy rpm files to all hosts
+  synchronize:
+    src: "{{ item }}/"
+    dest: "{{ rpm_dir }}"
+    checksum: yes
+  with_items:
+    - {{ docker_rpms_dir }}
+    - {{ rsync_rpms_dir }}
+
+- name: Get the list of rpms
+  command: "ls {{ rpm_dir }}"
+  register: rpm_list
+
+- name: Install offline package
+  when:
+    - ansible_os_family == "RedHat"
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items: rpm_list.stdout_lines
+

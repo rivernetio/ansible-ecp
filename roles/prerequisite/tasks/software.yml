@@ -1,24 +1,28 @@
 ---
-- name: Install required software
-  when: ansible_os_family == "RedHat"
-  yum:
-    name: "{{ item }}"
-    update_cache: yes
-    state: present
-  with_items: "{{ required_softwares }}"
+- name: Install binaries online
+  import_tasks: online.yml
+  when: offline is not defined or not offline | bool
 
-- name: Install required software 
-  when: ansible_os_family == "Debian"
-  apt:
-    name: "{{ item }}"
-    update_cache: yes
-    state: present
-  with_items: "{{ required_softwares }}"
+- name: Install binaries offline
+  import_tasks: offline.yml
+  when:
+    - offline is defined
+    - offline | bool
+
+- name: Copy Docker environment config file
+  template: src=docker.j2 dest={{ system_env_dir }}/docker
+
+- name: Enable and restart Docker engine
+  systemd:
+    name: docker
+    daemon_reload: yes
+    state: restarted
+    enabled: yes
+  register: started_docker
 
 - name: Copy jq binary
   copy:
     src: "../binary/jq-linux64"
     dest: "/usr/bin/jq"
     mode: 0755
-
 
