@@ -7,7 +7,7 @@
 # High availability is supported when:
 #  - There are more than one master, and
 #  - The IP addresses are all in the same subnet (/24), and
-#  - A virtual IP address (i.e. [masters:vars]) in the 
+#  - A virtual IP address (i.e. [cluster:vars]) in the 
 #    same subnet is configured.
 #
 # The recommended number of masters are three.
@@ -27,6 +27,7 @@
 masters
 workers
 
+# Virtual API server IP for the cluster. Must be specified for HA.
 [cluster:vars]
 vip=10.211.64.120
 
