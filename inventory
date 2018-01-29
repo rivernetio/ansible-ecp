@@ -22,6 +22,8 @@
 # 3 hosts  will be installed in the same cluster.
 [workers]
 10.211.64.111
+10.211.64.113
+10.211.64.115
 
 [cluster:children]
 masters
@@ -31,15 +33,18 @@ workers
 [cluster:vars]
 vip=10.211.64.120
 
-# Inventory for Gluster FS nodes. This is hyperconverged installation,
-# meaning all Gluster FS nodes must also be kubernetes nodes.
+# Inventory for Gluster FS nodes.
+# All Gluster FS nodes must also be kubernetes nodes.
+#
+# For production cluster, glusterfs nodes must be different than the master
+# nodes defined in the inventory.
 # 
 # The glusterfs_devices and glusterfs_hostname variables are used by the
 # installer to generate the proper topology file for glusterfs deployment.
 [glusterfs]
-10.211.64.105 glusterfs_devices='["/dev/sdb"]' glusterfs_hostname='kube05'
-10.211.64.107 glusterfs_devices='["/dev/sdb"]' glusterfs_hostname='kube07'
-10.211.64.109 glusterfs_devices='["/dev/sdb"]' glusterfs_hostname='kube09'
+10.211.64.111 glusterfs_devices='["/dev/sdb"]' glusterfs_hostname='kube11'
+10.211.64.113 glusterfs_devices='["/dev/sdb"]' glusterfs_hostname='kube13'
+10.211.64.115 glusterfs_devices='["/dev/sdb"]' glusterfs_hostname='kube15'
 
 # Specify new worker nodes during scale up
 [new_workers]

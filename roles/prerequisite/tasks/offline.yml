@@ -12,7 +12,8 @@
     - "{{ rsync_rpms_dir }}"
 
 - name: Get the list of rpms
-  command: "ls {{ rpm_dir }}"
+  shell: |
+    ls -d -1 {{ rpm_dir }}/*.rpm
   register: rpm_list
 
 - name: Install offline package

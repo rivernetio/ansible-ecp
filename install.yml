@@ -12,8 +12,8 @@
     - { role: etcd, tags: etcd }
     - { role: master, tags: master }
     - { role: cni, tags: cni }
-    - { role: candidate, tags: candidate, when: master_hosts|length > 1}
-    - { role: vip, tags: vip, when: master_hosts|length > 1 }
+    - { role: candidate, tags: candidate }
+    - { role: vip, tags: vip }
 
 - hosts: workers
   gather_facts: yes
