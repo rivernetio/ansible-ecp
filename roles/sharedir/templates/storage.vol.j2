@@ -1,0 +1,15 @@
+{%- for node in glusterfs_hosts %}
+volume remote{{ loop.index }}
+  type protocol/client
+  option transport-type tcp
+  option remote-host {{ hostvars[node].glusterfs_hostname }}
+  option remote-subvolume {{ ecp_share_dir }}
+end-volume
+
+{% endfor %}
+volume replicate
+  type cluster/replicate
+  subvolumes {% for node in glusterfs_hosts %}remote{{ loop.index }} {% endfor %}
+
+end-volume
+

@@ -12,7 +12,37 @@
   when:
     - internal_glusterfs is defined
     - internal_glusterfs | bool
-    
+
+- file: path="/etc/glusterfs" state=directory
+  when:
+    - internal_glusterfs is defined
+    - internal_glusterfs | bool
+  tags:
+    - gluster_debug
+
+- name: Create glusterfs volume file
+  when:
+    - internal_glusterfs is defined
+    - internal_glusterfs | bool
+  template: src={{ item }} dest=/etc/glusterfs/{{ item | basename | regex_replace('\.j2', '') }}
+  with_fileglob:
+    - ../templates/storage.vol.j2
+  tags:
+    - gluster_debug
+
+- name: Setup automount
+  when:
+    - internal_glusterfs is defined
+    - internal_glusterfs | bool
+  lineinfile:
+    dest=/etc/fstab
+    backup=yes
+    state=present
+    regexp='/etc/glusterfs/storage.vol.*$'
+    line='/etc/glusterfs/storage.vol {{ ecp_share_dir }} glusterfs rw,allow_other,default_permissions,max_read=131072 0 0'
+  tags:
+    - gluster_debug
+  
 - name: Mount nfs to management hosts
   shell: |
     mount -t nfs {{ nfs_server_shared_dir }} /ecp_share
