@@ -24,3 +24,5 @@
     state: present
   with_items: "{{ rpm_list.stdout_lines }}"
 
+- name: Remove rpms
+  file: path="{{ rpm_dir }}" state=absent

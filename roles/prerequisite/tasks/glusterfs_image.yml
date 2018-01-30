@@ -22,3 +22,6 @@
 - name: Retag heketi image
   shell: |
     docker tag {{ heketi_image }} docker.io/heketi/heketi:dev
+
+- name: Remove glusterfs docker image tars
+  file: path="{{ image_tars_dir }}/glusterfs" state=absent

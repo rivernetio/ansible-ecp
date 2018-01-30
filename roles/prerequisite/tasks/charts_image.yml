@@ -19,3 +19,5 @@
     docker load -i "{{ item.path }}"
   with_items: "{{ charts_images_result.files }}"
 
+- name: Remove chart docker image tars
+  file: path="{{ image_tars_dir }}/charts" state=absent

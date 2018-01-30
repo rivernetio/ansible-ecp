@@ -19,3 +19,5 @@
     docker load -i "{{ item.path }}"
   with_items: "{{ management_images_result.files }}"
 
+- name: Remove management docker image tars
+  file: path="{{ image_tars_dir }}/management" state=absent

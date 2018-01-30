@@ -18,3 +18,5 @@
     docker load -i "{{ item.path }}"
   with_items: "{{ cluster_images_result.files }}"
 
+- name: Remove cluster docker image tars
+  file: path="{{ image_tars_dir }}/cluster" state=absent
