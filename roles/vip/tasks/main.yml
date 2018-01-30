@@ -1,13 +1,19 @@
 ---
 - import_tasks: keepalived.yml
+  when:
+    - master_hosts|length > 1
   tags:
     - keepalived
 
 - import_tasks: nginx.yml
+  when:
+    - master_hosts|length > 1
   tags:
     - nginx
 
 - name: Configure kube-proxy to use vip
+  when:
+    - master_hosts|length > 1
   shell: |
     kubectl get -n kube-system configmap/kube-proxy -o yaml | \
         sed -e 's#server:.*#server: https://{{ vip }}:{{ nginx_port }}#g' | \
