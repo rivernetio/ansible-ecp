@@ -1,142 +1,187 @@
 # ECP Ansible Playbook
-Build an ECP cluster using Ansible. The underlying kubernetes is installed with Kubeadm
+Build an ECP cluster using Ansible. The underlying kubernetes is installed with Kubeadm.
 
 ## System requirement:
-* Deploy node must have `Ansible v2.1.0+` installed.
-* All Master/Node should have password-less access from Deploy node.
+* Deploy node must have `Ansible v2.4.2+` installed.
+* All Nodes should have password-less access from the Deploy node.
 * All hosts must have `Docker` installed. Verified with `Docker 1.12`.
-* Verified on `CentOS 7.3`
+* Verified on `CentOS Linux release 7.4.1708 (Core)`
 
 ## Install
-### Add the system information into `inventory`. For example:
-```
-[master]
-10.211.64.107
+### Deployment Architecture
+The following diagram illustrates the different components of ECP, and the types of nodes where these components are installed.
+![ECP Arch Diagram](ECP_Arch.png)
 
-[node]
+#### **Management nodes**
+Also called master nodes. These are the nodes where kubernetes master components and ECP management components are installed. If there are more than one management nodes, high availability will be enabled. See High Availability section for more details on the behavior of high availability.
+
+#### **GlusterFS nodes**
+These are the nodes for GlusterFS shared storage, if you choose to let the installer install and configure GlusterFS shared storage solution for ECP. GlusterFS nodes should be separate from the management nodes in an HA environment.
+If you choose to use external shared storage solutions, the GlusterFS nodes are not needed.
+
+#### **Worker nodes**
+These are the nodes to run user applications and services.
+
+### High Availability
+The following diagram illustrates more details on the high availability architecture:
+![ECP HA Diagram](k8s-ha.png)
+* The recommended number of master hosts is three.
+* **etcd** cluster is installed on the master hosts for data store. It is shared by kubernetes, calico, and ecp components.
+* **keepalived** cluster is installed on the master hosts to enable virtual IP for the kubernetes api server. It checks the api server health by probing port 6443 on the local host.
+* **nginx** daemonset is installed on the master hosts to enable load balancing of api requests from worker nodes through port 8443.
+* All api requests initiated from within the master hosts (i.e., kubelet, controller-manager, scheduler) are directed to the api server on the local host and port 6443.
+* The **kube-proxy** on all hosts is configured to access api server via the virtual IP and the nginx port (8443).
+* All ecp services access api server via the virtual IP and the nginx port.
+
+### GlusterFS
+The installer can install GlusterFS for you, and then create a shared volume (i.e., /ecp_share) out of the GlusterFS storage to store critical data for ECP, such as harbor image repository, appstore application charts, and monitoring/logging data. See **internal_glusterfs**, **gluster_ecp_volume_size**, **ecp_share_dir** parameteres in *group_vars/all.yml* for more details.
+
+You must configure a separate block device (e.g., /dev/sdb) on all gluster hosts, and configure them in the glusterfs hosts section in the *inventory* file.
+
+### Plan your install
+Depending on your situation, you need to decide if you should do online or offline installation, and if you want to enable High Availability. 
+
+To perform offline installation, you must first prepare the offline installation package which contains all the required RPM packages and docker image tar files. To prepare the offline installation, follow the instruction in the [offline package repository](https://github.com/rivernetio/tools)
+
+#### Edit the `inventory` file. 
+For example, the following inventory file specify three master candidate hosts, and three worker hosts. Because HA is enabled, a virtual IP is also configured. The inventory file also configures the glusterfs hosts, and the corresponding device to be used for glusterfs storage.
+```
+# Must specify all hosts in IPv4 address format. Host name is not supported.
+# All hosts must have passwordless ssh between other as root.
+# Make sure to modify group_vars/all.yml to correctly specify all values.
+
+# Kubernetes master nodes.
+#
+# High availability is supported when:
+#  - There are more than one master, and
+#  - The IP addresses are all in the same subnet (/24), and
+#  - A virtual IP address (i.e. [cluster:vars]) in the
+#    same subnet is configured.
+#
+# The recommended number of masters are three.
+[masters]
+10.211.64.105
+10.211.64.107
 10.211.64.109
 
+# Kubernetes worker (non-master) nodes.
+# Currently you must specify at least two worker nodes, such that there are
+# at least three nodes in the cluster. Gluster FS, which requires at least
+# 3 hosts  will be installed in the same cluster.
+[workers]
+10.211.64.111
+10.211.64.113
+10.211.64.115
+
 [cluster:children]
-master
-node
+masters
+workers
+
+# Virtual API server IP for the cluster. Must be specified for HA.
+[cluster:vars]
+vip=10.211.64.120
+
+# Inventory for Gluster FS nodes.
+# All Gluster FS nodes must also be kubernetes nodes.
+#
+# For production cluster, glusterfs nodes must be different than the master
+# nodes defined in the inventory.
+#
+# The glusterfs_devices and glusterfs_hostname variables are used by the
+# installer to generate the proper topology file for glusterfs deployment.
+[glusterfs]
+10.211.64.111 glusterfs_devices='["/dev/sdb"]' glusterfs_hostname='kube11'
+10.211.64.113 glusterfs_devices='["/dev/sdb"]' glusterfs_hostname='kube13'
+10.211.64.115 glusterfs_devices='["/dev/sdb"]' glusterfs_hostname='kube15'
 ```
 
-### Customize ```group_vars/all.yml```
-Modify the following variables according to your site
-```sh
-# Configuration for yum/apt repository
-yum_repo: "http://yum.kubernetes.io/repos/kubernetes-el7-x86_64"
-apt_repo: "deb http://apt.kubernetes.io/ kubernetes-xenial main"
-apt_key: "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
-# Configuration for kubeadm
-kubeadm_image_repository: gcr.io/google_containers
-# Configuration for k8s dashboard
-k8s_dashboard_image: gcr.io/google_containers/kubernetes-dashboard-amd64:v1.6.3
-# Configuration for networks
-calico_etcd_image: quay.io/coreos/etcd:v3.1.10
-calico_node_image: quay.io/calico/node:v2.4.1
-calico_cni_image: quay.io/calico/cni:v1.10.0
-calico_policy_controller_image: quay.io/calico/kube-policy-controller:v0.7.0
-# Configuration for ECP
-# appstore
-rudder_image: docker.io/rivernet/rudder:4.1
-tiller_image: docker.io/rivernet/tiller:v2.2.3
-# logging
-canes_image: docker.io/rivernet/canes:4.1
-elasticsearch_image: docker.io/rivernet/elasticsearch:1.5.2
-fluentd_image: docker.io/rivernet/fluentd-elasticsearch:1.22
-# events
-events_image: docker.io/rivernet/events:4.1
-# license
-license_image: docker.io/rivernet/license:4.1
-# lyra
-lyra_image: docker.io/rivernet/lyra:4.1
-# mysql
-mysql_image: docker.io/rivernet/mysql-sky:4.1
-# prometheus
-grafana_image: docker.io/rivernet/grafana-sky:4.1
-docker_image: docker.io/rivernet/docker
-kubestatemetrics_image: quay.io/coreos/kube-state-metrics:v0.5.0
-nodeexporter_image: quay.io/prometheus/node-exporter:0.12.0
-kubeapiexporter_image: docker.io/rivernet/kube-api-exporter
-prometheus_image: quay.io/prometheus/prometheus:v1.5.2
-# pyxis
-pyxis_image: docker.io/rivernet/pyxis:4.1
-# river
-river_image: docker.io/rivernet/river:4.1
-# sas
-keystone_image: docker.io/rivernet/keystone:20161108
-sas_image: docker.io/rivernet/skyform-sas:4.1
-```
-The following image still needs to be pulled on all hosts manually and then tagged **exactly** like the following, as ``kubeadm`` cannot get this image from ``kubeadm_image_repository``
-
-```gcr.io/google_containers/pause-amd64:3.0```
+#### Customize ```group_vars/all.yml```
+Modify the following variables according to your site.
 
 ### Run the `install.yml` playbook:
 ```sh
 $ ansible-playbook -v install.yml
 ...
-TASK [ecp : Create pyxis rc] ************************************************************************************************************
-changed: [10.211.64.107] => {"changed": true, "cmd": "kubectl --kubeconfig=/etc/kubernetes/admin.conf create -f /etc/kubernetes/ecp/pyxis/pyxis-controller.yaml", "delta": "0:00:00.249539", "end": "2017-10-20 21:35:58.130390", "rc": 0, "start": "2017-10-20 21:35:57.880851", "stderr": "", "stderr_lines": [], "stdout": "replicationcontroller \"firmament-pyxis\" created", "stdout_lines": ["replicationcontroller \"firmament-pyxis\" created"]}
+TASK [ecp : Create events rc] *******************************************************************************************************
+changed: [10.211.64.105] => {"changed": true, "cmd": "kubectl --kubeconfig=/etc/kubernetes/admin.conf create -f /etc/kubernetes/ecp/events/events-controller.yaml", "delta": "0:00:00.299579", "end": "2018-01-30 22:52:25.788120", "rc": 0, "start": "2018-01-30 22:52:25.488541", "stderr": "", "stderr_lines": [], "stdout": "replicationcontroller \"firmament-events\" created", "stdout_lines": ["replicationcontroller \"firmament-events\" created"]}
 
-TASK [ecp : Check if pyxis service already exists] **************************************************************************************
-changed: [10.211.64.107] => {"changed": true, "cmd": "kubectl --kubeconfig=/etc/kubernetes/admin.conf get svc --namespace=sky-firmament | grep firmament-pyxis", "delta": "0:00:00.124027", "end": "2017-10-20 21:35:58.593534", "failed": false, "failed_when_result": false, "rc": 1, "start": "2017-10-20 21:35:58.469507", "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+TASK [ecp : Create events service] **************************************************************************************************
+changed: [10.211.64.105] => {"changed": true, "cmd": "kubectl --kubeconfig=/etc/kubernetes/admin.conf create -f /etc/kubernetes/ecp/events/events-service.yaml", "delta": "0:00:00.677848", "end": "2018-01-30 22:52:27.352944", "rc": 0, "start": "2018-01-30 22:52:26.675096", "stderr": "", "stderr_lines": [], "stdout": "service \"events-firmament-com\" created", "stdout_lines": ["service \"events-firmament-com\" created"]}
 
-TASK [ecp : Create pyxis svc] ***********************************************************************************************************
-changed: [10.211.64.107] => {"changed": true, "cmd": "kubectl --kubeconfig=/etc/kubernetes/admin.conf create -f /etc/kubernetes/ecp/pyxis/pyxis-service.yaml", "delta": "0:00:00.176530", "end": "2017-10-20 21:35:59.037876", "rc": 0, "start": "2017-10-20 21:35:58.861346", "stderr": "", "stderr_lines": [], "stdout": "service \"pyxis-firmament-com\" created", "stdout_lines": ["service \"pyxis-firmament-com\" created"]}
-
-TASK [ecp : Wait until pyxis pod starts to run] *****************************************************************************************
-FAILED - RETRYING: Wait until pyxis pod starts to run (300 retries left).
-FAILED - RETRYING: Wait until pyxis pod starts to run (299 retries left).
-FAILED - RETRYING: Wait until pyxis pod starts to run (298 retries left).
-FAILED - RETRYING: Wait until pyxis pod starts to run (297 retries left).
-FAILED - RETRYING: Wait until pyxis pod starts to run (296 retries left).
-FAILED - RETRYING: Wait until pyxis pod starts to run (295 retries left).
-FAILED - RETRYING: Wait until pyxis pod starts to run (294 retries left).
-FAILED - RETRYING: Wait until pyxis pod starts to run (293 retries left).
-FAILED - RETRYING: Wait until pyxis pod starts to run (292 retries left).
-FAILED - RETRYING: Wait until pyxis pod starts to run (291 retries left).
-changed: [10.211.64.107] => {"attempts": 11, "changed": true, "cmd": "kubectl --kubeconfig=/etc/kubernetes/admin.conf get po --namespace=sky-firmament | grep firmament-pyxis", "delta": "0:00:00.172916", "end": "2017-10-20 21:36:54.492635", "rc": 0, "start": "2017-10-20 21:36:54.319719", "stderr": "", "stderr_lines": [], "stdout": "firmament-pyxis-9wnzk              1/1       Running   0          56s", "stdout_lines": ["firmament-pyxis-9wnzk              1/1       Running   0          56s"]}
-
-PLAY RECAP ******************************************************************************************************************************
-10.211.64.107              : ok=118  changed=97   unreachable=0    failed=0
-10.211.64.109              : ok=11   changed=7    unreachable=0    failed=0
+PLAY RECAP **************************************************************************************************************************
+10.211.64.105              : ok=257  changed=194  unreachable=0    failed=0
+10.211.64.107              : ok=61   changed=26   unreachable=0    failed=0
+10.211.64.109              : ok=57   changed=26   unreachable=0    failed=0
+10.211.64.111              : ok=29   changed=13   unreachable=0    failed=0
+10.211.64.113              : ok=29   changed=13   unreachable=0    failed=0
+10.211.64.115              : ok=25   changed=13   unreachable=0    failed=0
 ```
 
 ### Verify
 ```sh
-[root@kube07 ansible-ecp]# kubectl get po --all-namespaces
-NAMESPACE       NAME                                             READY     STATUS    RESTARTS   AGE
-kube-system     calico-etcd-h006t                                1/1       Running   0          11m
-kube-system     calico-node-3pcxs                                2/2       Running   0          11m
-kube-system     calico-node-70p77                                2/2       Running   1          9m
-kube-system     calico-policy-controller-336633499-w1xws         1/1       Running   0          11m
-kube-system     etcd-kube07                                      1/1       Running   0          11m
-kube-system     helm-rudder-1209115447-c745p                     1/1       Running   0          7m
-kube-system     kube-api-exporter-1890998689-l5q4b               1/1       Running   0          7m
-kube-system     kube-apiserver-kube07                            1/1       Running   0          11m
-kube-system     kube-controller-manager-kube07                   1/1       Running   0          11m
-kube-system     kube-dns-95433198-p35k5                          3/3       Running   0          11m
-kube-system     kube-proxy-5jmpv                                 1/1       Running   0          9m
-kube-system     kube-proxy-krjwd                                 1/1       Running   0          11m
-kube-system     kube-scheduler-kube07                            1/1       Running   0          10m
-kube-system     kube-state-metrics-deployment-3043460491-9xp98   1/1       Running   0          7m
-kube-system     kubernetes-dashboard-3313488171-xkstp            1/1       Running   0          9m
-kube-system     river-4042643603-58fsr                           1/1       Running   0          7m
-kube-system     tiller-deploy-3139936634-1tk1v                   1/1       Running   0          7m
-sky-firmament   firmament-license-f1w3s                          1/1       Running   0          9m
-sky-firmament   firmament-lyra-bq8xw                             1/1       Running   0          8m
-sky-firmament   firmament-mysql-8s3hz                            1/1       Running   0          6m
-sky-firmament   firmament-pyxis-9wnzk                            1/1       Running   0          4m
-sky-firmament   grafana-core-3853529772-7mvbw                    1/1       Running   0          7m
-sky-firmament   prometheus-core-1376599314-7whrt                 1/1       Running   0          7m
-sky-firmament   prometheus-node-exporter-gg2r7                   1/1       Running   0          7m
-sky-firmament   prometheus-node-exporter-s1dw4                   1/1       Running   0          7m
-sky-firmament   skyform-sas-6xggb                                2/2       Running   0          5m
-
+[root@kube07 vagrant]# kubectl get po --all-namespaces -o wide
+NAMESPACE       NAME                                             READY     STATUS    RESTARTS   AGE       IP                NODE
+default         glusterfs-1xw63                                  1/1       Running   0          23h       10.211.64.115     kube15
+default         glusterfs-kg6f8                                  1/1       Running   0          23h       10.211.64.111     kube11
+default         glusterfs-t6hm2                                  1/1       Running   0          23h       10.211.64.113     kube13
+default         heketi-2422963060-z6j5f                          1/1       Running   0          23h       192.168.71.193    kube07
+default         jupyter-jupyter-3550354844-dp7j7                 1/1       Running   0          23h       192.168.239.140   kube09
+harbor          docker-cdw50                                     1/1       Running   0          23h       192.168.199.67    kube05
+harbor          mysql-h1p0c                                      1/1       Running   0          23h       192.168.71.194    kube07
+harbor          proxy-5nh7b                                      1/1       Running   0          23h       192.168.239.131   kube09
+harbor          registry-39h52                                   1/1       Running   0          23h       192.168.239.130   kube09
+harbor          ui-chtz4                                         1/1       Running   0          23h       192.168.71.195    kube07
+kube-system     calico-node-47c06                                2/2       Running   0          23h       10.211.64.111     kube11
+kube-system     calico-node-4g8p4                                2/2       Running   0          23h       10.211.64.107     kube07
+kube-system     calico-node-chlsw                                2/2       Running   0          23h       10.211.64.109     kube09
+kube-system     calico-node-n6zs1                                2/2       Running   0          23h       10.211.64.115     kube15
+kube-system     calico-node-qg4s4                                2/2       Running   1          23h       10.211.64.113     kube13
+kube-system     calico-node-w7p4v                                2/2       Running   0          23h       10.211.64.105     kube05
+kube-system     calico-policy-controller-975587260-b53xv         1/1       Running   0          23h       10.211.64.105     kube05
+kube-system     helm-rudder-617253635-x3gwt                      2/2       Running   0          23h       192.168.71.197    kube07
+kube-system     kube-api-exporter-766554028-nv9j5                1/1       Running   0          23h       192.168.71.199    kube07
+kube-system     kube-apiserver-kube05                            1/1       Running   0          23h       10.211.64.105     kube05
+kube-system     kube-apiserver-kube07                            1/1       Running   0          23h       10.211.64.107     kube07
+kube-system     kube-apiserver-kube09                            1/1       Running   0          23h       10.211.64.109     kube09
+kube-system     kube-controller-manager-kube05                   1/1       Running   1          23h       10.211.64.105     kube05
+kube-system     kube-controller-manager-kube07                   1/1       Running   0          23h       10.211.64.107     kube07
+kube-system     kube-controller-manager-kube09                   1/1       Running   0          23h       10.211.64.109     kube09
+kube-system     kube-dns-2425271678-tvbjn                        3/3       Running   0          23h       192.168.199.65    kube05
+kube-system     kube-proxy-79bxb                                 1/1       Running   0          23h       10.211.64.105     kube05
+kube-system     kube-proxy-9pk97                                 1/1       Running   0          23h       10.211.64.113     kube13
+kube-system     kube-proxy-dwzsh                                 1/1       Running   0          23h       10.211.64.109     kube09
+kube-system     kube-proxy-h189l                                 1/1       Running   1          23h       10.211.64.115     kube15
+kube-system     kube-proxy-k8nkv                                 1/1       Running   1          23h       10.211.64.111     kube11
+kube-system     kube-proxy-s9vps                                 1/1       Running   0          23h       10.211.64.107     kube07
+kube-system     kube-scheduler-kube05                            1/1       Running   1          23h       10.211.64.105     kube05
+kube-system     kube-scheduler-kube07                            1/1       Running   0          23h       10.211.64.107     kube07
+kube-system     kube-scheduler-kube09                            1/1       Running   0          23h       10.211.64.109     kube09
+kube-system     kube-state-metrics-deployment-3234364931-tcq3l   1/1       Running   0          23h       192.168.239.136   kube09
+kube-system     kubernetes-dashboard-768341277-gpnfc             1/1       Running   0          23h       192.168.199.66    kube05
+kube-system     nginx-lb-j0lf9                                   1/1       Running   0          23h       10.211.64.105     kube05
+kube-system     nginx-lb-sn5bl                                   1/1       Running   0          23h       10.211.64.107     kube07
+kube-system     nginx-lb-t1ggp                                   1/1       Running   0          23h       10.211.64.109     kube09
+kube-system     river-4191847710-3z0rz                           1/1       Running   0          23h       192.168.239.133   kube09
+kube-system     tiller-deploy-3694163333-szh7m                   1/1       Running   0          23h       192.168.239.134   kube09
+sky-firmament   custom-metrics-apiserver-3146564623-l7zrn        1/1       Running   0          23h       192.168.239.137   kube09
+sky-firmament   firmament-ara-shpd6                              1/1       Running   0          23h       192.168.239.138   kube09
+sky-firmament   firmament-events-vmf18                           1/1       Running   0          23h       192.168.199.71    kube05
+sky-firmament   firmament-license-2fqx3                          1/1       Running   0          23h       192.168.239.132   kube09
+sky-firmament   firmament-lyra-jrcg6                             1/1       Running   0          23h       192.168.71.196    kube07
+sky-firmament   firmament-mysql-92qlr                            1/1       Running   0          23h       192.168.199.68    kube05
+sky-firmament   firmament-pyxis-fs9gg                            1/1       Running   0          23h       192.168.239.139   kube09
+sky-firmament   grafana-core-2251161593-4vgh3                    1/1       Running   0          23h       192.168.71.198    kube07
+sky-firmament   prometheus-core-2626112434-96np1                 1/1       Running   0          23h       192.168.199.70    kube05
+sky-firmament   prometheus-node-exporter-56q49                   1/1       Running   0          23h       10.211.64.107     kube07
+sky-firmament   prometheus-node-exporter-5k5mk                   1/1       Running   0          23h       10.211.64.113     kube13
+sky-firmament   prometheus-node-exporter-7x8sr                   1/1       Running   0          23h       10.211.64.109     kube09
+sky-firmament   prometheus-node-exporter-87z1k                   1/1       Running   0          23h       10.211.64.105     kube05
+sky-firmament   prometheus-node-exporter-nkg2d                   1/1       Running   0          23h       10.211.64.111     kube11
+sky-firmament   prometheus-node-exporter-pxk0z                   1/1       Running   0          23h       10.211.64.115     kube15
+sky-firmament   skyform-sas-87rlm                                2/2       Running   0          23h       192.168.199.69    kube05
 ```
 
 ### Destroy
 ```sh
-$ ansible-playbook reset-site.yml
+$ ansible-playbook destroy.yml
 ```
