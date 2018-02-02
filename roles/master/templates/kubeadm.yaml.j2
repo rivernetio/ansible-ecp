@@ -23,7 +23,7 @@ imageRepository: {{ kubeadm_image_repository }}
 controllerManagerExtraArgs:
   horizontal-pod-autoscaler-use-rest-clients: "true"
   horizontal-pod-autoscaler-sync-period: "10s"
-  node-monitor-grace-period: "10s"
+  node-monitor-grace-period: "40s"
 apiServerExtraArgs:
   runtime-config: "api/all=true"
   feature-gates: "TaintBasedEvictions=true"
