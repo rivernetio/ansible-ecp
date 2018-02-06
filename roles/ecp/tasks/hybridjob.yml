@@ -1,0 +1,50 @@
+---
+- name: Create hybridjob directory
+  file: path={{ kube_ecp_dir }}/hybridjob state=directory
+
+- name: Copy hybridjob yaml file
+  template: src={{ item }} dest={{ kube_ecp_dir }}/hybridjob/{{ item | basename | regex_replace('\.j2', '') }}
+  with_fileglob:
+    - ../templates/hybridjob/*.j2
+
+- name: Check if hybridjob service account already exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get sa --namespace=kube-system | grep hybridjob
+  run_once: true
+  register: check_hybridjob_sa
+  failed_when: check_hybridjob_sa.rc != 0 and check_hybridjob_sa.rc != 1
+
+- name: Create RBAC
+  when: check_hybridjob_sa.rc != 0
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            create -f {{ kube_ecp_dir }}/hybridjob/hybridjob-k8s-rbac.yaml
+  run_once: true
+
+- name: Check if hybridjob deployment already exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get deployment --namespace=kube-system | grep hybridjob
+  run_once: true
+  register: check_hybridjob_deploy
+  failed_when: check_hybridjob_deploy.rc != 0 and check_hybridjob_deploy.rc != 1
+
+- name: Create hybridjob deployment
+  when: check_hybridjob_deploy.rc != 0
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            create -f {{ kube_ecp_dir }}/hybridjob/hybridjob.yaml
+  run_once: true
+
+- name: Wait until hybridjob pod starts to run
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get po --namespace=kube-system | grep hybridjob
+  register: check_hybridjob
+  until: check_hybridjob.rc == 0 and check_hybridjob.stdout.find("Running") != -1
+  retries: "{{ pod_run_retry | int }}"
+  delay: "{{ pod_run_retry_delay | int }}"
+
+
+
