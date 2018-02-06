@@ -202,8 +202,6 @@ function create_x86_64_package() {
 			images="$images $image"
 		fi
 	done
-        docker tag docker.io/rivernet/kube-scheduler-amd64:v1.7.5.1 docker.io/rivernet/kube-scheduler-amd64:v1.7.5
-        images="$images docker.io/rivernet/kube-scheduler-amd64:v1.7.5"
 
 	echo
 	echo "Generating cluster nodes images, this may take a while."
@@ -223,6 +221,9 @@ function create_x86_64_package() {
 			images="$images $image"
 		fi
 	done
+
+        docker tag docker.io/rivernet/kube-scheduler-amd64:v1.7.5.1 gcr.io/google_containers/kube-scheduler-amd64:v1.7.5
+        images="$images gcr.io/google_containers/kube-scheduler-amd64:v1.7.5"
 
 	echo
 	echo "Generating management nodes images, this may take a while."
