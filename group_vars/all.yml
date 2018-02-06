@@ -64,27 +64,27 @@ registry_domain: registry.harbor:5000
 # ECP - Namespace
 ecp_namespace: sky-firmament
 # ECP - Appstore
-rudder_image: rivernet/rudder:4.1
+rudder_image: rivernet/rudder:4.2
 helm_image: rivernet/helm:v2.2.3
 tiller_image: rivernet/tiller:v2.6.2
 ecp_charts_url: https://github.com/rivernetio/charts/raw/master/repo/stable
 ecp_local_charts_repo: "{{ playbook_dir }}/depends/charts/repo"
 # ECP - Logging
-canes_image: rivernet/canes:4.1
+canes_image: rivernet/canes:4.2
 elasticsearch_image: rivernet/elasticsearch:5.6.4
 fluentd_image: rivernet/fluentd-elasticsearch:v2.0.2
 kibana_image: rivernet/kibana:5.6.4
 elasticsearch_curator_image: rivernet/docker-elasticsearch-curator:5.4.1
 # ECP - Events
-events_image: rivernet/events:4.1
+events_image: rivernet/events:4.2
 # ECP - License
-license_image: rivernet/license:4.1
+license_image: rivernet/license:4.2
 # ECP - Lyra
-lyra_image: rivernet/lyra:4.1
+lyra_image: rivernet/lyra:4.2
 # ECP - Mysql
-mysql_image: rivernet/mysql-sky:4.1
+mysql_image: rivernet/mysql-sky:4.2
 # ECP - Prometheus
-grafana_image: rivernet/grafana-sky:4.1
+grafana_image: rivernet/grafana-sky:4.2
 curl_image: rivernet/curl:latest
 kubestatemetrics_image: rivernet/kube-state-metrics:v0.5.0
 nodeexporter_image: rivernet/node-exporter:0.12.0
@@ -92,19 +92,21 @@ kubeapiexporter_image: rivernet/kube-api-exporter:master-2fe5dfb
 prometheus_image: rivernet/prometheus:v1.5.2
 prometheus_adapter_image: rivernet/k8s-prometheus-adapter:v0.2.0-beta.0
 # ECP - Pyxis GUI
-pyxis_image: rivernet/pyxis:4.1
+pyxis_image: rivernet/pyxis:4.2
 # ECP - River Websocket
-river_image: rivernet/river:4.1
+river_image: rivernet/river:4.2
 # ECP - Sas Authentication
 keystone_image: rivernet/keystone:20161108
-sas_image: rivernet/skyform-sas:4.1
+sas_image: rivernet/skyform-sas:4.2
 # ECP - Harbor Image Repository
-harbor_mysql_image: rivernet/harbor-mysql:4.1
-harbor_registry_image: rivernet/harbor-registry:4.1
-harbor_ui_image: rivernet/harbor-ui:4.1
-harbor_proxy_image: rivernet/harbor-proxy:4.1
+harbor_mysql_image: rivernet/harbor-mysql:4.2
+harbor_registry_image: rivernet/harbor-registry:4.2
+harbor_ui_image: rivernet/harbor-ui:4.2
+harbor_proxy_image: rivernet/harbor-proxy:4.2
 harbor_docker_image: rivernet/docker:stable-dind
-ara_image: rivernet/ara:4.1
+ara_image: rivernet/ara:4.2
+# ECP - HybridJob Controller
+hybridjob_image: rivernet/hybridjob-controller:4.2
 # ECP - Email for alert
 email_host: smtp.xxx.com
 email_sender: xxx@example.com
@@ -137,15 +139,15 @@ harbor_https_nodeport: 31443
 
 # ECP - Appstore Images.  All images must start with docker.io/rivernet
 app_images:
-  - docker.io/rivernet/tensorflow-serving:4.1
-  - docker.io/rivernet/tensorflow:4.1
-  - docker.io/rivernet/jupyter:4.1.1
+  - docker.io/rivernet/tensorflow-serving:4.2
+  - docker.io/rivernet/tensorflow:4.2
+  - docker.io/rivernet/jupyter:4.2
   - docker.io/rivernet/web-vote-app:v0.1
   - docker.io/rivernet/redis:3.0
   - docker.io/rivernet/redis_exporter:v0.14
   - docker.io/rivernet/curl:latest
   - docker.io/rivernet/tomcat:8.0.47-r0
-  - docker.io/rivernet/mnist-demo:4.1
+  - docker.io/rivernet/mnist-demo:4.2
 
 # Harbor registry
 insecure_registry: registry.harbor:5000
