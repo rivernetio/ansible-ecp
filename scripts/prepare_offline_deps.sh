@@ -77,7 +77,7 @@ GOOGLE_IMAGES=(
 	k8s-dns-dnsmasq-nanny-amd64:1.14.4
 	kube-apiserver-amd64:v1.7.5
 	kube-controller-manager-amd64:v1.7.5
-	kube-scheduler-amd64:v1.7.5
+	kube-scheduler-amd64:v1.7.5.1
 	kube-proxy-amd64:v1.7.5
 	etcd-amd64:3.0.17
 )
@@ -85,30 +85,30 @@ GOOGLE_IMAGES=(
 MANAGEMENT_IMAGES=(
 	docker.io/rivernet/kube-apiserver-amd64:v1.7.5
 	docker.io/rivernet/kube-controller-manager-amd64:v1.7.5
-	docker.io/rivernet/kube-scheduler-amd64:v1.7.5
+	docker.io/rivernet/kube-scheduler-amd64:v1.7.5.1
 	docker.io/rivernet/etcd-amd64:3.0.17
-	docker.io/rivernet/rudder:4.1
+	docker.io/rivernet/rudder:4.2
 	docker.io/rivernet/tiller:v2.6.2
 	docker.io/rivernet/helm:v2.2.3
-	docker.io/rivernet/canes:4.1
+	docker.io/rivernet/canes:4.2
 	docker.io/rivernet/elasticsearch:5.6.4
 	docker.io/rivernet/kibana:5.6.4
 	docker.io/rivernet/docker-elasticsearch-curator:5.4.1
-	docker.io/rivernet/events:4.1
-	docker.io/rivernet/license:4.1
-	docker.io/rivernet/lyra:4.1
-	docker.io/rivernet/mysql-sky:4.1
+	docker.io/rivernet/events:4.2
+	docker.io/rivernet/license:4.2
+	docker.io/rivernet/lyra:4.2
+	docker.io/rivernet/mysql-sky:4.2
 	docker.io/rivernet/curl:latest
-	docker.io/rivernet/grafana-sky:4.1
+	docker.io/rivernet/grafana-sky:4.2
 	docker.io/rivernet/kube-state-metrics:v0.5.0
 	docker.io/rivernet/kube-api-exporter:master-2fe5dfb
 	docker.io/rivernet/prometheus:v1.5.2
 	docker.io/rivernet/k8s-prometheus-adapter:v0.2.0-beta.0
-	docker.io/rivernet/pyxis:4.1
-	docker.io/rivernet/river:4.1
+	docker.io/rivernet/pyxis:4.2
+	docker.io/rivernet/river:4.2
 	docker.io/rivernet/keystone:20161108
-	docker.io/rivernet/skyform-sas:4.1
-	docker.io/rivernet/ara:4.1
+	docker.io/rivernet/skyform-sas:4.2
+	docker.io/rivernet/ara:4.2
 )
 
 CLUSTER_IMAGES=(
@@ -128,23 +128,23 @@ CLUSTER_IMAGES=(
 )
 
 HARBOR_IMAGES=(
-	docker.io/rivernet/harbor-ui:4.1
-	docker.io/rivernet/harbor-proxy:4.1
-	docker.io/rivernet/harbor-mysql:4.1
-	docker.io/rivernet/harbor-registry:4.1
+	docker.io/rivernet/harbor-ui:4.2
+	docker.io/rivernet/harbor-proxy:4.2
+	docker.io/rivernet/harbor-mysql:4.2
+	docker.io/rivernet/harbor-registry:4.2
 	docker.io/rivernet/docker:stable-dind
 )
 
 APP_IMAGES=(
-	docker.io/rivernet/jupyter:4.1.1
-	docker.io/rivernet/tensorflow-serving:4.1
-	docker.io/rivernet/tensorflow:4.1
+	docker.io/rivernet/jupyter:4.2
+	docker.io/rivernet/tensorflow-serving:4.2
+	docker.io/rivernet/tensorflow:4.2
 	docker.io/rivernet/web-vote-app:v0.1
 	docker.io/rivernet/redis:3.0
 	docker.io/rivernet/redis_exporter:v0.14
 	docker.io/rivernet/curl:latest
 	docker.io/rivernet/tomcat:8.0.47-r0
-	docker.io/rivernet/mnist-demo:4.1
+	docker.io/rivernet/mnist-demo:4.2
 )
 
 GLUSTER_IMAGES=(
@@ -202,6 +202,8 @@ function create_x86_64_package() {
 			images="$images $image"
 		fi
 	done
+        docker tag docker.io/rivernet/kube-scheduler-amd64:v1.7.5.1 docker.io/rivernet/kube-scheduler-amd64:v1.7.5
+        images="$images docker.io/rivernet/kube-scheduler-amd64:v1.7.5"
 
 	echo
 	echo "Generating cluster nodes images, this may take a while."
