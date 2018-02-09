@@ -77,3 +77,10 @@
   tags:
     - ecp_events
 
+- name: Create hybridjob service
+  when:
+    - ecp is defined
+    - ecp | bool
+  import_tasks: hybridjob.yml
+  tags:
+    - ecp_hybridjob
