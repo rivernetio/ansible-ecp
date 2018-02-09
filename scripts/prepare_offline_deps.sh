@@ -145,6 +145,8 @@ APP_IMAGES=(
 	docker.io/rivernet/curl:latest
 	docker.io/rivernet/tomcat:8.0.47-r0
 	docker.io/rivernet/mnist-demo:4.2
+        docker.io/rivernet/mysql:5.7.20
+        docker.io/rivernet/mysqld-exporter:latest
 )
 
 GLUSTER_IMAGES=(
