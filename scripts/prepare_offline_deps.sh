@@ -147,6 +147,7 @@ APP_IMAGES=(
 	docker.io/rivernet/mnist-demo:4.2
         docker.io/rivernet/mysql:5.7.20
         docker.io/rivernet/mysqld-exporter:latest
+        docker.io/rivernet/nvidia-smi-exporter:8.0-runtime-ubuntu14.04
 )
 
 GLUSTER_IMAGES=(
