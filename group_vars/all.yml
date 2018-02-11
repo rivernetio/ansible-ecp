@@ -45,7 +45,7 @@ flannel_image: rivernet/flannel:v0.7.1-amd64
 
 # Network implementation('flannel', 'calico')
 network: calico
-pod_network_cidr: 192.168.0.0/16
+pod_network_cidr: 10.254.0.0/16
 cni_opts: interface=enp0s8 # flannel: --iface=enp0s8, calico: interface=enp0s8
 service_subnet: 10.96.0
 service_cidr: "{{ service_subnet }}.0/12"
