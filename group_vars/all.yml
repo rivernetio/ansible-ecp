@@ -107,8 +107,6 @@ harbor_docker_image: rivernet/docker:stable-dind
 ara_image: rivernet/ara:4.2
 # ECP - HybridJob Controller
 hybridjob_image: rivernet/hybridjob-controller:4.2
-# ECP - nvidia smi exporter
-nvidia_smi_exporter: rivernet/nvidia-smi-exporter:8.0-runtime-ubuntu14.04
 # ECP - Email for alert
 email_host: smtp.xxx.com
 email_sender: xxx@example.com
@@ -152,6 +150,7 @@ app_images:
   - docker.io/rivernet/mnist-demo:4.2
   - docker.io/rivernet/mysql:5.7.20
   - docker.io/rivernet/mysqld-exporter:latest
+  - docker.io/rivernet/nvidia-smi-exporter:8.0-runtime-ubuntu14.04
 
 # Harbor registry
 insecure_registry: registry.harbor:5000
