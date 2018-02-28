@@ -1,7 +1,8 @@
 ---
 - hosts: new_workers
-  gather_facts: no
+  gather_facts: yes
   become: yes
   roles:
+    - { role: prerequisite, tags: prerequisite }
     - { role: worker, tags: worker }
 

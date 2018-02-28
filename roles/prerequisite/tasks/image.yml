@@ -10,3 +10,5 @@
 - include_tasks: charts_image.yml
   when: "'masters' in group_names"
 
+- include_tasks: cluster_image.yml
+  when: "'new_workers' in group_names"
