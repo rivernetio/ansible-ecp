@@ -1,0 +1,20 @@
+---
+- name: Copy binaries offline
+  import_tasks: offline.yml
+  when:
+    - offline is defined
+    - offline | bool
+    
+- name: Train master and candidates
+  import_tasks: drain.yml
+  
+- name: Upgrade master
+  import_tasks: master.yml
+  when:
+    - inventory_hostname == master_hosts[0]
+
+- name: Upgrade candidates
+  import_tasks: candidate.yml
+  when:
+    - inventory_hostname != master_hosts[0]
+    - master_hosts|length > 1

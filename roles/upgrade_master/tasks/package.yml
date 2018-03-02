@@ -1,0 +1,20 @@
+---
+- name: Install kubernetes packages
+  yum:
+    name: "{{ item }}"
+    update_cache: yes
+    state: present
+  with_items:
+    - kubectl-{{ upgrade_yum_kubectl_version }}
+    - kubelet-{{ upgrade_yum_kubelet_version }}
+    - kubeadm-{{ upgrade_yum_kubeadm_version }}
+  when: offline is not defined or not offline | bool
+ 
+- name: Prepull kubernetes images
+  shell: |
+    docker pull {{ kubeadm_image_repository }}/{{ item }}:{{ k8s_upgrade_version }}
+  with_items:
+    - kube-apiserver-amd64
+    - kube-controller-manager-amd64
+    - kube-scheduler-amd64
+  when: offline is not defined or not offline | bool

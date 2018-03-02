@@ -22,12 +22,6 @@
     - kubernetes-cni
   ignore_errors: True
 
-- name: Clear versionlock
-  when: ansible_os_family == "RedHat"
-  shell: |
-    yum versionlock clear
-  ignore_errors: True
-
 - name: Remove kubeadm
   when: ansible_os_family == "Debian"
   apt: name={{item}} state=removed

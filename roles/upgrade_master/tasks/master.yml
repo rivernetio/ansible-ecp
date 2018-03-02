@@ -1,0 +1,96 @@
+---
+- name: Online upgrade kubeadm
+  yum:
+    name: "{{ item }}"
+    update_cache: yes
+    state: present
+  with_items:
+    - kubeadm-{{ upgrade_yum_kubeadm_version }}
+  when: offline is not defined or not offline | bool
+  
+- name: Offline upgrade kubeadm
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - "{{ rpm_dir }}/kubeadm-{{ upgrade_yum_kubeadm_version }}.x86_64.rpm"
+  when:
+    - offline is defined
+    - offline | bool
+
+- name: Config kubeadm.yaml
+  shell: |
+    kubeadm config upload from-file --config {{ kubeadm_config }}
+    
+- name: Backup kubernetes manifests
+  synchronize:
+    src: "/etc/kubernetes/manifests/"
+    dest: "/etc/kubernetes/manifests_backup"
+    
+- name: Upgrade control plane
+  shell: |
+    kubeadm upgrade apply -y {{ k8s_upgrade_version }} --force
+
+- name: Remove node restrictions
+  replace:
+    path: /etc/kubernetes/manifests/kube-apiserver.yaml
+    regexp: ',NodeRestriction,ResourceQuota'
+    replace: ''
+
+- name: Remove node authorization
+  replace:
+    path: /etc/kubernetes/manifests/kube-apiserver.yaml
+    regexp: '--authorization-mode=.*$'
+    replace: '--authorization-mode=RBAC'
+    
+- name: Online upgrade kubelet & kubectl
+  yum:
+    name: "{{ item }}"
+    update_cache: yes
+    state: present
+  with_items:
+    - kubectl-{{ upgrade_yum_kubectl_version }}
+    - kubelet-{{ upgrade_yum_kubelet_version }}
+  when: offline is not defined or not offline | bool
+  
+- name: Offline upgrade kubelet & kubectl
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - "{{ rpm_dir }}/kubectl-{{ upgrade_yum_kubectl_version }}.x86_64.rpm"
+    - "{{ rpm_dir }}/kubelet-{{ upgrade_yum_kubelet_version }}.x86_64.rpm"
+  when:
+    - offline is defined
+    - offline | bool
+
+- name: Upgrade kubelet
+  shell: |
+    systemctl daemon-reload
+    
+- name: Restart kubelet
+  systemd:
+    name: "{{ item }}"
+    state: restarted
+  with_items:
+    - kubelet
+    
+- name: Check node version
+  shell: |
+    kubectl get node {{ ansible_hostname }} --no-headers=true | grep {{ k8s_upgrade_version }}
+  register: check_version
+  until: check_version.rc == 0
+  retries: 30
+  delay: 30
+    
+- name: Check node ready
+  shell: |
+    kubectl get node {{ ansible_hostname }} --no-headers=true | grep ' Ready'
+  register: get_ready
+  until: get_ready.rc == 0
+  retries: 5
+  delay: 5
+  
+- name: Bring the host back online
+  shell: |
+    kubectl uncordon {{ ansible_hostname }}

@@ -1,0 +1,12 @@
+---
+- hosts: masters
+  gather_facts: yes
+  become: yes
+  roles:
+    - { role: upgrade_master, tags: master }
+
+- hosts: workers
+  gather_facts: yes
+  become: yes
+  roles:
+    - { role: upgrade_worker, tags: worker }

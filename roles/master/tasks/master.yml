@@ -7,7 +7,7 @@
 
 - name: Init Kubernetes cluster
   shell: |
-    kubeadm init --config={{ kubeadm_config }}
+    kubeadm init --config={{ kubeadm_config }} --skip-preflight-checks
   register: init_cluster
 
 - name: Create Kubernetes config directory

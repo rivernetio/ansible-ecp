@@ -203,7 +203,6 @@ keepalived_rpms_dir: "{{ src_rpms_dir }}/keepalived"
 # kubelet-1.7.5-0.x86_64.rpm
 # kubernetes-cni-0.5.1-0.x86_64.rpm
 # socat-1.7.3.2-2.el7.x86_64.rpm
-# yum-plugin-versionlock-1.1.31-42.el7.noarch.rpm
 #############################################################################
 # By default, ECP uses internal storage: glusterfs
 # If you want to use external NFS, make sure:
@@ -216,3 +215,10 @@ internal_glusterfs: true
 gluster_ecp_volume_size: 30
 ecp_share_dir: /ecp_share
 nfs_server_shared_dir: 10.211.58.114:/var/nfsshare 
+#############################################################################
+# Upgrade k8s from 1.7.5 to 1.8.3
+k8s_upgrade_version: "v1.8.3"
+upgrade_yum_kubectl_version: 1.8.3-0
+upgrade_yum_kubelet_version: 1.8.3-0
+upgrade_yum_kubeadm_version: 1.8.3-0
+k8s_updrade_rpms_dir: "{{ src_rpms_dir }}/kubernetes-1.8.3"

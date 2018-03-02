@@ -1,0 +1,5 @@
+---
+- name: Drain master and candidates
+  shell: |
+    kubectl drain {{ ansible_hostname }} --ignore-daemonsets
+  ignore_errors: True

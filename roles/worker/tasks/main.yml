@@ -23,6 +23,18 @@
                  {{ vip }}:{{ nginx_port }}
   when: master_hosts|length > 1
 
+- name: Create Kubernetes config directory
+  file: path=/root/.kube/ state=directory
+  
+- name: Copy admin.conf from primary master to worker
+  synchronize:
+    src: "{{ kubeadmin_config }}"
+    dest: "/root/.kube/config"
+    recursive: yes
+    delete: yes
+    checksum: yes
+  delegate_to: "{{ master_hosts[0] }}"
+
 - name: Check node readiness
   shell: |
     kubectl get node {{ ansible_hostname }} --no-headers=true | awk '{print $2}' | grep Ready | wc -l

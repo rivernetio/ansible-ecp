@@ -185,3 +185,38 @@ sky-firmament   skyform-sas-87rlm                                2/2       Runni
 ```sh
 $ ansible-playbook destroy.yml
 ```
+
+### Upgrade from 1.7.5 to 1.8.3
+* Offline prepare
+
+Prepull and load following images to all management nodes:
+
+```
+docker.io/rivernet/kube-controller-manager-amd64:v1.8.3
+docker.io/rivernet/kube-scheduler-amd64:v1.8.3
+docker.io/rivernet/kube-proxy-amd64:v1.8.3
+``` 
+
+Download following rpm packages from github "rivernetio/rpm" and put to folder "depends/rpm"
+
+```
+[root@node1 ansible-ecp]# ll depends/rpm/kubernetes-1.8.3/
+total 38828
+-rwxrwxrwx. 1 vagrant vagrant 15618410 Mar  2 22:11 kubeadm-1.8.3-0.x86_64.rpm
+-rwxrwxrwx. 1 vagrant vagrant  7618130 Mar  2 22:11 kubectl-1.8.3-0.x86_64.rpm
+-rwxrwxrwx. 1 vagrant vagrant 16516710 Mar  2 22:11 kubelet-1.8.3-0.x86_64.rpm
+```
+
+* Upgrade
+
+Run "ansible-playbook -v upgrade.yml"
+
+If upgrade is failed, find your previous k8s manifest files here:
+
+```
+[root@node1 ansible-ecp]# ll /etc/kubernetes/manifests_backup/
+total 12
+-rw-------. 1 root root 2497 Mar  2 21:50 kube-apiserver.yaml
+-rw-------. 1 root root 1719 Mar  2 21:50 kube-controller-manager.yaml
+-rw-------. 1 root root  922 Mar  2 21:50 kube-scheduler.yaml
+```
