@@ -211,7 +211,7 @@ If upgrade is failed, find your previous k8s manifest files here:
 total 12
 -rw-------. 1 root root 2497 Mar  2 21:50 kube-apiserver.yaml
 -rw-------. 1 root root 1719 Mar  2 21:50 kube-controller-manager.yaml
--rw---
+-rw-------. 1 root root  922 Mar  2 21:50 kube-scheduler.yaml
 ```
 
 #### Offline upgrade
