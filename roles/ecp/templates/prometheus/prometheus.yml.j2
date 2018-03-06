@@ -1,8 +1,8 @@
 # my global config
 global:
-  scrape_interval:     1m # scrape interval to every 15 seconds. Default is every 1 minute.
-  evaluation_interval: 1m # Evaluate rules every 15 seconds. The default is every 1 minute.
-  # scrape_timeout is set to the global default (10s).
+  scrape_interval:     30s # scrape interval to every 30 seconds. Default is every 1 minute.
+  evaluation_interval: 30s # Evaluate rules every 30 seconds. The default is every 1 minute.
+  scrape_timeout:      15s # scrape_timeout is set to the global default (15s).
 
   # Attach these labels to any time series or alerts when communicating with
   # external systems (federation, remote storage, Alertmanager).
