@@ -186,10 +186,38 @@ sky-firmament   skyform-sas-87rlm                                2/2       Runni
 $ ansible-playbook destroy.yml
 ```
 
-### Upgrade from 1.7.5 to 1.8.3
-* Offline prepare
+### Add worker nodes
+* Edit the `inventory` file. For example, the following inventory file specify one new worker node.
 
-Prepull and load following images to all management nodes:
+```
+# Specify new worker nodes during scale up
+[new_workers]
+10.211.64.116
+```
+
+* Run the `install.yml` playbook:
+```
+ansible-playbook -v scaleup.yml
+```
+
+### Upgrade from 1.7.5 to 1.8.3
+#### Online upgrade
+Run "ansible-playbook -v upgrade.yml"
+
+If upgrade is failed, find your previous k8s manifest files here:
+
+```
+[root@node1 ansible-ecp]# ll /etc/kubernetes/manifests_backup/
+total 12
+-rw-------. 1 root root 2497 Mar  2 21:50 kube-apiserver.yaml
+-rw-------. 1 root root 1719 Mar  2 21:50 kube-controller-manager.yaml
+-rw---
+```
+
+#### Offline upgrade
+* Prepare images and rpms
+
+Prepull and load following images to all master nodes:
 
 ```
 docker.io/rivernet/kube-controller-manager-amd64:v1.8.3
@@ -197,7 +225,13 @@ docker.io/rivernet/kube-scheduler-amd64:v1.8.3
 docker.io/rivernet/kube-proxy-amd64:v1.8.3
 ``` 
 
-Download following rpm packages from github "rivernetio/rpm" and put to folder "depends/rpm"
+Prepull and load following images to all master and worker nodes:
+
+```
+docker.io/rivernet/kube-proxy-amd64:v1.8.3
+```
+
+Download following rpm packages from github "rivernetio/rpm" and put to folder "ansible-ecp/depends/rpm"
 
 ```
 [root@node1 ansible-ecp]# ll depends/rpm/kubernetes-1.8.3/
