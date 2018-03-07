@@ -28,6 +28,7 @@
 [cluster:children]
 masters
 workers
+new_workers
 
 # Virtual API server IP for the cluster. Must be specified for HA.
 [cluster:vars]

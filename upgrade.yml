@@ -10,3 +10,9 @@
   become: yes
   roles:
     - { role: upgrade_worker, tags: worker }
+
+- hosts: new_workers
+  gather_facts: yes
+  become: yes
+  roles:
+    - { role: upgrade_worker, tags: new_worker }
