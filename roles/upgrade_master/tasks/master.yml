@@ -30,18 +30,33 @@
 - name: Upgrade control plane
   shell: |
     kubeadm upgrade apply -y {{ k8s_upgrade_version }} --force
-
+    
+- name: Copy apiserver manifest
+  shell: |
+    mkdir -p /etc/kubernetes/tmp
+    cp -f /etc/kubernetes/manifests/kube-apiserver.yaml /etc/kubernetes/tmp/
+  when: master_hosts|length > 1
+    
 - name: Remove node restrictions
   replace:
-    path: /etc/kubernetes/manifests/kube-apiserver.yaml
+    path:  /etc/kubernetes/tmp/kube-apiserver.yaml
     regexp: ',NodeRestriction,ResourceQuota'
     replace: ''
+  when: master_hosts|length > 1
 
 - name: Remove node authorization
   replace:
-    path: /etc/kubernetes/manifests/kube-apiserver.yaml
+    path:  /etc/kubernetes/tmp/kube-apiserver.yaml
     regexp: '--authorization-mode=.*$'
     replace: '--authorization-mode=RBAC'
+  when: master_hosts|length > 1
+  
+- name: Update apiserver manifest
+  shell: |
+    cp -f /etc/kubernetes/tmp/kube-apiserver.yaml /etc/kubernetes/manifests/
+    rm -rf /etc/kubernetes/tmp/
+    sleep 3
+  when: master_hosts|length > 1
     
 - name: Online upgrade kubelet & kubectl
   yum:
@@ -88,8 +103,8 @@
     kubectl get node {{ ansible_hostname }} --no-headers=true | grep ' Ready'
   register: get_ready
   until: get_ready.rc == 0
-  retries: 5
-  delay: 5
+  retries: 10
+  delay: 10
   
 - name: Bring the host back online
   shell: |

@@ -3,11 +3,12 @@
   shell: |
     mkdir -p /etc/kubernetes/manifests_backup
     mv /etc/kubernetes/manifests/* /etc/kubernetes/manifests_backup/
+    mkdir -p /etc/kubernetes/tmp/
 
 - name: Copy k8s configuration from primary master to candidates
   synchronize:
     src: "/etc/kubernetes/manifests/"
-    dest: "/etc/kubernetes/manifests/"
+    dest: "/etc/kubernetes/tmp/"
     recursive: yes
     delete: yes
     checksum: yes
@@ -15,9 +16,15 @@
 
 - name: Replace api server advertise address
   replace:
-    path: "/etc/kubernetes/manifests/kube-apiserver.yaml"
+    path: "/etc/kubernetes/tmp/kube-apiserver.yaml"
     regexp: '--advertise-address=.*$'
     replace: '--advertise-address={{ inventory_hostname }}'
+
+- name: Update static pod manifest
+  shell: |
+    mv /etc/kubernetes/tmp/* /etc/kubernetes/manifests/
+    rm -rf /etc/kubernetes/tmp/
+    sleep 3
     
 - name: Online upgrade kubelet & kubectl
   yum:
