@@ -20,3 +20,5 @@
     - "{{ rpm_dir }}/kubelet-{{ yum_kubelet_version }}.x86_64.rpm"
     - "{{ rpm_dir }}/kubeadm-{{ yum_kubeadm_version }}.x86_64.rpm"
 
+- name: Remove rpms
+  file: path="{{ rpm_dir }}" state=absent
