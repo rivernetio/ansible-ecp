@@ -62,6 +62,7 @@
     - /var/run/calico
     - /etc/systemd/system/kubelet.service.d/
     - /etc/keepalived
+    - /opt/rpm
   ignore_errors: True
   
 - name: Umount ECP share directory
