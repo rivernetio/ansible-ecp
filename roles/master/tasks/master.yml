@@ -56,7 +56,7 @@
   shell: kubectl get no | grep {{ ansible_hostname }}
   register: get_node_result
   until: get_node_result.rc == 0
-  retries: 10
+  retries: 50
   delay: 5
 
 - name: Taint master node
