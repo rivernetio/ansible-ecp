@@ -109,6 +109,7 @@ MANAGEMENT_IMAGES=(
 	docker.io/rivernet/keystone:20161108
 	docker.io/rivernet/skyform-sas:4.1
 	docker.io/rivernet/ara:4.1
+    docker.io/rivernet/nginx:1.13.8
 )
 
 CLUSTER_IMAGES=(
