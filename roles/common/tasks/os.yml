@@ -21,7 +21,7 @@
 - name: Set fact ansible_os_family var to RedHat
   when:
     - ansible_os_family is not defined
-    - "'CentOS' in distro.stdout"
+    - "'CentOS' in distro.stdout or 'Red Hat' in distro.stdout"
   set_fact:
     ansible_os_family: RedHat
 
