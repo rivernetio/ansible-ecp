@@ -50,7 +50,7 @@ echo "RPM packages downloaded successfully."
 ###############################################
 echo "Downloading ECP Charts, this may take a while."
 if [ ! -d `pwd`/"charts" ]; then
-  git clone https://github.com/rivernetio/charts
+  git clone -b ecp-4.1 https://github.com/rivernetio/charts
 fi
 cd charts && git pull
 cd ..
