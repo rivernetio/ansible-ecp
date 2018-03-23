@@ -31,16 +31,17 @@
   shell: |
     sysctl net.bridge.bridge-nf-call-iptables=1
     sysctl net.bridge.bridge-nf-call-ip6tables=1
+    
+- name: Docker cgroup driver
+  shell: |
+    docker info | grep -i cgroup | cut -d: -f2 | awk '{$1=$1};1'
+  run_once: true
+  register: cgroup_driver
+  failed_when: cgroup_driver.rc != 0
 
 - name: Set facts for Debian
-  when: ansible_os_family == "Debian"
   set_fact:
-    cgroup_driver: cgroupfs
-
-- name: Set facts for RedHat
-  when: ansible_os_family == "RedHat"
-  set_fact:
-    cgroup_driver: systemd
+    cgroup_driver: "{{ cgroup_driver.stdout }}"
 
 - name: Copy kubeadm conf to drop-in directory
   template: src=10-kubeadm.conf.j2 dest={{ dropin_dir }}/kubelet.service.d/10-kubeadm.conf

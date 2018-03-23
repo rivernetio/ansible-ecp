@@ -4,6 +4,12 @@
   become: yes
   roles:
     - { role: prerequisite, tags: prerequisite }
+    
+- hosts: gpu
+  gather_facts: no
+  become: yes
+  roles:
+    - { role: nvidia, tags: nvidia }
 
 - hosts: masters
   gather_facts: yes

@@ -1,0 +1,10 @@
+---
+- name: Install binaries online
+  import_tasks: online.yml
+  when: offline is not defined or not offline | bool
+
+- name: Install binaries offline
+  import_tasks: offline.yml
+  when:
+    - offline is defined
+    - offline | bool

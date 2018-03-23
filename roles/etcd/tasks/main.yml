@@ -33,7 +33,7 @@
     -p 2380:2380 
     -p 2379:2379 
     --name etcd 
-    gcr.io/google_containers/etcd-amd64:3.0.17 
+    {{ etcd_image_version }}
     etcd --name="{{ etcd_name }}" 
     --advertise-client-urls=http://{{ inventory_hostname }}:2379,http://{{ inventory_hostname }}:4001 
     --listen-client-urls=http://0.0.0.0:2379,http://0.0.0.0:4001 

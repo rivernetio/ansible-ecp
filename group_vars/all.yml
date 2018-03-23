@@ -2,23 +2,27 @@
 ###########################################################################
 # Configuration for yum repository for CentOS 7
 yum_k8s_repo: "http://yum.kubernetes.io/repos/kubernetes-el7-x86_64"
-yum_kubectl_version: 1.7.5-0
-yum_kubelet_version: 1.7.5-0
-yum_kubernetes_cni_version: 0.5.1-0
-yum_kubeadm_version: 1.7.5-0
+yum_kubectl_version: 1.9.5-0
+yum_kubelet_version: 1.9.5-0
+yum_kubernetes_cni_version: 0.6.0-0
+yum_kubeadm_version: 1.9.5-0
+yum_docker_repo: "https://download.docker.com/linux/centos/docker-ce.repo"
 ###########################################################################
 # Configuration for apt repository for Ubuntu 16.04
 apt_k8s_repo: "deb http://apt.kubernetes.io/ kubernetes-xenial main"
 apt_k8s_key: "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
-apt_kubectl_version: 1.7.5-00
-apt_kubelet_version: 1.7.5-00
-apt_kubernetes_cni_version: 0.5.1-00
-apt_kubeadm_version: 1.7.5-00
+apt_kubectl_version: 1.9.5-00
+apt_kubelet_version: 1.9.5-00
+apt_kubernetes_cni_version: 0.6.0-00
+apt_kubeadm_version: 1.9.5-00
 apt_glusterfs_repo: "ppa:gluster/glusterfs-3.8"
+############################################################################
+# Configuration for etcd
+etcd_image_version: rivernet/etcd-amd64:3.1.11
 ###########################################################################
 # Configuration for kubeadm
 kubeadm_image_repository: docker.io/rivernet
-kube_version: v1.7.5
+kube_version: v1.9.5
 token: b0f7b8.8d1767876297d85c
 ###########################################################################
 # Configuration for kubelet
@@ -38,10 +42,10 @@ heketi_image: rivernet/heketi:dev
 ############################################################################
 # Configuration for networks
 calico_etcd_image: rivernet/etcd:v3.1.10
-calico_node_image: rivernet/node:v2.4.1
-calico_cni_image: rivernet/cni:v1.10.0
-calico_policy_controller_image: rivernet/kube-policy-controller:v0.7.0
-flannel_image: rivernet/flannel:v0.7.1-amd64
+calico_node_image: rivernet/node:v3.0.3
+calico_cni_image: rivernet/cni:v2.0.1
+calico_policy_controller_image: rivernet/kube-controllers:v2.0.1
+flannel_image: rivernet/flannel:v0.9.1-amd64
 
 # Network implementation('flannel', 'calico')
 network: calico
@@ -55,7 +59,7 @@ dns_ip: "{{ service_subnet }}.10"
 # Configuration for required softwares to be installed on all hosts
 required_softwares:
   - rsync
-  - docker
+  - docker-ce
 ############################################################################
 # Configuration for ECP
 
@@ -187,7 +191,8 @@ src_rpms_dir: "{{ playbook_dir }}/depends/rpm"
 kubernetes_rpms_dir: "{{ src_rpms_dir }}/kubernetes"
 glusterfs_rpms_dir: "{{ src_rpms_dir }}/glusterfs"
 nfs_client_rpms_dir: "{{ src_rpms_dir }}/nfs"
-docker_rpms_dir: "{{ src_rpms_dir }}/docker"
+docker_rpms_dir: "{{ src_rpms_dir }}/docker-17.12.1-ce"
+nvidia_docker_rpms_dir: "{{ src_rpms_dir }}/nvidia-docker"
 rsync_rpms_dir: "{{ src_rpms_dir }}/rsync"
 keepalived_rpms_dir: "{{ src_rpms_dir }}/keepalived"
 #############################################################################
@@ -198,10 +203,10 @@ keepalived_rpms_dir: "{{ src_rpms_dir }}/keepalived"
 # glusterfs-client-xlators-3.8.4-18.4.el7.centos.x86_64.rpm
 # glusterfs-fuse-3.8.4-18.4.el7.centos.x86_64.rpm
 # glusterfs-libs-3.8.4-18.4.el7.centos.x86_64.rpm
-# kubeadm-1.7.5-0.x86_64.rpm
-# kubectl-1.7.5-0.x86_64.rpm
-# kubelet-1.7.5-0.x86_64.rpm
-# kubernetes-cni-0.5.1-0.x86_64.rpm
+# kubeadm-1.9.5-0.x86_64.rpm
+# kubectl-1.9.5-0.x86_64.rpm
+# kubelet-1.9.5-0.x86_64.rpm
+# kubernetes-cni-0.6.0-0.x86_64.rpm
 # socat-1.7.3.2-2.el7.x86_64.rpm
 #############################################################################
 # By default, ECP uses internal storage: glusterfs
@@ -217,8 +222,8 @@ ecp_share_dir: /ecp_share
 nfs_server_shared_dir: 10.211.58.114:/var/nfsshare 
 #############################################################################
 # Upgrade k8s from 1.7.5 to 1.8.3
-k8s_upgrade_version: "v1.8.3"
-upgrade_yum_kubectl_version: 1.8.3-0
-upgrade_yum_kubelet_version: 1.8.3-0
-upgrade_yum_kubeadm_version: 1.8.3-0
-k8s_updrade_rpms_dir: "{{ src_rpms_dir }}/kubernetes-1.8.3"
+#k8s_upgrade_version: "v1.8.3"
+#upgrade_yum_kubectl_version: 1.8.3-0
+#upgrade_yum_kubelet_version: 1.8.3-0
+#upgrade_yum_kubeadm_version: 1.8.3-0
+#k8s_updrade_rpms_dir: "{{ src_rpms_dir }}/kubernetes-1.8.3"

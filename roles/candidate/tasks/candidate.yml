@@ -1,29 +1,20 @@
 ---
-- name: Copy k8s configuration from primary master to candidates
+- name: Copy k8s kpi from primary master to candidates
   synchronize:
-    src: "/etc/kubernetes"
-    dest: "/etc/"
+    src: "/etc/kubernetes/pki"
+    dest: "/etc/kubernetes/"
     recursive: yes
     delete: yes
     checksum: yes
   delegate_to: "{{ master_hosts[0] }}"
-
-- name: Replace api server advertise address
-  replace:
-    path: "/etc/kubernetes/manifests/kube-apiserver.yaml"
-    regexp: '--advertise-address=.*$'
-    replace: '--advertise-address={{ inventory_hostname }}'
-
-- name: Replace api server address 
-  replace:
-    path: "{{ item }}"
-    regexp: 'server: https://.*$'
-    replace: 'server: https://{{ inventory_hostname }}:6443' 
-  with_items:
-    - /etc/kubernetes/kubelet.conf
-    - /etc/kubernetes/admin.conf
-    - /etc/kubernetes/controller-manager.conf
-    - /etc/kubernetes/scheduler.conf
+  
+- name: Copy kubeadm.yaml file
+  template: src=kubeadm.yaml.j2  dest={{ kubeadm_config }}
+  
+- name: Init Kubernetes cluster
+  shell: |
+    kubeadm init --config={{ kubeadm_config }} --ignore-preflight-errors=CRI
+  register: init_cluster
 
 - name: Create Kubernetes config directory
   file: path=/root/.kube/ state=directory
@@ -51,6 +42,43 @@
   until: get_ready.stdout | int == master_hosts | length
   retries: 20
   delay: 15
+  
+- name: Wait until apiserver starts to run
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get po kube-apiserver-{{ ansible_hostname }} --namespace=kube-system --no-headers=true
+  register: check_apiserver
+  until: check_apiserver.rc == 0 and check_apiserver.stdout.find("Running") != -1
+  retries: "{{ pod_run_retry | int }}"
+  delay: "{{ pod_run_retry_delay | int }}"
+  
+- name: Wait until controller manager starts to run
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get po kube-controller-manager-{{ ansible_hostname }} --namespace=kube-system --no-headers=true
+  register: check_controller
+  until: check_controller.rc == 0 and check_controller.stdout.find("Running") != -1
+  retries: "{{ pod_run_retry | int }}"
+  delay: "{{ pod_run_retry_delay | int }}"
+  
+- name: Wait until scheduler starts to run
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get po kube-scheduler-{{ ansible_hostname }} --namespace=kube-system --no-headers=true
+  register: check_scheduler
+  until: check_scheduler.rc == 0 and check_scheduler.stdout.find("Running") != -1
+  retries: "{{ pod_run_retry | int }}"
+  delay: "{{ pod_run_retry_delay | int }}"
+
+- name: Wait until kube-proxy starts to run
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get po --namespace=kube-system --no-headers=true -l k8s-app=kube-proxy -o wide | grep {{ ansible_hostname }}
+  register: check_proxy
+  until: check_proxy.rc == 0 and check_proxy.stdout.find("Running") != -1
+  retries: "{{ pod_run_retry | int }}"
+  delay: "{{ pod_run_retry_delay | int }}"
+  run_once: true
 
 - name: Set master label
   shell: |

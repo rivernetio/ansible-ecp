@@ -1,4 +1,19 @@
 ---
+- name: Install yum-utils
+  when: ansible_os_family == "RedHat"
+  yum:
+    name: "{{ item }}"
+    update_cache: yes
+    state: present
+  with_items:
+    - yum-utils
+    - device-mapper-persistent-data
+    - lvm2
+    
+- name: Add stable repository
+  shell: |
+    yum-config-manager --add-repo {{ yum_docker_repo }}
+
 - name: Install docker
   when: ansible_os_family == "RedHat"
   yum:

@@ -6,13 +6,12 @@
     mode: 0755
 
 - name: Validate calico profile, timeout in 5 minutes
-  command: "{{ network_dir }}/calicoctl get profile"
-  environment:
-    ETCD_ENDPOINTS: "{{ etcd_endpoints }}"
+  shell: |
+    DATASTORE_TYPE=kubernetes KUBECONFIG=/root/.kube/config {{ network_dir }}/calicoctl get profile
   register: get_calico_profile
   until: 
-    - get_calico_profile.stdout.find("k8s_ns.default") != -1
-    - get_calico_profile.stdout.find("k8s_ns.kube-system") != -1
+    - get_calico_profile.stdout.find("kns.default") != -1
+    - get_calico_profile.stdout.find("kns.kube-system") != -1
   retries: 60
   delay: 5
 

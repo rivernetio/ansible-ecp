@@ -1,0 +1,19 @@
+---    
+- name: Add the package repositories
+  shell: |
+    distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
+    curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.repo | \
+    sudo tee /etc/yum.repos.d/nvidia-docker.repo
+
+- name: Install docker
+  when: ansible_os_family == "RedHat"
+  yum:
+    name: "{{ item }}"
+    update_cache: yes
+    state: present
+  with_items:
+    - nvidia-docker2
+    
+- name: Reload the Docker daemon configuration
+  shell: |
+    sudo pkill -SIGHUP dockerd

@@ -50,3 +50,5 @@ vip=10.211.64.120
 # Specify new worker nodes during scale up
 [new_workers]
 
+# Specify gpu nodes
+[gpu]
