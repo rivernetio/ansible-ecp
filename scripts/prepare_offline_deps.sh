@@ -16,10 +16,17 @@ fi
 ###############################################
 # Check docker installation
 ###############################################
-docker info > /dev/null 2>&1
+docker > /dev/null 2>&1
 if [ $? -ne 0 ]; then
     echo "Install docker ..."
     yum install -y docker
+fi
+
+###############################################
+# Check docker running
+###############################################
+docker info > /dev/null 2>&1
+if [ $? -ne 0 ]; then
     systemctl enable docker.service && systemctl start docker.service
 fi
 
