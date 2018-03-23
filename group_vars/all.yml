@@ -59,7 +59,7 @@ dns_ip: "{{ service_subnet }}.10"
 # Configuration for required softwares to be installed on all hosts
 required_softwares:
   - rsync
-  - docker-ce
+  - docker-ce-17.12.1.ce
 ############################################################################
 # Configuration for ECP
 
@@ -188,7 +188,7 @@ charts_image_tars_dir: "{{ src_image_tars_dir }}/charts"
 #############################################################################
 # RPM files
 src_rpms_dir: "{{ playbook_dir }}/depends/rpm"
-kubernetes_rpms_dir: "{{ src_rpms_dir }}/kubernetes"
+kubernetes_rpms_dir: "{{ src_rpms_dir }}/kubernetes-1.9.5"
 glusterfs_rpms_dir: "{{ src_rpms_dir }}/glusterfs"
 nfs_client_rpms_dir: "{{ src_rpms_dir }}/nfs"
 docker_rpms_dir: "{{ src_rpms_dir }}/docker-17.12.1-ce"

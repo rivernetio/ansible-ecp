@@ -1,4 +1,18 @@
 ---
+- name: Uninstall old docker
+  when: ansible_os_family == "RedHat"
+  shell: |
+    yum remove -y docker \
+                  docker-client \
+                  docker-client-latest \
+                  docker-common \
+                  docker-latest \
+                  docker-latest-logrotate \
+                  docker-logrotate \
+                  docker-selinux \
+                  docker-engine-selinux \
+                  docker-engine
+
 - name: Install yum-utils
   when: ansible_os_family == "RedHat"
   yum:
@@ -11,6 +25,7 @@
     - lvm2
     
 - name: Add stable repository
+  when: ansible_os_family == "RedHat"
   shell: |
     yum-config-manager --add-repo {{ yum_docker_repo }}
 
