@@ -116,8 +116,8 @@ CLUSTER_IMAGES=(
     docker.io/rivernet/kube-proxy-amd64:v1.9.5
     docker.io/rivernet/pause-amd64:3.0
     docker.io/rivernet/kubernetes-dashboard-amd64:v1.6.3
-    docker.io/rivernet/etcd:v3.1.11
-    docker.io/rivernet/v3.0.3
+    docker.io/rivernet/etcd:v3.1.10
+    docker.io/rivernet/node:v3.0.3
     docker.io/rivernet/cni:v2.0.1
     docker.io/rivernet/kube-controllers:v2.0.1
     docker.io/rivernet/flannel:v0.9.1-amd64
