@@ -56,6 +56,9 @@ service_cidr: "{{ service_subnet }}.0/12"
 dns_name: cluster.local
 dns_ip: "{{ service_subnet }}.10"
 ############################################################################
+# Configuration for nvidia device plugin
+nvidia_device_plugin_image: rivernet/k8s-device-plugin:1.9
+############################################################################
 # Configuration for required softwares to be installed on all hosts
 required_softwares:
   - rsync

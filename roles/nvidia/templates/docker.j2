@@ -1,3 +1,11 @@
-# /etc/sysconfig/docker
+# /etc/docker/daemon.json
 
-OPTIONS='--insecure-registry={{ insecure_registry }}'
+{
+    "default-runtime": "nvidia",
+    "runtimes": {
+        "nvidia": {
+            "path": "/usr/bin/nvidia-container-runtime",
+            "runtimeArgs": []
+        }
+    }
+}
