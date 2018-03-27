@@ -8,3 +8,8 @@
   when:
     - offline is defined
     - offline | bool
+    
+- import_tasks: hybridjob.yml
+  when:
+    - hybridjob is defined
+    - hybridjob | bool

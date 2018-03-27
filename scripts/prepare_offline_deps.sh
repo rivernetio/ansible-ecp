@@ -82,6 +82,7 @@ MANAGEMENT_IMAGES=(
     docker.io/rivernet/kube-apiserver-amd64:v1.9.5
     docker.io/rivernet/kube-controller-manager-amd64:v1.9.5
     docker.io/rivernet/kube-scheduler-amd64:v1.9.5
+    docker.io/rivernet/kube-scheduler-amd64:v1.7.5.1
     docker.io/rivernet/etcd-amd64:3.1.11
     docker.io/rivernet/rudder:4.2
     docker.io/rivernet/tiller:v2.6.2

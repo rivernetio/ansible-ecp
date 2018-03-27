@@ -79,8 +79,8 @@
 
 - name: Create hybridjob service
   when:
-    - ecp is defined
-    - ecp | bool
+    - hybridjob is defined
+    - hybridjob | bool
   import_tasks: hybridjob.yml
   tags:
     - ecp_hybridjob

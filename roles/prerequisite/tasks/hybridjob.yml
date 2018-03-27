@@ -1,0 +1,19 @@
+---
+- name: Prepull scheduler images
+  shell: |
+    docker pull rivernet/kube-scheduler-amd64:{{ kube_version }}
+    docker pull rivernet/kube-scheduler-amd64:1.7.5.1 
+  when:
+    - hybridjob is defined
+    - hybridjob | bool
+    - 'masters' in group_names"
+    - offline is not defined or not offline | bool
+
+- name: Retag scheduler images
+  shell: |
+    docker tag rivernet/kube-scheduler-amd64:{{ kube_version }} rivernet/kube-scheduler-amd64:{{ kube_version }}.1
+    docker tag rivernet/kube-scheduler-amd64:1.7.5.1 rivernet/kube-scheduler-amd64:{{ kube_version }}
+  when:
+    - hybridjob is defined
+    - hybridjob | bool
+    - 'masters' in group_names"
