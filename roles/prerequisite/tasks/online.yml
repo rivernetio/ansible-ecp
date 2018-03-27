@@ -11,7 +11,8 @@
                   docker-logrotate \
                   docker-selinux \
                   docker-engine-selinux \
-                  docker-engine
+                  docker-engine \
+                  docker-ce
 
 - name: Install yum-utils
   when: ansible_os_family == "RedHat"

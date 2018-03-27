@@ -10,7 +10,14 @@
     - offline | bool
 
 - name: Config docker
-  template: sed -i 's@ExecStart=/usr/bin/dockerd@ExecStart=/usr/bin/dockerd \"--insecure-registry=registry.harbor:5000\"@' /lib/systemd/system/docker.service
+  template: src=docker.j2 dest={{ system_env_dir }}/docker 
+  
+- name: Config docker
+  shell: |
+    sed -i 's@ExecStart=/usr/bin/dockerd@ExecStart=/usr/bin/dockerd \"--insecure-registry=registry.harbor:5000\"@' /lib/systemd/system/docker.service
+  when:
+    - offline is defined
+    - offline | bool
 
 - name: Enable and restart Docker engine
   systemd:

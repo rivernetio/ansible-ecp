@@ -11,7 +11,8 @@
                   docker-logrotate \
                   docker-selinux \
                   docker-engine-selinux \
-                  docker-engine
+                  docker-engine \
+                  docker-ce
 
 - name: Create rpm directory
   file: path={{ rpm_dir }} state=directory
