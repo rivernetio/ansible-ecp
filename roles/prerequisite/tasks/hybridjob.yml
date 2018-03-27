@@ -6,7 +6,7 @@
   when:
     - hybridjob is defined
     - hybridjob | bool
-    - 'masters' in group_names"
+    - "'masters' in group_names"
     - offline is not defined or not offline | bool
 
 - name: Retag scheduler images
@@ -16,4 +16,4 @@
   when:
     - hybridjob is defined
     - hybridjob | bool
-    - 'masters' in group_names"
+    - "'masters' in group_names"
