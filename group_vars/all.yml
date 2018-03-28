@@ -99,6 +99,7 @@ kubeapiexporter_image: rivernet/kube-api-exporter:master-2fe5dfb
 prometheus_image: rivernet/prometheus:v1.7.1
 prometheus_remote_storage_image: rivernet/remote-storage-adapter:4.2
 prometheus_adapter_image: rivernet/k8s-prometheus-adapter:v0.2.0-beta.0
+nvidia_smi_exporter_image: rivernet/nvidia-smi-exporter:8.0-runtime-ubuntu14.04
 # ECP - Pyxis GUI
 pyxis_image: rivernet/pyxis:4.2
 # ECP - River Websocket
