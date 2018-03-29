@@ -103,14 +103,14 @@ MANAGEMENT_IMAGES=(
 	docker.io/rivernet/kube-state-metrics:v0.5.0
 	docker.io/rivernet/kube-api-exporter:master-2fe5dfb
 	docker.io/rivernet/prometheus:v1.7.2
-    docker.io/rivernet/remote-storage-adapter:4.2
+	docker.io/rivernet/remote-storage-adapter:4.2
 	docker.io/rivernet/k8s-prometheus-adapter:v0.2.0-beta.0
 	docker.io/rivernet/pyxis:4.2
 	docker.io/rivernet/river:4.2
 	docker.io/rivernet/keystone:20161108
 	docker.io/rivernet/skyform-sas:4.2
 	docker.io/rivernet/ara:4.2
-    docker.io/rivernet/nginx:1.13.8
+	docker.io/rivernet/nginx:1.13.8
 )
 
 CLUSTER_IMAGES=(
@@ -150,6 +150,13 @@ APP_IMAGES=(
         docker.io/rivernet/mysql:5.7.20
         docker.io/rivernet/mysqld-exporter:latest
         docker.io/rivernet/nvidia-smi-exporter:8.0-runtime-ubuntu14.04
+        docker.io/rivernet/gitlab-ce:8.14.4-ce.0
+        docker.io/rivernet/postgres:9.5.4
+        docker.io/rivernet/redis:3.2.6-r2
+        docker.io/rivernet/busybox:1.25.0
+        docker.io/rivernet/bats:0.4.0
+        docker.io/rivernet/jenkins:lts
+        docker.io/rivernet/jnlp-slave:3.10-1
 )
 
 GLUSTER_IMAGES=(
