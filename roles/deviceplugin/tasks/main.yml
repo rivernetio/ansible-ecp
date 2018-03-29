@@ -14,6 +14,10 @@
     enabled: yes
   register: started_kubelet
   
+- name: Set gpu label
+  shell: |
+    kubectl label --overwrite=true node {{ ansible_hostname }} nvidia.com/gpu=yes
+  
 - name: Copy device plugin yaml file
   template: src={{ item }} dest=/etc/kubernetes/{{ item | basename | regex_replace('\.j2', '') }}
   with_fileglob:
