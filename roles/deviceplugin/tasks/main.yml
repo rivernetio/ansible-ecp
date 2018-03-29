@@ -1,0 +1,38 @@
+---
+- name: Enable k8s device plugin
+  shell: |
+    awk '/KUBELET_POD_INFRA_IMAGE_ARGS=--pod-infra-container-image/ \
+    { print; print "Environment=\"KUBELET_EXTRA_ARGS=--feature-gates=DevicePlugins=true\""; next }1' \
+    /etc/systemd/system/kubelet.service.d/10-kubeadm.conf > /etc/systemd/system/kubelet.service.d/10-kubeadm.conf.tmp;
+    mv -f /etc/systemd/system/kubelet.service.d/10-kubeadm.conf.tmp /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+
+- name: Reload and restart kubelet
+  systemd:
+    name: kubelet
+    daemon_reload: yes
+    state: restarted
+    enabled: yes
+  register: started_kubelet
+  
+- name: Copy device plugin yaml file
+  template: src={{ item }} dest=/etc/kubernetes/{{ item | basename | regex_replace('\.j2', '') }}
+  with_fileglob:
+    - ../templates/nvidia-device-plugin.yml.j2
+  when: inventory_hostname == gpu_hosts[0]
+    
+- name: Check if nvidia device plugin pod already exists
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            get po --namespace=kube-system | grep nvidia-device-plugin
+  run_once: true
+  register: check_device_plugin
+  failed_when: check_device_plugin.rc != 0 and check_device_plugin.rc != 1
+  
+- name: Create nvidia device plugin
+  when: 
+    - check_device_plugin.rc != 0
+    - inventory_hostname == gpu_hosts[0]
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            create -f /etc/kubernetes/nvidia-device-plugin.yml
+  run_once: true

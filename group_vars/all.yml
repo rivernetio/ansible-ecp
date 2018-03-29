@@ -63,6 +63,12 @@ nvidia_device_plugin_image: rivernet/k8s-device-plugin:1.9
 required_softwares:
   - rsync
   - docker-ce-17.12.1.ce
+  - ftp://195.220.108.108/linux/centos/7.4.1708/extras/x86_64/Packages/container-selinux-2.42-1.gitad8f0f7.el7.noarch.rpm
+############################################################################
+# Configuration for required softwares to be installed on gpu hosts
+nvidia_docker:
+  - nvidia-docker2-2.0.3-1.docker17.12.1.ce.noarch
+  - nvidia-container-runtime-2.0.0-1.docker17.12.1.x86_64
 ############################################################################
 # Configuration for ECP
 
@@ -96,7 +102,7 @@ curl_image: rivernet/curl:latest
 kubestatemetrics_image: rivernet/kube-state-metrics:v0.5.0
 nodeexporter_image: rivernet/node-exporter:0.12.0
 kubeapiexporter_image: rivernet/kube-api-exporter:master-2fe5dfb
-prometheus_image: rivernet/prometheus:v1.7.1
+prometheus_image: rivernet/prometheus:v1.7.2
 prometheus_remote_storage_image: rivernet/remote-storage-adapter:4.2
 prometheus_adapter_image: rivernet/k8s-prometheus-adapter:v0.2.0-beta.0
 nvidia_smi_exporter_image: rivernet/nvidia-smi-exporter:8.0-runtime-ubuntu14.04

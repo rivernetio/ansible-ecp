@@ -4,11 +4,15 @@
     distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
     curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.repo | \
     sudo tee /etc/yum.repos.d/nvidia-docker.repo
-
+    
 - name: Install nvidia docker
   when: ansible_os_family == "RedHat"
-  shell: |
-    yum install -y nvidia-docker2
+  yum:
+    name: "{{ item }}"
+    update_cache: yes
+    state: present
+  with_items:
+    - "{{ nvidia_docker }}"
     
 - name: Reload the Docker daemon configuration
   shell: |

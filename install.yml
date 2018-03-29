@@ -26,12 +26,18 @@
   become: yes
   roles:
     - { role: worker, tags: worker }
-
+    
 - hosts: masters[0]
   gather_facts: no
   become: yes
   roles:
     - { role: addon, tags: addon }
+    
+- hosts: gpu
+  gather_facts: no
+  become: yes
+  roles:
+    - { role: deviceplugin, tags: deviceplugin }
 
 - hosts: cluster
   become: yes
