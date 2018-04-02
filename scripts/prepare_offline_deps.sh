@@ -138,6 +138,7 @@ APP_IMAGES=(
     docker.io/rivernet/jupyter:4.2
     docker.io/rivernet/tensorflow-serving:4.2
     docker.io/rivernet/tensorflow:4.3-gpu
+    docker.io/rivernet/tensorflow:4.3
     docker.io/rivernet/web-vote-app:v0.1
     docker.io/rivernet/redis:3.0
     docker.io/rivernet/redis_exporter:v0.14
