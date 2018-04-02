@@ -11,14 +11,16 @@
 
 - name: Join to Kubernetes cluster
   shell: |
-    kubeadm join --skip-preflight-checks \
+    kubeadm join --ignore-preflight-errors=all \
+                 --discovery-token-unsafe-skip-ca-verification \
                  --token {{ token }} \
                  {{ master_hosts[0] }}:6443
   when: master_hosts|length == 1
 
 - name: Join to Kubernetes cluster
   shell: |
-    kubeadm join --skip-preflight-checks \
+    kubeadm join --ignore-preflight-errors=all \
+                 --discovery-token-unsafe-skip-ca-verification \
                  --token {{ token }} \
                  {{ vip }}:{{ nginx_port }}
   when: master_hosts|length > 1
