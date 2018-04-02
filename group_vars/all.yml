@@ -155,7 +155,8 @@ harbor_https_nodeport: 31443
 # ECP - Appstore Images.  All images must start with docker.io/rivernet
 app_images:
   - docker.io/rivernet/tensorflow-serving:4.2
-  - docker.io/rivernet/tensorflow:4.2
+  - docker.io/rivernet/tensorflow:4.3
+  - docker.io/rivernet/tensorflow:4.3-gpu
   - docker.io/rivernet/jupyter:4.2
   - docker.io/rivernet/web-vote-app:v0.1
   - docker.io/rivernet/redis:3.0
