@@ -19,7 +19,11 @@ fi
 docker > /dev/null 2>&1
 if [ $? -ne 0 ]; then
     echo "Install docker ..."
-    yum install -y docker
+    yum install -y yum-utils \
+                   device-mapper-persistent-data \
+                   lvm2
+    yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+    yum install -y ftp://195.220.108.108/linux/centos/7.4.1708/extras/x86_64/Packages/container-selinux-2.42-1.gitad8f0f7.el7.noarch.rpm docker-ce-17.12.1.ce
 fi
 
 ###############################################
