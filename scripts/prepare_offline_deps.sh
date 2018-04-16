@@ -155,7 +155,7 @@ APP_IMAGES=(
         docker.io/rivernet/redis:3.2.6-r2
         docker.io/rivernet/busybox:1.25.0
         docker.io/rivernet/bats:0.4.0
-        docker.io/rivernet/jenkins:lts
+        docker.io/rivernet/jenkins:lts-1
         docker.io/rivernet/jnlp-slave:3.10-1
 )
 
