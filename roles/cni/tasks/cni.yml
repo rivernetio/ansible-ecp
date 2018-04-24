@@ -37,6 +37,8 @@
 - name: "Create {{ cni.name }} network daemonset"
   when: check_net.rc != 0
   shell: |
+    sed -i -e "s/MASTER_IP_ADDRESS/{{ master_hosts[0] }}/g" \ 
+                   {{ network_dir }}/{{ cni.template.ds }}
     kubectl create --kubeconfig={{ kubeadmin_config }} \
                    -f {{ network_dir }}/{{ cni.template.ds }}
 

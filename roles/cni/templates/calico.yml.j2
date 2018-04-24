@@ -99,6 +99,8 @@ spec:
             # Configure the IP Pool from which Pod IPs will be chosen.
             - name: CALICO_IPV4POOL_CIDR
               value: "{{ pod_network_cidr }}"
+            - name: IP_AUTODETECTION_METHOD
+              value: "MASTER_IP_ADDRESS"
             - name: CALICO_IPV4POOL_IPIP
               value: "always"
             # Disable IPv6 on Kubernetes.
