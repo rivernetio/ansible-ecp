@@ -26,8 +26,7 @@
     
 - name: Check if nvidia device plugin pod already exists
   shell: |
-    kubectl --kubeconfig={{ kubeadmin_config }} \
-            get po --namespace=kube-system | grep nvidia-device-plugin
+    kubectl get po --namespace=kube-system | grep nvidia-device-plugin
   run_once: true
   register: check_device_plugin
   failed_when: check_device_plugin.rc != 0 and check_device_plugin.rc != 1
@@ -37,6 +36,5 @@
     - check_device_plugin.rc != 0
     - inventory_hostname == gpu_hosts[0]
   shell: |
-    kubectl --kubeconfig={{ kubeadmin_config }} \
-            create -f /etc/kubernetes/nvidia-device-plugin.yml
+    kubectl create -f /etc/kubernetes/nvidia-device-plugin.yml
   run_once: true
