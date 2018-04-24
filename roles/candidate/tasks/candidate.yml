@@ -80,12 +80,6 @@
   delay: "{{ pod_run_retry_delay | int }}"
   run_once: true
   
-- name: Taint candidate node
-  when:
-    - get_node_result|succeeded
-  shell: |
-    kubectl taint nodes --all node-role.kubernetes.io/master-
-
 - name: Set master label
   shell: |
     kubectl label --overwrite=true node {{ ansible_hostname }} {{ item }}
