@@ -239,7 +239,10 @@ keepalived_rpms_dir: "{{ src_rpms_dir }}/keepalived"
 internal_glusterfs: true
 gluster_ecp_volume_size: 30
 ecp_share_dir: /ecp_share
+external_nfs: false
 nfs_server_shared_dir: 10.211.58.114:/var/nfsshare 
+external_glusterfs: false
+glusterfs_server_shared_vol: 10.252.66.4:ecp_share
 #############################################################################
 # Upgrade k8s from 1.7.5 to 1.8.3
 #k8s_upgrade_version: "v1.8.3"

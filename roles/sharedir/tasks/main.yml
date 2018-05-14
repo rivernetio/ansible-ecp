@@ -18,4 +18,14 @@
     mount -t nfs {{ nfs_server_shared_dir }} /ecp_share
   when:
     - internal_glusterfs is not defined or not internal_glusterfs | bool
-    - nfs_server_shared_dir is defined
+    - external_nfs is defined
+    - external_nfs | bool
+
+- name: Mount external glusterfs to management hosts
+  shell: |
+    mount -t glusterfs {{ glusterfs_server_shared_vol }} /ecp_share
+  when:
+    - internal_glusterfs is not defined or not internal_glusterfs | bool
+    - external_nfs is not defined or not external_nfs | bool
+    - external_glusterfs is defined
+    - external_glusterfs | bool
