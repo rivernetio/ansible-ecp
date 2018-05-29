@@ -11,6 +11,9 @@
 
 - name: Config nvidia runtime
   template: src=docker.j2 dest=/etc/docker/daemon.json
+
+- name: Config nvidia docker2
+  template: src=nvidia-docker dest=/usr/bin/nvidia-docker
   
 - name: Reload and restart Docker engine
   systemd:
