@@ -12,6 +12,11 @@
 - name: Config nvidia runtime
   template: src=docker.j2 dest=/etc/docker/daemon.json
 
+- name: Remove commandline runtimes
+  shell: |
+    sed -i '/--add-runtime/'d /usr/lib/systemd/system/docker.service 
+    sed -i '/--default-runtime/'d /usr/lib/systemd/system/docker.service 
+
 - name: Config nvidia docker2
   template: src=nvidia-docker dest=/usr/bin/nvidia-docker
   
