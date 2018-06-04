@@ -149,7 +149,6 @@ APP_IMAGES=(
 	docker.io/rivernet/mnist-demo:4.2
         docker.io/rivernet/mysql:5.7.20
         docker.io/rivernet/mysqld-exporter:latest
-        docker.io/rivernet/nvidia-smi-exporter:8.0-runtime-ubuntu14.04
         docker.io/rivernet/gitlab-ce:8.14.4-ce.0
         docker.io/rivernet/postgres:9.5.4
         docker.io/rivernet/redis:3.2.6-r2
