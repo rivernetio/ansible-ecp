@@ -111,6 +111,7 @@ MANAGEMENT_IMAGES=(
 	docker.io/rivernet/skyform-sas:4.2
 	docker.io/rivernet/ara:4.2
 	docker.io/rivernet/nginx:1.13.8
+        docker.io/rivernet/hybridjob-controller:4.2
 )
 
 CLUSTER_IMAGES=(
