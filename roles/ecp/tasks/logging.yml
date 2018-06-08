@@ -50,12 +50,24 @@
   register: check_es_svc
   failed_when: check_es_svc.rc != 0 and check_es_svc.rc != 1
 
-- name: Create elasticsearch service
-  when: check_es_svc.rc != 0
+- name: Create elasticsearch single service
+  when: 
+    - check_es_svc.rc != 0
+    - master_hosts|length == 1
   shell: |
     kubectl --kubeconfig={{ kubeadmin_config }} \
-            create -f {{ kube_ecp_dir }}/canes/es-service-internal-svc.yaml
+            create -f {{ kube_ecp_dir }}/canes/es-service-internal-single-svc.yaml
   run_once: true
+
+- name: Create elasticsearch cluster service
+  when: 
+    - check_es_svc.rc != 0
+    - master_hosts|length > 1
+  shell: |
+    kubectl --kubeconfig={{ kubeadmin_config }} \
+            create -f {{ kube_ecp_dir }}/canes/es-service-internal-cluster-svc.yaml
+  run_once: true
+  
 
 - name: Check if curator cronjob already exists
   shell: |

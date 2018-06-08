@@ -1,0 +1,98 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch-logging
+  namespace: {{ ecp_namespace }}
+  labels:
+    app: elasticsearch-logging
+spec:
+  ports:
+  - port: 9200
+    protocol: TCP
+    targetPort: 9200
+    nodePort: 30905
+  selector:
+    app: elasticsearch-logging
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch-logging-headless
+  namespace: {{ ecp_namespace }}
+  labels:
+    app: elasticsearch-logging
+spec:
+  clusterIP: None
+  ports:
+  - port: 9200
+    protocol: TCP
+    targetPort: 9200
+    name: external
+  - port: 9300
+    protocol: TCP
+    targetPort: 9300
+    name: internal
+  selector:
+    app: elasticsearch-logging
+---
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: elasticsearch-logging
+  namespace: {{ ecp_namespace }}
+  labels:
+    app: elasticsearch-logging
+spec:
+  serviceName: elasticsearch-logging-headless
+  replicas: 3
+  selector:
+    matchLabels:
+      app: elasticsearch-logging
+  template:
+    metadata:
+      labels:
+        app: elasticsearch-logging
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - topologyKey: "kubernetes.io/hostname"
+            labelSelector:
+              matchLabels:
+                app: elasticsearch-logging
+      containers:
+      - image: {{ elasticsearch_image }}
+        name: elasticsearch-logging
+        env:
+        - name: ES_JAVA_OPTS
+          value: -Xms2g -Xmx2g
+        args:
+        - -Ecluster.name=mycluster
+        - -Etransport.host=0.0.0.0
+        - -Ediscovery.zen.minimum_master_nodes=1
+        - -Ediscovery.zen.ping.unicast.hosts=elasticsearch-logging-0.elasticsearch-logging-headless,elasticsearch-logging-1.elasticsearch-logging-headless,elasticsearch-logging-2.elasticsearch-logging-headless
+        - -Ediscovery.zen.ping_timeout=100s
+        resources:
+          # keep request = limit to keep this container in guaranteed class
+          limits:
+            cpu: 4000m
+            memory: 2500Mi
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        ports:
+        - containerPort: 9200
+          protocol: TCP
+        - containerPort: 9300
+          protocol: TCP
+        volumeMounts:
+        - name: es-persistent-storage
+          mountPath: /usr/share/elasticsearch/data
+      volumes:
+      - hostPath:
+          path: /usr/share/elasticsearch/data
+        name: es-persistent-storage
+      nodeSelector:
+        management: "yes"
+      
