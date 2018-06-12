@@ -32,6 +32,10 @@
     sysctl net.bridge.bridge-nf-call-iptables=1
     sysctl net.bridge.bridge-nf-call-ip6tables=1
 
+- name: Change vm.max_map_count to 262144
+  shell: |
+    sysctl vm.max_map_count=262144
+
 - name: Set facts for Debian
   when: ansible_os_family == "Debian"
   set_fact:
