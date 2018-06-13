@@ -62,3 +62,7 @@ cluster_deployment_num=count(kube_deployment_spec_replicas)
 cluster_replication_controller_num=count(k8s_rc_spec_replicas)
 cluster_daemonset_num=count(k8s_ds_metadata_generation)
 
+cluster_gpu_total=count(nvidia_utilization_gpu)
+cluster_gpu_used=count(nvidia_utilization_gpu != 0)
+node_gpu_total=count(nvidia_utilization_gpu) by (kubernetes_io_hostname)
+node_gpu_used=count(nvidia_utilization_gpu != 0) by (kubernetes_io_hostname)
