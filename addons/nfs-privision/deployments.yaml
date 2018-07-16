@@ -1,0 +1,32 @@
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: nfs-client-provisioner
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: nfs-client-provisioner
+    spec:
+      serviceAccountName: nfs-provisioner
+      containers:
+        - name: nfs-client-provisioner
+          image: docker.io/rivernet/nfs-provisoner:4.1
+          volumeMounts:
+            - name: nfs-client-root
+              mountPath: /persistentvolumes
+          env:
+            - name: PROVISIONER_NAME
+              value: local/nfs
+            - name: NFS_SERVER
+              value: {NFS-ADDRESS}
+            - name: NFS_PATH
+              value: {NFS-DIR}
+      volumes:
+        - name: nfs-client-root
+          nfs:
+            server: {NFS-ADDRESS}
+            path: {NFS-DIR}
