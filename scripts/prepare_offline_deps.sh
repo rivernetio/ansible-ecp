@@ -126,6 +126,7 @@ CLUSTER_IMAGES=(
 	docker.io/rivernet/flannel:v0.7.1-amd64
 	docker.io/rivernet/fluentd-elasticsearch:v2.0.2
 	docker.io/rivernet/node-exporter:0.12.0
+	docker.io/rivernet/nfs-provisoner:4.1
 )
 
 HARBOR_IMAGES=(
