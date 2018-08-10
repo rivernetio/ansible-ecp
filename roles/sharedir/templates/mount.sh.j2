@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+res=`mountpoint /ecp_share`
+
+if [ $? -ne 0 ]; then
+  echo "mount ecp_share"
+  COMMAND
+else
+  echo "ecp_share is already mounted"
+fi
+
