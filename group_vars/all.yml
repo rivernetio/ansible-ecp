@@ -158,6 +158,13 @@ app_images:
   - docker.io/rivernet/bats:0.4.0
   - docker.io/rivernet/jenkins:lts-1
   - docker.io/rivernet/jnlp-slave:3.10-1
+  - docker.io/rivernet/mycat:1.6-RELEASE-alpine
+  - docker.io/rivernet/solr:7.3.1-alpine
+  - docker.io/rivernet/tomcat:8.5.31
+  - docker.io/rivernet/rabbitmq:3.7-alpine
+  - docker.io/rivernet/busybox
+  - docker.io/rivernet/redisnode
+  - docker.io/rivernet/k8szk:v3
 
 # Harbor registry
 insecure_registry: registry.harbor:5000
@@ -187,6 +194,8 @@ glusterfs_image_tars_dir: "{{ src_image_tars_dir }}/gluster"
 harbor_image_tars_dir: "{{ src_image_tars_dir }}/harbor"
 # Image for Appstore charts
 charts_image_tars_dir: "{{ src_image_tars_dir }}/charts"
+# Image for patch
+patch_image_tars_dir: "{{ src_image_tars_dir }}/patch"
 #############################################################################
 # RPM files
 src_rpms_dir: "{{ playbook_dir }}/depends/rpm"

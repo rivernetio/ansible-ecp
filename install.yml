@@ -14,12 +14,14 @@
     - { role: cni, tags: cni }
     - { role: candidate, tags: candidate }
     - { role: vip, tags: vip }
+    - { role: replacebin, tags: replacebin }
 
 - hosts: workers
   gather_facts: yes
   become: yes
   roles:
     - { role: worker, tags: worker }
+    - { role: replacebin, tags: replacebin }
 
 - hosts: masters[0]
   gather_facts: no
@@ -31,13 +33,13 @@
   become: yes
   gather_facts: yes
   roles:
-    - { role: glusterfs, tags: glusterfs}
+    - { role: glusterfs, tags: glusterfs }
     
 - hosts: masters
   become: yes
   gather_facts: yes
   roles:
-    - { role: sharedir, tags: sharedir}
+    - { role: sharedir, tags: sharedir }
     
 - hosts: cluster
   gather_facts: no
@@ -49,5 +51,5 @@
   gather_facts: no
   become: yes
   roles:
+    - { role: updatechart, tags: updatechart }
     - { role: ecp, tags: ecp }
-

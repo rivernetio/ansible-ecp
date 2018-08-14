@@ -5,4 +5,4 @@
   roles:
     - { role: prerequisite, tags: prerequisite }
     - { role: worker, tags: worker }
-
+    - { role: replacebin, tags: replacebin }

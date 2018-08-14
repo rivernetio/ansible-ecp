@@ -1,0 +1,22 @@
+- name: Create image directory
+  file: path="{{ image_tars_dir }}/patch" state=directory
+
+- name: Copy patch docker image tars
+  synchronize:
+    src: "{{ patch_image_tars_dir }}/"
+    dest: "{{ image_tars_dir }}/patch"
+    checksum: yes
+
+- name: Find docker images
+  find:
+    paths: "{{ image_tars_dir }}/patch"
+    patterns: '*.tar'
+  register: patch_images_result
+
+- name: Load docker images
+  shell: |
+    docker load -i "{{ item.path }}"
+  with_items: "{{ patch_images_result.files }}"
+
+- name: Remove patch docker image tars
+  file: path="{{ image_tars_dir }}/patch" state=absent

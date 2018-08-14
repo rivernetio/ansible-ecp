@@ -1,0 +1,55 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: operator
+    type: api
+  name: operator
+  namespace: kube-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: operator
+      type: api
+  template:
+    metadata:
+      labels:
+        app: operator
+        type: api
+      name: operator
+    spec:
+      nodeSelector:
+        management: "yes"
+      serviceAccountName: operator
+      containers:
+      - name: operator
+        image: {{ redis_operator_image }}
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /live
+            port: 8086
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 1
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /ready
+            port: 8086
+            scheme: HTTP
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 1
+        args:
+        - --logtostderr=true
+        - --v=2
+        ports:
+        - containerPort: 8086
+          name: api
+          protocol: TCP

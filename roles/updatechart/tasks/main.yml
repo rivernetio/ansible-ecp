@@ -1,0 +1,5 @@
+---
+- name: Copy new charts
+  template: src={{ item }} dest=/ecp_share/appstore/repository/local/
+  with_fileglob:
+    - ../template/*

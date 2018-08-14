@@ -112,6 +112,7 @@ MANAGEMENT_IMAGES=(
 	docker.io/rivernet/ara:4.2
 	docker.io/rivernet/nginx:1.13.8
         docker.io/rivernet/hybridjob-controller:4.2
+        docker.io/rivernet/redisoperator
 )
 
 CLUSTER_IMAGES=(
@@ -158,6 +159,13 @@ APP_IMAGES=(
         docker.io/rivernet/bats:0.4.0
         docker.io/rivernet/jenkins:lts-1
         docker.io/rivernet/jnlp-slave:3.10-1
+	docker.io/rivernet/mycat:1.6-RELEASE-alpine
+	docker.io/rivernet/solr:7.3.1-alpine
+	docker.io/rivernet/tomcat:8.5.31
+	docker.io/rivernet/rabbitmq:3.7-alpine
+	docker.io/rivernet/busybox
+	docker.io/rivernet/redisnode
+	docker.io/rivernet/k8szk:v3
 )
 
 GLUSTER_IMAGES=(
@@ -200,7 +208,7 @@ function create_x86_64_package() {
 	#  - APP_IMAGES
 	# image_tars/gluster
 	#  - GLUSTER_IMAGES
-	mkdir -p image_tars/{cluster,management,charts,gluster}
+	mkdir -p image_tars/{cluster,management,charts,gluster,patch}
 
 	# Generate images for all hosts in the cluster
 	local images=
@@ -278,6 +286,25 @@ function create_x86_64_package() {
 	echo "Generating gluster images, this may take a while."
 	echo
 	docker save  $images > image_tars/gluster/ecp-glusters.tar
+
+        images=""
+        retry docker pull docker.io/rivernet/heketi:tang
+        docker tag docker.io/rivernet/heketi:tang docker.io/rivernet/heketi:dev
+        images="$images docker.io/rivernet/heketi:dev"
+        retry docker pull docker.io/rivernet/tiller:tang
+        docker tag docker.io/rivernet/tiller:tang docker.io/rivernet/tiller:v2.6.2
+        images="$images docker.io/rivernet/tiller:v2.6.2"
+        retry docker pull docker.io/rivernet/kube-controller-manager-amd64:tang
+        docker tag docker.io/rivernet/kube-controller-manager-amd64:tang docker.io/rivernet/kube-controller-manager-amd64:v1.7.5
+        images="$images docker.io/rivernet/kube-controller-manager-amd64:v1.7.5"
+        retry docker pull docker.io/rivernet/kube-apiserver-amd64:tang
+        docker tag docker.io/rivernet/kube-apiserver-amd64:tang docker.io/rivernet/kube-apiserver-amd64:v1.7.5
+        images=$images docker.io/rivernet/kube-apiserver-amd64:v1.7.5"
+        echo
+        echo "Generating patch images, this may take a while."
+        echo
+        docker save  $images > image_tars/patch/patch.tar
+        
 }
 
 create_x86_64_package
