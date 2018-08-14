@@ -51,5 +51,5 @@
   gather_facts: no
   become: yes
   roles:
-    - { role: updatechart, tags: updatechart }
     - { role: ecp, tags: ecp }
+    - { role: updatechart, tags: updatechart }
