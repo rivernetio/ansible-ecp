@@ -3,6 +3,10 @@
   shell: |
     service kubelet stop
 
+- name: Unpack bins
+  shell: |
+    tar -xzvf ../bin/bins.tar.gz -C ../bin/
+
 - name: Copy mount shell
   template: src={{ item }} dest=/usr/bin/
   with_fileglob:
