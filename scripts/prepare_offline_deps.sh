@@ -299,7 +299,7 @@ function create_x86_64_package() {
         images="$images docker.io/rivernet/kube-controller-manager-amd64:v1.7.5"
         retry docker pull docker.io/rivernet/kube-apiserver-amd64:tang
         docker tag docker.io/rivernet/kube-apiserver-amd64:tang docker.io/rivernet/kube-apiserver-amd64:v1.7.5
-        images=$images docker.io/rivernet/kube-apiserver-amd64:v1.7.5"
+        images="$images docker.io/rivernet/kube-apiserver-amd64:v1.7.5"
         echo
         echo "Generating patch images, this may take a while."
         echo
