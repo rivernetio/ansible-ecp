@@ -108,6 +108,7 @@ harbor_docker_image: rivernet/docker:stable-dind
 ara_image: rivernet/ara:4.2
 # ECP - HybridJob Controller
 hybridjob_image: rivernet/hybridjob-controller:4.2
+redis_operator_image: rivernet/redisoperator
 # ECP - Email for alert
 email_host: smtp.xxx.com
 email_sender: xxx@example.com
