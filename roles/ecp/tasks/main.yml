@@ -84,3 +84,11 @@
   import_tasks: hybridjob.yml
   tags:
     - ecp_hybridjob
+
+- name: Create redis-operator service
+  when:
+    - ecp is defined
+    - ecp | bool
+  import_tasks: redis-operator.yml
+  tags:
+    - ecp_redis-operator
