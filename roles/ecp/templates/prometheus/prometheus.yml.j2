@@ -258,5 +258,3 @@ scrape_configs:
     target_label: __metrics_path__
     replacement: /api/v1/nodes/${1}/proxy/metrics/cadvisor
 
-remote_write:
-  - url: "http://localhost:9201/write"

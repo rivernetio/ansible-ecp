@@ -85,7 +85,7 @@
   tags:
     - ecp_hybridjob
 
-- name: Create redis-operator service
+- name: Create operator service
   when:
     - ecp is defined
     - ecp | bool

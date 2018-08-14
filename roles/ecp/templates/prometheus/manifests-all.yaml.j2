@@ -380,14 +380,6 @@ spec:
           mountPath: /etc/prometheus
         - name: data-volume
           mountPath: /prometheus
-      - name: adapter
-        image: {{ prometheus_remote_storage_image }}
-        imagePullPolicy: IfNotPresent
-        args:
-          - '-elasticsearch-url=http://elasticsearch-logging:9200'
-        ports:
-        - name: api
-          containerPort: 9201
       volumes:
       - name: config-volume
         hostPath:

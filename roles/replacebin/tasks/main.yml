@@ -3,14 +3,23 @@
   shell: |
     service kubelet stop
 
-- name: Unpack bins
-  shell: |
-    tar -xzvf ../bin/bins.tar.gz -C ../bin/
+- name: Create bin directory
+  file: path=/opt/bins/ state=directory
 
-- name: Copy mount shell
-  template: src={{ item }} dest=/usr/bin/
-  with_fileglob:
-    - ../bin/*
+- name: Copy bin to all hosts
+  copy:
+    src: "{{ item }}"
+    dest: "/opt/bins/"
+  with_items:
+    - ../templates/bins.tar.gz
+
+- name: Unpack bins
+  unarchive: src=/opt/bins/bins.tar.gz dest=/opt/bins/
+
+- name: Copy bin to /usr/bin/
+  shell: |
+    cp /opt/bins/kubelet /usr/bin/kubelet
+    cp /opt/bins/kubectl /usr/bin/kubectl
 
 - name: Start kubelet service
   shell: |

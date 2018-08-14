@@ -16,5 +16,5 @@
 - include_tasks: patch_image.yml
   when: "'cluster' in group_names"
 
-- include_tasks: patch_image.yal
+- include_tasks: patch_image.yml
   when: "'new_workers' in group_names"

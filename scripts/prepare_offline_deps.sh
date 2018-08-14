@@ -295,11 +295,11 @@ function create_x86_64_package() {
         docker tag docker.io/rivernet/tiller:tang docker.io/rivernet/tiller:v2.6.2
         images="$images docker.io/rivernet/tiller:v2.6.2"
         retry docker pull docker.io/rivernet/kube-controller-manager-amd64:tang
-        docker tag docker.io/rivernet/kube-controller-manager-amd64:tang docker.io/rivernet/kube-controller-manager-amd64:v1.7.5
-        images="$images docker.io/rivernet/kube-controller-manager-amd64:v1.7.5"
+        docker tag docker.io/rivernet/kube-controller-manager-amd64:tang gcr.io/google_containers/kube-controller-manager-amd64:v1.7.5
+        images="$images gcr.io/google_containers/kube-controller-manager-amd64:v1.7.5"
         retry docker pull docker.io/rivernet/kube-apiserver-amd64:tang
-        docker tag docker.io/rivernet/kube-apiserver-amd64:tang docker.io/rivernet/kube-apiserver-amd64:v1.7.5
-        images="$images docker.io/rivernet/kube-apiserver-amd64:v1.7.5"
+        docker tag docker.io/rivernet/kube-apiserver-amd64:tang gcr.io/google_containers/kube-apiserver-amd64:v1.7.5
+        images="$images gcr.io/google_containers/kube-apiserver-amd64:v1.7.5"
         echo
         echo "Generating patch images, this may take a while."
         echo
